@@ -729,7 +729,7 @@
             })
             .on('broadcast', { event: 'buzzer_locked' }, payload => {
                 const lock = payload.payload;
-                if (lock.locked && (!currentBuzz || currentBuzz.playerName !== lock.playerName)) {
+                if (lock.locked && (!currentBuzz || currentBuzz.timestamp !== lock.timestamp)) {
                     currentBuzz = {
                         name: lock.playerName,
                         teamName: lock.teamName,
@@ -740,7 +740,22 @@
                     showBuzzerAlert(currentBuzz);
                 }
             })
-            .subscribe();
+            .on('broadcast', { event: 'reset_buzz' }, payload => {
+                if (payload.payload.reset) {
+                    document.getElementById('buzzerAlert').classList.remove('active');
+                    currentBuzz = null;
+                }
+            })
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    // Request current state when presenter joins
+                    channel.send({
+                        type: 'broadcast',
+                        event: 'request_sync',
+                        payload: { timestamp: Date.now() }
+                    });
+                }
+            });
 
         // Game State
         let letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"];
@@ -1077,6 +1092,27 @@
                 team: team
             });
 
+            // Also broadcast game state update
+            setTimeout(() => {
+                const state = {
+                    settings: settings,
+                    greenScore: greenScore,
+                    orangeScore: orangeScore,
+                    currentRound: currentRound,
+                    cells: cells.map(c => ({
+                        id: c.id,
+                        owner: c.owner,
+                        isPending: c.isPending || false
+                    })),
+                    timestamp: Date.now()
+                };
+                channel.send({
+                    type: 'broadcast',
+                    event: 'game_state',
+                    payload: state
+                });
+            }, 100);
+
             // افحص المسارات
             checkWinPaths(answeredCell, team);
 
@@ -1403,6 +1439,7 @@
                 payload: action
             });
 
+            // LocalStorage fallback (only works on same device)
             localStorage.setItem('huroofPresenterActions_' + sessionId, JSON.stringify(action));
         }
 
