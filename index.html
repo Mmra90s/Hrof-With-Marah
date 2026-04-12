@@ -223,1452 +223,912 @@
 
         .final-score-container {
             display: flex; gap: 40px; margin-top: 10px;
-            animation: scoreReveal 0.6s ease-out 0.8s forwards;
-            opacity: 0;
+            animation: scoreReveal 0.8s ease-out 0.5s both;
         }
-        .final-score-box {
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-        }
-        .final-score-label {
-            font-size: clamp(16px, 3vw, 26px); font-weight: 900; color: white;
-        }
-        .final-score-value {
-            font-size: clamp(36px, 7vw, 70px); font-weight: 900;
-            padding: 10px 30px; border-radius: 20px; color: white;
-        }
-        .final-score-value.green { background: #2ecc00; }
-        .final-score-value.orange { background: #ff6d00; }
+        .final-score-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .final-score-label { font-size: 18px; color: rgba(255,255,255,0.7); }
+        .final-score-value { font-size: 48px; font-weight: 900; color: white; }
 
         .play-again-btn {
-            margin-top: 20px; padding: clamp(14px, 2.5vw, 22px) clamp(40px, 8vw, 80px);
-            border: none; border-radius: 50px; background: #f1c40f; color: #2c1b4d;
-            font-size: clamp(20px, 4vw, 32px); font-weight: 900; cursor: pointer;
-            box-shadow: 0 6px 20px rgba(241,196,15,0.4);
-            animation: btnPopIn 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.2s forwards;
-            opacity: 0; transform: scale(0);
-            transition: transform 0.15s, box-shadow 0.15s;
+            margin-top: 30px; padding: 15px 40px;
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+            border: none; border-radius: 50px;
+            color: #2c1b4d; font-size: 24px; font-weight: 900;
+            cursor: pointer; box-shadow: 0 10px 25px rgba(241,196,15,0.4);
+            animation: btnPopIn 0.6s cubic-bezier(0.34,1.56,0.64,1) 1s both;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .play-again-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(241,196,15,0.5);
-        }
-        .play-again-btn:active { transform: translateY(2px) scale(0.98); }
+        .play-again-btn:hover { transform: scale(1.05); box-shadow: 0 15px 35px rgba(241,196,15,0.6); }
 
-        /* ===== TEAM CHOICE MODAL ===== */
-        #team-choice-modal {
-            position: fixed; inset: 0; z-index: 600;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.7);
+        /* ===== MAIN SCREENS ===== */
+        #screen-start {
+            flex-direction: column; align-items: center; justify-content: center;
+            background-color: #6a3093; gap: 30px; z-index: 10;
         }
-        #team-choice-modal.active { display: flex; }
-        .team-choice-content {
-            background: #2c1b4d; border-radius: 24px; padding: 30px;
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-        }
-        @keyframes modalPop {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .team-choice-title {
-            font-size: clamp(22px, 4vw, 32px); font-weight: 900; color: white;
-            text-align: center;
-        }
-        .team-buttons {
-            display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-        }
-        .team-choice-btn {
-            padding: clamp(14px, 2.5vw, 20px) clamp(30px, 5vw, 50px);
-            border: none; border-radius: 16px; font-size: clamp(18px, 3vw, 26px);
-            font-weight: 900; cursor: pointer; color: white;
-            transition: transform 0.15s, box-shadow 0.15s;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .team-choice-btn.green {
-            background: linear-gradient(135deg, #2ecc00, #27ae60);
-            box-shadow: 0 6px 20px rgba(46,204,113,0.4);
-        }
-        .team-choice-btn.orange {
-            background: linear-gradient(135deg, #ff6d00, #e67e22);
-            box-shadow: 0 6px 20px rgba(255,109,0,0.4);
-        }
-        .team-choice-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
-        .team-choice-btn:active {
-            transform: translateY(2px) scale(0.98);
-        }
-
-        /* ===== NEW GAME CONFIRM MODAL ===== */
-        #new-game-modal {
-            position: fixed; inset: 0; z-index: 600;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.7);
-        }
-        #new-game-modal.active { display: flex; }
-        .new-game-content {
-            background: #2c1b4d; border-radius: 24px; padding: 30px;
-            display: flex; flex-direction: column; align-items: center; gap: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            max-width: 90vw;
-        }
-        .new-game-icon {
-            font-size: clamp(60px, 12vw, 90px);
-        }
-        .new-game-text {
-            font-size: clamp(22px, 4.5vw, 32px); font-weight: 900; color: white;
-            text-align: center;
-        }
-        .new-game-subtext {
-            font-size: clamp(14px, 2.5vw, 18px); color: rgba(255,255,255,0.7);
-            text-align: center; margin-top: -8px;
-        }
-        .new-game-buttons {
-            display: flex; gap: 12px; margin-top: 8px;
-        }
-        .new-game-btn {
-            padding: clamp(12px, 2vw, 18px) clamp(28px, 5vw, 45px);
-            border: none; border-radius: 14px; font-size: clamp(16px, 3vw, 22px);
-            font-weight: 900; cursor: pointer; color: white;
-            transition: transform 0.15s, box-shadow 0.15s;
-        }
-        .new-game-btn.confirm {
-            background: linear-gradient(135deg, #2ecc00, #27ae60);
-            box-shadow: 0 6px 20px rgba(46,204,113,0.4);
-        }
-        .new-game-btn.cancel {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            box-shadow: 0 6px 20px rgba(231,76,60,0.4);
-        }
-        .new-game-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
-        .new-game-btn:active {
-            transform: translateY(2px) scale(0.98);
-        }
-
-        @keyframes slideFromRight {
-            from { transform: translateX(-100%); opacity:0; }
-            to   { transform: translateX(0);     opacity:1; }
-        }
-
-        /* ===== LOGO ===== */
         .logo-stack {
-            display: flex; flex-direction: column;
-            align-items: center; line-height: 1; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center;
+            line-height: 0.85; pointer-events: none;
         }
         .logo-word { font-weight: 900; text-align: center; display: inline-block; }
-
         .logo-huroof {
-            color: #fdd835; font-size: clamp(54px, 8vw, 90px);
+            color: #fdd835; font-size: clamp(80px, 15vw, 160px);
             text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
                 4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 6px 6px 0 #2c1b4d,
-                7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 15px rgba(0,0,0,0.6);
+                7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 25px rgba(0,0,0,0.6);
+            animation: floatUp 4s ease-in-out infinite, glow-yellow 4s ease-in-out infinite;
         }
         .logo-ma {
-            color: #26c6da; font-size: clamp(42px, 6vw, 70px); letter-spacing: clamp(10px,2vw,20px);
+            color: #26c6da; font-size: clamp(40px, 8vw, 85px);
+            letter-spacing: clamp(15px, 3vw, 35px); margin-right: clamp(15px, 3vw, 35px);
             text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
-                4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 7px 7px 15px rgba(0,0,0,0.6);
+                4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 7px 7px 20px rgba(0,0,0,0.6);
+            animation: floatUpMa 4s ease-in-out 0.5s infinite, glow-cyan 4s ease-in-out 0.5s infinite;
         }
         .logo-marah {
-            color: #ef5350; font-size: clamp(54px, 8vw, 90px);
+            color: #ef5350; font-size: clamp(80px, 15vw, 160px);
             text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
                 4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 6px 6px 0 #2c1b4d,
-                7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 15px rgba(0,0,0,0.6);
+                7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 25px rgba(0,0,0,0.6);
+            animation: floatUp 4s ease-in-out 1s infinite, glow-red 4s ease-in-out 1s infinite;
         }
 
-        /* Floating + colored glow — start screen only */
-        #screen-start .logo-huroof {
-            animation:
-                slideInDown 0.65s cubic-bezier(0.34,1.56,0.64,1) both,
-                floatUp     4s ease-in-out 0.65s infinite,
-                glow-yellow 4s ease-in-out 0.65s infinite;
+        .start-btn {
+            padding: 18px 60px; font-size: 32px; font-weight: 900;
+            background: linear-gradient(135deg, #fdd835, #f9a825);
+            color: #2c1b4d; border: none; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: slideInUp 0.8s ease-out 0.5s both;
         }
-        #screen-start .logo-ma {
-            animation:
-                slideInLeft 0.65s cubic-bezier(0.34,1.56,0.64,1) 0.15s both,
-                floatUpMa   4s ease-in-out 1.1s infinite,
-                glow-cyan   4s ease-in-out 1.1s infinite;
+        .start-btn:hover { transform: scale(1.08); box-shadow: 0 15px 45px rgba(0,0,0,0.4); }
+
+        /* Settings Screen */
+        #screen-settings {
+            flex-direction: column; align-items: center; justify-content: center;
+            background-color: #6a3093; z-index: 20;
         }
-        #screen-start .logo-marah {
-            animation:
-                slideInUp 0.65s cubic-bezier(0.34,1.56,0.64,1) 0.3s both,
-                floatUp   4s ease-in-out 1.55s infinite,
-                glow-red  4s ease-in-out 1.55s infinite;
+        .settings-card {
+            background: white; padding: 40px; border-radius: 30px;
+            width: 90%; max-width: 500px; display: flex; flex-direction: column; gap: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: slideInDown 0.6s cubic-bezier(0.34,1.56,0.64,1);
         }
-        #screen-start .menu-btn:nth-child(2) {
-            animation: fadeSlideUp 0.55s cubic-bezier(0.34,1.4,0.64,1) 0.55s both;
+        .settings-title { font-size: 32px; font-weight: 900; color: #6a3093; text-align: center; margin-bottom: 10px; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-weight: 900; color: #2c1b4d; font-size: 18px; }
+        .input-group input {
+            padding: 15px; border: 3px solid #eee; border-radius: 15px;
+            font-size: 20px; font-weight: 700; outline: none; transition: border-color 0.2s;
         }
-        #screen-start .menu-btn:nth-child(3) {
-            animation: fadeSlideUp 0.55s cubic-bezier(0.34,1.4,0.64,1) 0.72s both;
+        .input-group input:focus { border-color: #6a3093; }
+
+        .settings-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .action-btn {
+            padding: 15px; font-size: 20px; font-weight: 900; border: none; border-radius: 15px; cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .action-btn:active { transform: scale(0.95); }
+        .btn-save { background: #6a3093; color: white; }
+        .btn-cancel { background: #eee; color: #666; }
+
+        /* Game Screen */
+        #screen-game {
+            flex-direction: column; align-items: center; justify-content: center;
+            background: #6a3093; padding: 20px; gap: 20px; z-index: 30;
+        }
+        .game-header {
+            width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center;
+            animation: slideInDown 0.8s ease-out;
+        }
+        .score-display { display: flex; gap: 30px; align-items: center; }
+        .score-team { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .score-label { font-size: 18px; font-weight: 900; color: white; }
+        .score-num {
+            width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;
+            font-size: 36px; font-weight: 900; color: white; border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .score-g { background: #2ecc00; }
+        .score-o { background: #ff6d00; }
+
+        .round-info {
+            background: rgba(255,255,255,0.15); padding: 10px 30px; border-radius: 50px;
+            backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);
+        }
+        .round-text { font-size: 24px; font-weight: 900; color: #fdd835; }
+
+        .board-container {
+            width: 100%; max-width: 750px; aspect-ratio: 1; position: relative;
+            animation: fadeSlideUp 1s ease-out 0.3s both;
+        }
+        #board { width: 100%; height: 100%; }
+        .hexagon { cursor: pointer; transition: transform 0.2s; }
+        .hexagon:hover { transform: scale(1.03); }
+        .hex-poly { fill: white; stroke: #6a3093; stroke-width: 3; transition: fill 0.3s; }
+        .hex-text {
+            font-size: 32px; font-weight: 900; fill: #6a3093; text-anchor: middle;
+            dominant-baseline: central; pointer-events: none;
         }
 
-        /* ===== START SCREEN ===== */
-        #screen-start {
-            flex-direction: column; align-items: center;
-            justify-content: center; gap: 30px; position: relative;
-        }
-        #screen-start .logo-stack { margin-bottom: 10px; }
-        .menu-btn {
-            width: clamp(220px, 60vw, 340px); padding: clamp(12px,2vw,18px) 0; border-radius: 50px;
-            border: none; background: white; color: #6a3093;
-            font-size: clamp(18px,3vw,28px); font-weight: 900; cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-            transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
-            position: relative; z-index: 1;
-        }
-        .menu-btn:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 14px 32px rgba(0,0,0,0.35); }
-        .menu-btn:active { transform: translateY(2px) scale(0.97); }
+        .green-fill .hex-poly { fill: #2ecc00 !important; }
+        .orange-fill .hex-poly { fill: #ff6d00 !important; }
+        .pending-fill .hex-poly { fill: #fdd835 !important; }
+        .green-fill .hex-text, .orange-fill .hex-text { fill: white !important; }
 
-        /* ===== TRANSITION OVERLAY ===== */
+        /* Transition Overlay */
         #transition-overlay {
-            position: fixed; inset: 0; z-index: 1000;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: #6a3093; overflow: hidden;
+            position: fixed; inset: 0; background: #6a3093; z-index: 100;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
         }
         #transition-overlay.active { display: flex; }
-        #trans-hex-bg { position: absolute; inset: 0; width:100%; height:100%; opacity: 0.18; pointer-events: none; }
+        .trans-logo {
+            display: flex; flex-direction: column; align-items: center; line-height: 0.85;
+        }
+        .trans-logo.zooming { animation: logoZoomFade 3.5s ease-in-out forwards; }
+        .trans-round {
+            position: absolute; font-size: clamp(60px, 12vw, 120px); font-weight: 900; color: white;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none;
+        }
+        .trans-round.popping { animation: roundPop 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .trans-round.fading { animation: roundFadeOut 0.6s ease-in forwards; }
 
-        #trans-logo { will-change: transform, opacity; }
-        #trans-logo.zooming { animation: logoZoomFade 1.5s cubic-bezier(0.25,0.1,0.25,1) forwards; }
+        /* Modal */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white; padding: 40px; border-radius: 30px; width: 90%; max-width: 450px;
+            display: flex; flex-direction: column; gap: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .modal-title { font-size: 28px; font-weight: 900; color: #2c1b4d; text-align: center; }
+        .team-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .team-btn {
+            padding: 20px; border: none; border-radius: 20px; font-size: 22px; font-weight: 900;
+            color: white; cursor: pointer; transition: transform 0.1s;
+        }
+        .team-btn:active { transform: scale(0.95); }
+        .btn-green-team { background: #2ecc00; box-shadow: 0 8px 0 #27ae60; }
+        .btn-orange-team { background: #ff6d00; box-shadow: 0 8px 0 #e67e22; }
 
-        #trans-round {
-            position: absolute; display: flex;
-            flex-direction: column; align-items: center; opacity: 0;
+        /* Options Button */
+        .options-btn {
+            position: fixed; top: 20px; right: 20px; width: 50px; height: 50px;
+            background: rgba(255,255,255,0.2); border-radius: 15px; display: none;
+            align-items: center; justify-content: center; color: white; font-size: 24px;
+            cursor: pointer; z-index: 40; backdrop-filter: blur(5px); transition: background 0.2s;
         }
-        #trans-round.popping  { animation: roundPop    1.1s cubic-bezier(0.22,1,0.36,1) forwards; }
-        #trans-round.fading   { animation: roundFadeOut 0.7s ease-in forwards; }
+        .options-btn:hover { background: rgba(255,255,255,0.3); }
 
-        .trans-rw1 { color: #e74c3c; font-size: clamp(46px,7vw,80px);  font-weight:900; line-height:1.05;
-            text-shadow: 0 4px 0 #000, 0 8px 20px rgba(0,0,0,0.6); }
-        .trans-rw2 { color: #f1c40f; font-size: clamp(64px,10vw,110px); font-weight:900; line-height:1;
-            text-shadow: 0 4px 0 #000, 0 8px 20px rgba(0,0,0,0.6); }
+        .options-dropdown {
+            position: fixed; top: 80px; right: 20px; background: white; border-radius: 20px;
+            width: 220px; display: none; flex-direction: column; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 40;
+        }
+        .options-dropdown.open { display: flex; }
+        .option-item {
+            padding: 15px 20px; font-size: 18px; font-weight: 900; color: #2c1b4d;
+            cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.2s;
+        }
+        .option-item:hover { background: #f8f9fa; }
+        .option-item.danger { color: #ef5350; }
 
-        #screen-game.animating .left    { animation: slideFromRight 0.65s cubic-bezier(0.34,1.1,0.64,1) forwards; }
-        #screen-game.animating .sidebar { animation: slideFromLeft  0.65s cubic-bezier(0.34,1.1,0.64,1) forwards; }
-
-        /* ===== SETTINGS SCREEN ===== */
-        #screen-settings {
-            flex-direction: column; align-items: center;
-            overflow-y: auto; padding: 30px 20px 40px; position: relative;
+        /* Presenter Modal */
+        .presenter-modal-content {
+            max-width: 550px; text-align: center;
         }
-        #screen-settings .logo-stack { margin-bottom: 30px; }
-        .logo-huroof-sm { font-size: clamp(34px,5vw,56px) !important; }
-        .logo-ma-sm     { font-size: clamp(26px,4vw,44px) !important; }
-        .logo-marah-sm  { font-size: clamp(34px,5vw,56px) !important; }
-
-        .settings-form {
-            width: 100%; max-width: 680px;
-            display: flex; flex-direction: column; gap: clamp(10px,2vw,18px);
-            position: relative; z-index: 1;
+        .qr-container {
+            background: white; padding: 20px; border-radius: 20px; margin: 10px auto;
+            width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .setting-row { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
-        .setting-label {
-            color: white; font-size: clamp(15px,2vw,22px); font-weight: 900;
-            white-space: nowrap; min-width: 130px; text-align: right;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        .url-box {
+            background: #f0f0f0; padding: 12px; border-radius: 10px; font-family: monospace;
+            font-size: 14px; word-break: break-all; margin: 10px 0; color: #666;
         }
-        .setting-input {
-            flex: 1; min-width: 120px; padding: clamp(10px,1.5vw,14px) 16px; border-radius: 50px;
-            border: none; background: white; color: #6a3093;
-            font-size: clamp(16px,2vw,22px); font-weight: 900; text-align: center; outline: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .setting-input::placeholder { color: #b39ddb; }
-        .toggle-group {
-            flex: 1; min-width: 120px; display: flex; border-radius: 50px; overflow: hidden;
-            background: rgba(255,255,255,0.15); border: 3px solid rgba(255,255,255,0.3);
-        }
-        .toggle-btn {
-            flex: 1; padding: clamp(8px,1.2vw,13px) 6px; border: none; background: transparent;
-            color: rgba(255,255,255,0.7); font-size: clamp(13px,1.6vw,20px); font-weight: 900; cursor: pointer; transition: all 0.2s;
-        }
-        .toggle-btn.active { background: white; color: #6a3093; border-radius: 50px; margin: 3px; }
-        .save-btn {
-            width: 100%; max-width: 680px; padding: clamp(12px,1.8vw,18px) 0; border-radius: 50px;
-            border: none; background: white; color: #6a3093;
-            font-size: clamp(18px,2.5vw,26px); font-weight: 900; cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-            transition: transform 0.1s; margin-top: 10px; position: relative; z-index: 1;
-        }
-        .save-btn:hover { transform: translateY(-2px); }
-
-        /* ===== GAME SCREEN ===== */
-        #screen-game { flex-direction: row; overflow: hidden; position: relative; }
-        .left {
-            flex: 1; display: flex; justify-content: center; align-items: center;
-            position: relative; overflow: hidden;
-            background: conic-gradient(from 45deg, #2ecc00 90deg, #ff6d00 90deg 180deg, #2ecc00 180deg 270deg, #ff6d00 270deg);
-        }
-        .sidebar {
-            width: clamp(220px, 28vw, 400px);
-            background: #6a3093; color: white;
-            display: flex; flex-direction: column; align-items: center;
-            padding: clamp(12px, 2vw, 30px) clamp(10px, 1.5vw, 20px);
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            z-index: 10; position: relative; overflow: hidden;
-        }
-        .logo-container {
-            position: absolute; top: clamp(8px, 1.2vw, 15px); left: clamp(8px, 1.2vw, 15px);
-            display: flex; flex-direction: column; align-items: center;
-            transform: rotate(-8deg); pointer-events: none; line-height: 1.1;
-        }
-        .logo-container .logo-word { font-size: clamp(28px, 4vw, 52px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(8px, 1.2vw, 15px); }
-        .title-container {
-            text-align: center;
-            margin-top: clamp(100px, 18vw, 220px);
-            margin-bottom: clamp(8px, 1.5vw, 20px);
-        }
-        .title-word { display: block; font-weight: 900; line-height: 1.1; }
-        .title-round {
-            color: #e74c3c; font-size: clamp(32px, 5.5vw, 68px);
-            transform: rotate(-10deg) translateX(-20px); display: inline-block; margin-bottom: -10px;
-            text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
-                0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
-        }
-        .title-first {
-            color: #f1c40f; font-size: clamp(56px, 9vw, 125px);
-            transform: rotate(10deg) translateX(20px); display: inline-block;
-            text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
-                0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
-        }
-        .score-container { margin-top: auto; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); }
-        .score-box {
-            width: clamp(60px, 8vw, 105px); height: clamp(60px, 8vw, 105px);
-            display: flex; justify-content: center; align-items: center;
-            font-size: clamp(28px, 4vw, 52px); font-weight: 900; color: white;
-            border-radius: clamp(12px, 1.8vw, 22px);
-        }
-        .green-score  { background: #2ecc00; }
-        .orange-score { background: #ff6d00; }
-        .team-label {
-            font-size: clamp(13px, 1.8vw, 24px); font-weight: 900; color: white;
-            text-align: center; margin-bottom: 6px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-            max-width: clamp(70px, 9vw, 120px); word-break: break-word;
-        }
-        svg#board { width: 100%; height: 100%; display: block; }
-        .hexagon { cursor: pointer; }
-        .hex-poly {
-            stroke: #6a3093; stroke-width: 8;
-            stroke-linejoin: round; stroke-linecap: round;
-            fill: white; transition: fill 0.3s;
-        }
-        .hex-text {
-            font-size: 35px; font-weight: 900; fill: #6a3093;
-            pointer-events: none; dominant-baseline: middle; text-anchor: middle;
-        }
-        .green-fill  .hex-poly { fill: #2ecc00 !important; }
-        .orange-fill .hex-poly { fill: #ff6d00 !important; }
-
-        /* Pending state - yellow glow */
-        .pending-fill .hex-poly { fill: #fdd835 !important; }
-        .pending-fill .hex-text { fill: #2c1b4d !important; }
-
-        /* Buzzer Alert Display */
-        .buzzer-alert-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            display: none;
-        }
-        .buzzer-alert-container.active {
-            display: block;
-            animation: buzzAlertPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .copy-btn {
+            background: #6a3093; color: white; border: none; padding: 10px 20px;
+            border-radius: 10px; font-weight: 900; cursor: pointer;
         }
 
-        @keyframes buzzAlertPop {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        /* Buzzer Overlay */
+        #buzzerOverlay {
+            position: fixed; inset: 0; z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
         }
+        #buzzerOverlay.active { display: flex; }
 
         .buzzer-alert {
-            background: linear-gradient(135deg, #fdd835, #ff9800);
-            border-radius: 25px;
-            padding: 30px 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.6), 0 0 50px rgba(253,216,53,0.6);
-            animation: buzzPulse 0.8s ease-in-out infinite;
-            min-width: 280px;
+            background: white; padding: 40px; border-radius: 40px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.6);
+            animation: trophyBounce 0.8s cubic-bezier(0.34,1.56,0.64,1);
+            width: 90%; max-width: 500px;
         }
-
-        @keyframes buzzPulse {
-            0%, 100% { box-shadow: 0 15px 50px rgba(0,0,0,0.6), 0 0 50px rgba(253,216,53,0.6); }
-            50% { box-shadow: 0 15px 50px rgba(0,0,0,0.6), 0 0 80px rgba(253,216,53,0.9); }
-        }
-
-        .buzzer-alert-icon {
-            font-size: 70px;
-            animation: bounce 0.4s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-        }
-
-        .buzzer-alert-text {
-            color: #2c1b4d;
-            font-size: clamp(26px, 4vw, 36px);
-            font-weight: 900;
-            text-align: center;
-        }
-
+        .buzzer-alert-icon { font-size: 80px; animation: ribbonShake 0.5s infinite; }
+        .buzzer-alert-text { font-size: 32px; font-weight: 900; color: #2c1b4d; }
         .buzzer-alert-team {
-            font-size: clamp(18px, 3vw, 26px);
-            padding: 8px 25px;
-            border-radius: 25px;
-            color: white;
-            font-weight: 700;
+            font-size: 40px; font-weight: 900; padding: 10px 30px; border-radius: 20px;
+            color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
         .buzzer-alert-team.green { background: #2ecc00; }
         .buzzer-alert-team.orange { background: #ff6d00; }
+        .buzzer-alert-player { font-size: 28px; font-weight: 700; color: #666; }
 
-        .buzzer-alert-player {
-            color: #2c1b4d;
-            font-size: clamp(16px, 2.5vw, 22px);
-            font-weight: 700;
-            opacity: 0.9;
-        }
-
-        .buzzer-alert-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-            display: none;
-        }
-        .buzzer-alert-overlay.active { display: block; }
-
-        /* ===== OPTIONS BUTTON & DROPDOWN ===== */
-        #options-btn {
-            position: fixed; top: 14px; right: 14px; z-index: 500;
-            background: white; color: #6a3093;
-            border: none; border-radius: 50px;
-            padding: clamp(8px,1vw,12px) clamp(14px,1.8vw,24px);
-            font-size: clamp(14px,1.6vw,20px); font-weight: 900;
-            cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-            transition: transform 0.15s, box-shadow 0.15s;
-            display: none;
-        }
-        #options-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
-        #options-btn:active { transform: translateY(1px); }
-
-        #options-dropdown {
-            position: fixed; top: 60px; right: 14px; z-index: 499;
-            background: white; border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-            overflow: hidden; display: none; flex-direction: column;
-            min-width: 200px;
-        }
-        #options-dropdown.open { display: flex; }
-
-        .opt-btn {
-            padding: clamp(10px,1.2vw,16px) clamp(14px,1.8vw,22px);
-            border: none; background: transparent;
-            color: #6a3093; font-size: clamp(14px,1.5vw,19px); font-weight: 900;
-            cursor: pointer; text-align: right; transition: background 0.15s;
-            border-bottom: 1px solid rgba(106,48,147,0.1);
-        }
-        .opt-btn:last-child { border-bottom: none; }
-        .opt-btn:hover { background: rgba(106,48,147,0.08); }
-        .opt-btn.disabled { opacity: 0.45; cursor: default; }
-        .opt-btn.disabled:hover { background: transparent; }
-
-        /* ===== PRESENTER MODAL ===== */
-        #presenter-modal {
-            position: fixed; inset: 0; z-index: 700;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.8);
-        }
-        #presenter-modal.active { display: flex; }
-        .presenter-modal-content {
-            background: #2c1b4d; border-radius: 24px; padding: 30px;
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            max-width: 90vw; width: 360px;
-        }
-        .presenter-modal-title {
-            font-size: clamp(22px, 4vw, 28px); font-weight: 900; color: white;
-            text-align: center;
-        }
-        .presenter-modal-subtitle {
-            font-size: clamp(14px, 2.5vw, 18px); color: rgba(255,255,255,0.7);
-            text-align: center;
-        }
-        .presenter-link-box {
-            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px 20px;
-            width: 100%; text-align: center;
-        }
-        .presenter-link-label {
-            font-size: clamp(12px, 2vw, 14px); color: rgba(255,255,255,0.6);
-            margin-bottom: 8px;
-        }
-        .presenter-link-url {
-            font-size: clamp(14px, 2.5vw, 16px); color: #26c6da; word-break: break-all;
-            font-weight: 700;
-        }
-        .qr-container {
-            background: white; border-radius: 12px; padding: 15px;
-            display: flex; justify-content: center; align-items: center;
-        }
-        #presenter-qr-code { display: block; }
-        .presenter-modal-close {
-            padding: clamp(12px, 2vw, 16px) clamp(30px, 5vw, 50px);
-            border: none; border-radius: 14px; font-size: clamp(16px, 3vw, 20px);
-            font-weight: 900; cursor: pointer; background: #6a3093; color: white;
-            transition: transform 0.15s;
-        }
-        .presenter-modal-close:hover { transform: translateY(-2px); }
-
-        /* ===== TABLET (portrait or small landscape) ===== */
-        @media (max-width: 900px) and (orientation: landscape) {
-            .sidebar { width: clamp(180px, 26vw, 280px); padding: 10px 12px; }
-            .logo-container .logo-word { font-size: clamp(22px, 3.5vw, 36px); }
-            .title-container { margin-top: clamp(80px, 14vw, 140px); }
-            .title-round  { font-size: clamp(24px, 4vw, 44px); }
-            .title-first  { font-size: clamp(42px, 7vw, 80px); }
-            .score-box { width: clamp(50px, 7vw, 80px); height: clamp(50px, 7vw, 80px); font-size: clamp(22px, 3.5vw, 40px); }
-            .team-label { font-size: clamp(11px, 1.5vw, 18px); }
-        }
-
-        /* ===== MOBILE landscape (phone) ===== */
-        @media (max-width: 680px) and (orientation: landscape) {
-            .sidebar { width: 200px; padding: 8px 10px; }
-            .logo-container .logo-word { font-size: 24px; }
-            .logo-container .logo-ma   { letter-spacing: 6px; }
-            .title-container { margin-top: 80px; margin-bottom: 6px; }
-            .title-round  { font-size: 22px; }
-            .title-first  { font-size: 38px; }
-            .score-box { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
-            .team-label { font-size: 11px; }
-            .score-container { gap: 10px; padding-bottom: 4px; }
-        }
-
-        /* ===== PORTRAIT PHONES/TABLETS — stack vertically ===== */
-        @media (orientation: portrait) and (max-width: 1024px) {
-            #screen-game { flex-direction: column-reverse; }
-            .sidebar {
-                width: 100% !important;
-                flex-direction: row !important;
-                align-items: center !important;
-                justify-content: space-around !important;
-                padding: 10px 16px !important;
-                height: auto !important;
-                box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-            }
-            .logo-container { display: none !important; }
-            .title-container { margin-top: 0 !important; margin-bottom: 0 !important; text-align: center; }
-            .title-round { font-size: clamp(18px, 4vw, 32px); transform: rotate(-6deg) translateX(-10px); }
-            .title-first { font-size: clamp(32px, 7vw, 60px); transform: rotate(6deg) translateX(10px); }
-            .score-container { margin-top: 0 !important; padding-bottom: 0 !important; gap: 14px; }
-            .score-box { width: clamp(44px, 9vw, 70px); height: clamp(44px, 9vw, 70px); font-size: clamp(20px, 4.5vw, 36px); }
-            .team-label { font-size: clamp(11px, 2.5vw, 18px); max-width: 80px; margin-bottom: 4px; }
-            .left { flex: 1 !important; width: 100%; }
-        }
-
-        /* ===== PORTRAIT WARNING ===== */
-        #portrait-warning {
-            display: none;
-            position: fixed; inset: 0; z-index: 9999;
-            background: #2c1b4d;
-            flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 28px;
-        }
-        @media (orientation: portrait) {
-            #portrait-warning { display: flex; }
-        }
-        .portrait-phone {
-            font-size: 90px;
-            display: inline-block;
-            animation: tiltPhone 2s ease-in-out infinite;
-            transform-origin: center;
-        }
-        @keyframes tiltPhone {
-            0%   { transform: rotate(0deg); }
-            30%  { transform: rotate(90deg); }
-            60%  { transform: rotate(90deg); }
-            80%  { transform: rotate(0deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .portrait-text {
-            color: white; font-size: 26px; font-weight: 900;
-            text-align: center; padding: 0 30px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-            line-height: 1.5;
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .game-header { flex-direction: column; gap: 15px; }
+            .score-display { gap: 15px; }
+            .score-num { width: 55px; height: 55px; font-size: 28px; }
+            .hex-text { font-size: 24px; }
+            .settings-card { padding: 25px; }
         }
     </style>
 </head>
 <body>
-
-<!-- ===== PORTRAIT WARNING ===== -->
-<div id="portrait-warning">
-    <span class="portrait-phone">📱</span>
-    <div class="portrait-text">خلي الشاشة بالعرض<br>عشان تزيد الفلة 😎</div>
-</div>
-
-<!-- ===== TEAM CHOICE MODAL ===== -->
-<div id="team-choice-modal">
-    <div class="team-choice-content">
-        <div class="team-choice-title">👆 اختار الفريق</div>
-        <div class="team-buttons">
-            <button class="team-choice-btn green" onclick="chooseTeam('green')">
-                ✓ <span id="modal-team1">الفريق الأول</span>
-            </button>
-            <button class="team-choice-btn orange" onclick="chooseTeam('orange')">
-                ✓ <span id="modal-team2">الفريق الثاني</span>
-            </button>
-        </div>
+    <div class="hex-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" id="hex-pattern-svg"></svg>
     </div>
-</div>
 
-<!-- ===== NEW GAME CONFIRM MODAL ===== -->
-<div id="new-game-modal">
-    <div class="new-game-content">
-        <div class="new-game-icon">❓</div>
-        <div class="new-game-text">هل تريد بدء لعبة جديدة؟</div>
-        <div class="new-game-subtext">سيتم إعادة تصفير النتائج</div>
-        <div class="new-game-buttons">
-            <button class="new-game-btn confirm" onclick="newGameConfirmed()">✅ نعم</button>
-            <button class="new-game-btn cancel" onclick="closeNewGameModal()">❌ لا</button>
-        </div>
-    </div>
-</div>
-
-<!-- Hex Background -->
-<div class="hex-bg">
-    <svg xmlns="http://www.w3.org/2000/svg" id="hex-pattern-svg"></svg>
-</div>
-
-<!-- ===== GAME OVER OVERLAY ===== -->
-<div id="game-over-overlay">
-    <div class="game-over-content">
-        <div class="trophy-icon">🏆</div>
-        <div class="winner-text">الفائز!</div>
-        <div class="winner-name" id="game-winner-name">الفريق الأول</div>
-        <div class="final-score-container">
-            <div class="final-score-box">
-                <div class="final-score-label" id="final-label-team1">الفريق الأول</div>
-                <div class="final-score-value green" id="final-score-green">0</div>
-            </div>
-            <div class="final-score-box">
-                <div class="final-score-label" id="final-label-team2">الفريق الثاني</div>
-                <div class="final-score-value orange" id="final-score-orange">0</div>
-            </div>
-        </div>
-        <button class="play-again-btn" onclick="playAgain()">🔄 اللعب مرة أخرى</button>
-    </div>
-</div>
-
-<!-- ===== ROUND WIN OVERLAY ===== -->
-<div id="round-win-overlay">
-    <div class="confetti confetti-1"></div>
-    <div class="confetti confetti-2"></div>
-    <div class="confetti confetti-3"></div>
-    <div class="confetti confetti-4"></div>
-    <div class="confetti confetti-5"></div>
-    <div class="confetti confetti-6"></div>
-    <div class="confetti confetti-7"></div>
-    <div class="confetti confetti-8"></div>
-    <div class="confetti confetti-9"></div>
-    <div class="confetti confetti-10"></div>
-    <div class="confetti confetti-11"></div>
-    <div class="confetti confetti-12"></div>
-    <div class="win-text-container">
-        <div class="win-label">الفائز بالجولة</div>
-        <div class="win-team" id="win-team-name">الفريق الأول</div>
-    </div>
-</div>
-
-<!-- ===== TRANSITION OVERLAY ===== -->
-<div id="transition-overlay">
-    <svg xmlns="http://www.w3.org/2000/svg" id="trans-hex-bg"></svg>
-    <div class="logo-stack" id="trans-logo">
-        <span class="logo-word logo-huroof">حروف</span>
-        <span class="logo-word logo-ma">مع</span>
-        <span class="logo-word logo-marah" id="trans-logo-name">مراح</span>
-    </div>
-    <div id="trans-round">
-        <span class="trans-rw1">الجولة</span>
-        <span class="trans-rw2" id="trans-round-word">الأولى</span>
-    </div>
-</div>
-
-<!-- ===== START SCREEN ===== -->
-<div class="screen active" id="screen-start">
-    <div class="logo-stack">
-        <span class="logo-word logo-huroof">حروف</span>
-        <span class="logo-word logo-ma">مع</span>
-        <span class="logo-word logo-marah" id="logo-name-start">مراح</span>
-    </div>
-    <button class="menu-btn" onclick="startGame()">بدء اللعبة</button>
-    <button class="menu-btn" onclick="showSettings()">إعدادات</button>
-</div>
-
-<!-- ===== SETTINGS SCREEN ===== -->
-<div class="screen" id="screen-settings">
-    <div class="logo-stack" style="z-index:1;">
-        <span class="logo-word logo-huroof logo-huroof-sm">حروف</span>
-        <span class="logo-word logo-ma logo-ma-sm">مع</span>
-        <span class="logo-word logo-marah logo-marah-sm" id="logo-name-settings">مراح</span>
-    </div>
-    <div class="settings-form">
-        <div class="setting-row">
-            <label class="setting-label">اسم المسابقة:</label>
-            <input class="setting-input" id="inp-name" type="text" placeholder="مراح" value="مراح">
-        </div>
-        <div class="setting-row">
-            <label class="setting-label">اسم الفريق الأول:</label>
-            <input class="setting-input" id="inp-team1" type="text" placeholder="الفريق الأول">
-        </div>
-        <div class="setting-row">
-            <label class="setting-label">اسم الفريق الثاني:</label>
-            <input class="setting-input" id="inp-team2" type="text" placeholder="الفريق الثاني">
-        </div>
-        <div class="setting-row">
-            <label class="setting-label">عدد جولات الفوز:</label>
-            <div class="toggle-group" id="rounds-group">
-                <button class="toggle-btn" onclick="selectRounds(1)">جولة</button>
-                <button class="toggle-btn active" onclick="selectRounds(2)">جولتين</button>
-                <button class="toggle-btn" onclick="selectRounds(3)">ثلاث جولات</button>
-            </div>
-        </div>
-    </div>
-    <button class="save-btn" onclick="saveSettings()">← حفظ ورجوع</button>
-</div>
-
-<!-- ===== GAME SCREEN ===== -->
-<div class="screen" id="screen-game">
-    <div class="left">
-        <svg viewBox="0 0 500 500" id="board"></svg>
-    </div>
-    <div class="sidebar">
-        <div class="logo-container">
+    <!-- Start Screen -->
+    <div class="screen active" id="screen-start">
+        <div class="logo-stack">
             <span class="logo-word logo-huroof">حروف</span>
             <span class="logo-word logo-ma">مع</span>
-            <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
+            <span class="logo-word logo-marah" id="logo-name-start">مراح</span>
         </div>
-        <div class="title-container">
-            <span class="title-word title-round">الجولة</span>
-            <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
-        </div>
-        <div class="score-container">
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <div class="team-label" style="color:#2ecc00;" id="label-team1">الفريق الأول</div>
-                <div class="score-box green-score" id="score-g">0</div>
+        <button class="start-btn" onclick="showSettings()">ابدأ اللعبة</button>
+    </div>
+
+    <!-- Settings Screen -->
+    <div class="screen" id="screen-settings">
+        <div class="settings-card">
+            <div class="settings-title">إعدادات اللعبة</div>
+            <div class="input-group">
+                <label>اسم المسابقة</label>
+                <input type="text" id="game-name" value="مراح">
             </div>
-            <div style="display:flex;flex-direction:column;align-items:center;">
-                <div class="team-label" style="color:#ff6d00;" id="label-team2">الفريق الثاني</div>
-                <div class="score-box orange-score" id="score-o">0</div>
+            <div class="input-group">
+                <label>اسم الفريق الأول</label>
+                <input type="text" id="team1-name" value="الفريق الأول">
+            </div>
+            <div class="input-group">
+                <label>اسم الفريق الثاني</label>
+                <input type="text" id="team2-name" value="الفريق الثاني">
+            </div>
+            <div class="input-group">
+                <label>عدد الجولات للفوز</label>
+                <input type="number" id="rounds-count" value="2" min="1" max="5">
+            </div>
+            <div class="settings-actions">
+                <button class="action-btn btn-save" onclick="saveSettings()">حفظ</button>
+                <button class="action-btn btn-cancel" onclick="showStart()">إلغاء</button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Buzzer Alert Overlay & Display -->
-<div class="buzzer-alert-overlay" id="buzzerOverlay"></div>
-<div class="buzzer-alert-container" id="buzzerAlert">
-    <div class="buzzer-alert">
-        <div class="buzzer-alert-icon">🔔</div>
-        <div class="buzzer-alert-text">ضغط الجرس!</div>
-        <div class="buzzer-alert-team" id="buzzerAlertTeam"></div>
-        <div class="buzzer-alert-player" id="buzzerAlertPlayer"></div>
-    </div>
-</div>
-
-<!-- ===== OPTIONS BUTTON & DROPDOWN ===== -->
-<button id="options-btn" onclick="toggleOptions()">⚙️ الخيارات</button>
-<div id="options-dropdown">
-    <button class="opt-btn" onclick="closeOptions(); showPresenterModal()">📺 شاشة المقدم</button>
-    <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()">🏃 شاشة اللاعب</button>
-    <button class="opt-btn" onclick="closeOptions(); confirmNewGame()">🔄 بداية لعبة جديدة</button>
-</div>
-
-<!-- ===== PRESENTER MODAL ===== -->
-<div id="presenter-modal">
-    <div class="presenter-modal-content">
-        <div class="presenter-modal-title" id="presenter-modal-title">📺 شاشة المقدم</div>
-        <div class="presenter-modal-subtitle" id="presenter-modal-subtitle">امسح الباركود أو افتح الرابط على جهاز المقدم</div>
-        <div class="presenter-link-box">
-            <div class="presenter-link-label" id="presenter-link-label">رابط شاشة المقدم</div>
-            <div class="presenter-link-url" id="presenter-url"></div>
+    <!-- Game Screen -->
+    <div class="screen" id="screen-game">
+        <div class="game-header">
+            <div class="score-display">
+                <div class="score-team">
+                    <div class="score-label" id="label-team1">الفريق الأول</div>
+                    <div class="score-num score-g" id="score-g">0</div>
+                </div>
+                <div class="score-team">
+                    <div class="score-label" id="label-team2">الفريق الثاني</div>
+                    <div class="score-num score-o" id="score-o">0</div>
+                </div>
+            </div>
+            <div class="round-info">
+                <div class="round-text">الجولة <span id="round-label">الأولى</span></div>
+            </div>
         </div>
-        <div class="qr-container">
-            <canvas id="presenter-qr-code" width="180" height="180"></canvas>
+        <div class="board-container">
+            <svg viewBox="0 0 500 500" id="board"></svg>
         </div>
-        <button class="presenter-modal-close" onclick="closePresenterModal()">إغلاق</button>
     </div>
-</div>
 
-<script>
-    /* ===== HEX PATTERN ===== */
-    function drawHexPattern(svgEl) {
-        const R = 50, w = Math.sqrt(3)*R, h = 2*R;
-        const cols = Math.ceil(window.innerWidth/w)+2;
-        const rows = Math.ceil(window.innerHeight/(h*0.75))+2;
-        let d = '';
-        for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) {
-            const cx = c*w+(r%2===1?w/2:0), cy = r*h*0.75;
-            let pts='';
-            for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);pts+=(i===0?'M':'L')+(cx+R*Math.cos(a)).toFixed(1)+','+(cy+R*Math.sin(a)).toFixed(1);}
-            d+=pts+'Z ';
+    <!-- Transition Overlay -->
+    <div id="transition-overlay">
+        <div class="hex-bg" style="display:none"><svg id="trans-hex-bg"></svg></div>
+        <div class="trans-logo" id="trans-logo">
+            <span class="logo-word logo-huroof">حروف</span>
+            <span class="logo-word logo-ma">مع</span>
+            <span class="logo-word logo-marah" id="trans-logo-name">مراح</span>
+        </div>
+        <div class="trans-round" id="trans-round">الجولة <span id="trans-round-word">الأولى</span></div>
+    </div>
+
+    <!-- Team Choice Modal -->
+    <div class="modal" id="team-choice-modal">
+        <div class="modal-content">
+            <div class="modal-title">من فاز بالحرف؟</div>
+            <div class="team-btns">
+                <button class="team-btn btn-green-team" id="modal-team1" onclick="chooseTeam('green')">الفريق الأول</button>
+                <button class="team-btn btn-orange-team" id="modal-team2" onclick="chooseTeam('orange')">الفريق الثاني</button>
+            </div>
+            <button class="action-btn btn-cancel" onclick="hideTeamChoice()">إلغاء</button>
+        </div>
+    </div>
+
+    <!-- Round Win Overlay -->
+    <div id="round-win-overlay">
+        <div class="confetti confetti-1"></div><div class="confetti confetti-2"></div>
+        <div class="confetti confetti-3"></div><div class="confetti confetti-4"></div>
+        <div class="confetti confetti-5"></div><div class="confetti confetti-6"></div>
+        <div class="confetti confetti-7"></div><div class="confetti confetti-8"></div>
+        <div class="confetti confetti-9"></div><div class="confetti confetti-10"></div>
+        <div class="confetti confetti-11"></div><div class="confetti confetti-12"></div>
+        <div class="win-text-container">
+            <div class="win-label">فاز بالجولة</div>
+            <div class="win-team" id="win-team-name">الفريق الأول</div>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="game-over-overlay">
+        <div class="game-over-content">
+            <div class="trophy-icon">🏆</div>
+            <div class="winner-text">بطل المسابقة</div>
+            <div class="winner-name" id="game-winner-name">الفريق الأول</div>
+            <div class="final-score-container">
+                <div class="final-score-item">
+                    <div class="final-score-label" id="final-label-team1">الفريق الأول</div>
+                    <div class="final-score-value" id="final-score-green">0</div>
+                </div>
+                <div class="final-score-item">
+                    <div class="final-score-label" id="final-label-team2">الفريق الثاني</div>
+                    <div class="final-score-value" id="final-score-orange">0</div>
+                </div>
+            </div>
+            <button class="play-again-btn" onclick="playAgain()">لعب مرة أخرى</button>
+        </div>
+    </div>
+
+    <!-- Options Dropdown -->
+    <div class="options-btn" id="options-btn" onclick="toggleOptions()">
+        <i class="fas fa-ellipsis-v"></i>
+    </div>
+    <div class="options-dropdown" id="options-dropdown">
+        <div class="option-item" onclick="showPresenterScreen()">
+            <i class="fas fa-desktop"></i> شاشة المقدم
+        </div>
+        <div class="option-item" onclick="showPlayerScreen()">
+            <i class="fas fa-mobile-alt"></i> شاشة اللاعب
+        </div>
+        <div class="option-item danger" onclick="resetCurrentGame()">
+            <i class="fas fa-redo"></i> إعادة ضبط اللعبة
+        </div>
+    </div>
+
+    <!-- Presenter/Player Modal -->
+    <div class="modal" id="presenter-modal">
+        <div class="modal-content presenter-modal-content">
+            <div class="modal-title" id="presenter-modal-title">شاشة المقدم</div>
+            <div class="presenter-modal-subtitle" id="presenter-modal-subtitle">امسح الباركود أو افتح الرابط على جهاز المقدم</div>
+            <div class="qr-container">
+                <canvas id="presenter-qr-code" width="180" height="180"></canvas>
+            </div>
+            <div class="input-group">
+                <label id="presenter-link-label">رابط شاشة المقدم</label>
+                <div class="url-box" id="presenter-url"></div>
+            </div>
+            <button class="copy-btn" onclick="copyPresenterUrl()">نسخ الرابط</button>
+            <button class="action-btn btn-cancel" style="margin-top:10px" onclick="closePresenterModal()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Buzzer Overlay -->
+    <div id="buzzerOverlay">
+        <div class="buzzer-alert" id="buzzerAlert">
+            <div class="buzzer-alert-icon">🔔</div>
+            <div class="buzzer-alert-text">ضغط الجرس!</div>
+            <div class="buzzer-alert-team" id="buzzerAlertTeam"></div>
+            <div class="buzzer-alert-player" id="buzzerAlertPlayer"></div>
+            <button class="copy-btn" style="margin-top:10px" onclick="hideGameBuzzerAlert()">إغلاق</button>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        /* ===== UTILS ===== */
+        function drawHexPattern(svgEl) {
+            const R=50, w=Math.sqrt(3)*R, h=2*R;
+            const cols=Math.ceil(window.innerWidth/w)+2, rows=Math.ceil(window.innerHeight/(h*0.75))+2;
+            let d='';
+            for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) {
+                const cx=c*w+(r%2===1?w/2:0), cy=r*h*0.75;
+                let pts='';
+                for(let i=0;i<6;i++) {
+                    const a=Math.PI/180*(60*i-30);
+                    pts+=(i===0?'M':'L')+(cx+R*Math.cos(a)).toFixed(1)+','+(cy+R*Math.sin(a)).toFixed(1);
+                }
+                d+=pts+'Z ';
+            }
+            const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+            path.setAttribute('d',d); path.setAttribute('fill','none');
+            path.setAttribute('stroke','white'); path.setAttribute('stroke-width','2');
+            svgEl.appendChild(path);
         }
-        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('d',d); path.setAttribute('fill','none');
-        path.setAttribute('stroke','white'); path.setAttribute('stroke-width','2');
-        svgEl.appendChild(path);
-    }
-    drawHexPattern(document.getElementById('hex-pattern-svg'));
-    drawHexPattern(document.getElementById('trans-hex-bg'));
+        drawHexPattern(document.getElementById('hex-pattern-svg'));
+        drawHexPattern(document.getElementById('trans-hex-bg'));
 
-    /* ===== SESSION MANAGEMENT ===== */
-    const urlParams = new URLSearchParams(window.location.search);
-    let sessionId = urlParams.get('session');
-    if (!sessionId) {
-        sessionId = Math.random().toString(36).substring(2, 11);
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?session=' + sessionId;
-        window.history.replaceState({path:newUrl}, '', newUrl);
-    }
+        /* ===== SESSION MANAGEMENT ===== */
+        const urlParams = new URLSearchParams(window.location.search);
+        let sessionId = urlParams.get('session');
+        if (!sessionId) {
+            sessionId = Math.random().toString(36).substring(2, 11);
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?session=' + sessionId;
+            window.history.replaceState({path:newUrl}, '', newUrl);
+        }
 
-    /* ===== STATE ===== */
-    let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
-    const roundWords = ['','الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
+        /* ===== STATE ===== */
+        let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
+        const roundWords = ['','الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
 
-    function updateAllLogos() {
-        ['logo-name-start','logo-name-settings','logo-name-game','trans-logo-name']
-            .forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=settings.name; });
-    }
+        function updateAllLogos() {
+            ['logo-name-start','logo-name-settings','logo-name-game','trans-logo-name']
+                .forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=settings.name; });
+        }
 
-    /* ===== SCREENS ===== */
-    function showStart() {
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        const s = document.getElementById('screen-start');
-        s.classList.add('active');
-        document.querySelector('.hex-bg').style.display = 'block';
-        document.getElementById('options-btn').style.display = 'none';
-        closeOptions();
-        // Restart animations
-        s.querySelectorAll('.logo-word,.menu-btn').forEach(el=>{
-            el.style.animation='none'; void el.offsetWidth; el.style.animation='';
-        });
-    }
-
-    function showSettings() {
-        document.getElementById('inp-name').value = settings.name;
-        document.getElementById('inp-team1').value = settings.team1==='الفريق الأول'?'':settings.team1;
-        document.getElementById('inp-team2').value = settings.team2==='الفريق الثاني'?'':settings.team2;
-        selectRounds(settings.rounds, false);
-        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-        document.getElementById('screen-settings').classList.add('active');
-        document.querySelector('.hex-bg').style.display = 'block';
-    }
-
-    function selectRounds(n, save=true) {
-        settings.rounds = n;
-        document.querySelectorAll('#rounds-group .toggle-btn').forEach((btn,i)=>btn.classList.toggle('active',i+1===n));
-    }
-
-    function saveSettings() {
-        settings.name  = document.getElementById('inp-name').value.trim()  || 'مراح';
-        settings.team1 = document.getElementById('inp-team1').value.trim() || 'الفريق الأول';
-        settings.team2 = document.getElementById('inp-team2').value.trim() || 'الفريق الثاني';
-        updateAllLogos();
-        showStart();
-        // Sync settings to presenter
-        localStorage.setItem('huroofSettings_' + sessionId, JSON.stringify(settings));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'huroofSettings_' + sessionId,
-            newValue: JSON.stringify(settings)
-        }));
-    }
-
-    /* ===== GAME ===== */
-    let orangeScore=0, greenScore=0, currentRound=1, cells=[], lastOP=false, lastGP=false;
-    let pendingCell = null;
-
-    function startGame() {
-        orangeScore=0; greenScore=0; currentRound=1;
-        updateAllLogos();
-        document.getElementById('label-team1').textContent = settings.team1;
-        document.getElementById('label-team2').textContent = settings.team2;
-        document.getElementById('modal-team1').textContent = settings.team1;
-        document.getElementById('modal-team2').textContent = settings.team2;
-        document.getElementById('score-g').textContent = '0';
-        document.getElementById('score-o').textContent = '0';
-        document.getElementById('round-label').textContent = roundWords[1];
-        buildBoard();
-        runStartTransition(1);
-    }
-
-    function showTeamChoice(cell) {
-        pendingCell = cell;
-        document.getElementById('team-choice-modal').classList.add('active');
-    }
-
-    function hideTeamChoice() {
-        document.getElementById('team-choice-modal').classList.remove('active');
-        pendingCell = null;
-    }
-
-    function chooseTeam(team) {
-        if (!pendingCell) return;
-        const cell = pendingCell;
-        hideTeamChoice();
-
-        cell.owner = team;
-        cell.el.classList.add(team + '-fill');
-        cell.text.style.display = 'none';
-        checkPaths();
-    }
-
-    /* ===== TRANSITION ===== */
-    function runStartTransition(roundNum) {
-        const overlay    = document.getElementById('transition-overlay');
-        const transLogo  = document.getElementById('trans-logo');
-        const transRound = document.getElementById('trans-round');
-        document.getElementById('trans-round-word').textContent = roundWords[roundNum]||roundNum;
-        document.querySelector('.hex-bg').style.display = 'block';
-
-        // Reset state
-        transLogo.classList.remove('zooming');
-        transRound.classList.remove('popping','fading');
-        transLogo.style.opacity='1'; transLogo.style.transform='scale(1)';
-        transRound.style.opacity='0';
-        overlay.classList.add('active');
-
-        // Phase 1 — Logo zooms in (0ms)
-        void overlay.offsetWidth;
-        transLogo.classList.add('zooming');
-
-        // Phase 2 — Round text pops (1300ms)
-        setTimeout(()=>{
-            transRound.classList.add('popping');
-        }, 1300);
-
-        // Phase 3 — Round text fades (2800ms)
-        setTimeout(()=>{
-            transRound.classList.remove('popping');
-            transRound.classList.add('fading');
-        }, 2800);
-
-        // Phase 4 — Show game (3700ms)
-        setTimeout(()=>{
-            overlay.classList.remove('active');
-            document.querySelector('.hex-bg').style.display='none';
+        /* ===== SCREENS ===== */
+        function showStart() {
             document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-            const gs = document.getElementById('screen-game');
-            gs.classList.add('active','animating');
-            document.getElementById('options-btn').style.display = 'flex';
-            setTimeout(()=>gs.classList.remove('animating'), 800);
-        }, 3700);
-    }
-
-    /* ===== BOARD ===== */
-    function buildBoard() {
-        const svg = document.getElementById('board');
-        svg.innerHTML=''; cells=[]; lastOP=false; lastGP=false;
-        const letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"]
-            .sort(()=>Math.random()-0.5);
-
-        // Store letters for presenter sync
-        localStorage.setItem('huroofLetters_' + sessionId, JSON.stringify(letters));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'huroofLetters_' + sessionId,
-            newValue: JSON.stringify(letters)
-        }));
-
-        const R=50, hw=Math.sqrt(3)*R, hh=2*R;
-        const sx=250-2*hw, sy=250-2*hh*0.75;
-        for(let row=0;row<5;row++) for(let col=0;col<5;col++) {
-            const x=sx+col*hw+(row%2===1?hw/2:0), y=sy+row*hh*0.75;
-            createHex(svg,x,y,letters[row*5+col],row*5+col);
+            const s = document.getElementById('screen-start');
+            s.classList.add('active');
         }
-    }
 
-    function createHex(svg,x,y,letter,id) {
-        const R=50, row=Math.floor(id/5), col=id%5;
-        const g=document.createElementNS("http://www.w3.org/2000/svg","g");
-        g.setAttribute("class","hexagon");
-        g.setAttribute("transform",`translate(${x},${y})`);
-        const poly=document.createElementNS("http://www.w3.org/2000/svg","polygon");
-        poly.setAttribute("points",Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-30);return `${R*Math.cos(a)},${R*Math.sin(a)}`;}).join(" "));
-        poly.setAttribute("class","hex-poly");
-        const text=document.createElementNS("http://www.w3.org/2000/svg","text");
-        text.setAttribute("class","hex-text"); text.textContent=letter; text.setAttribute("dy","5");
-        g.appendChild(poly); g.appendChild(text);
-        const cell={el:g,owner:null,text,row,col,id};
-        cells.push(cell);
-        g.onclick=()=>{
-            if(cell.owner) return;
-            showTeamChoice(cell);
-        };
-        svg.appendChild(g);
-    }
-
-    function getNeighbors(id) {
-        const row=Math.floor(id/5), col=id%5;
-        return ((row%2===0)?[[-1,-1],[-1,0],[0,-1],[0,1],[1,-1],[1,0]]:[[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1]])
-            .map(([dr,dc])=>[row+dr,col+dc]).filter(([r,c])=>r>=0&&r<5&&c>=0&&c<5).map(([r,c])=>r*5+c);
-    }
-
-    function hasPath(team) {
-        const visited=new Set(), queue=[];
-        if(team==="orange"){for(let i=0;i<5;i++)if(cells[i].owner==="orange"){queue.push(i);visited.add(i);}}
-        else{for(let i=0;i<5;i++){const idx=i*5+4;if(cells[idx].owner==="green"){queue.push(idx);visited.add(idx);}}}
-        while(queue.length){
-            const cur=queue.shift();
-            if(team==="orange"&&cells[cur].row===4)return true;
-            if(team==="green" &&cells[cur].col===0)return true;
-            getNeighbors(cur).forEach(n=>{if(!visited.has(n)&&cells[n].owner===team){visited.add(n);queue.push(n);}});
+        function showSettings() {
+            document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+            document.getElementById('screen-settings').classList.add('active');
+            document.getElementById('game-name').value = settings.name;
+            document.getElementById('team1-name').value = settings.team1;
+            document.getElementById('team2-name').value = settings.team2;
+            document.getElementById('rounds-count').value = settings.rounds;
         }
-        return false;
-    }
 
-    function checkPaths() {
-        if(hasPath("orange")&&!lastOP){orangeScore++;lastOP=true;document.getElementById('score-o').textContent=orangeScore;checkWin("orange");}
-        if(hasPath("green") &&!lastGP){greenScore++; lastGP=true; document.getElementById('score-g').textContent=greenScore; checkWin("green");}
-    }
+        function saveSettings() {
+            settings.name = document.getElementById('game-name').value || 'مراح';
+            settings.team1 = document.getElementById('team1-name').value || 'الفريق الأول';
+            settings.team2 = document.getElementById('team2-name').value || 'الفريق الثاني';
+            settings.rounds = parseInt(document.getElementById('rounds-count').value) || 2;
+            startGame();
+        }
 
-    function showRoundWin(team) {
-        const name = team === "green" ? settings.team1 : settings.team2;
-        const winTeam = document.getElementById('win-team-name');
-        winTeam.textContent = name;
-        winTeam.className = 'win-team ' + team;
+        /* ===== GAME LOGIC ===== */
+        let orangeScore=0, greenScore=0, currentRound=1;
+        let cells=[], lastOP=false, lastGP=false;
+        let pendingCell = null;
 
-        // Reset confetti animations
-        document.querySelectorAll('.confetti').forEach(c => {
-            c.style.animation = 'none';
-            void c.offsetWidth;
-            c.style.animation = '';
-        });
+        function startGame() {
+            orangeScore=0; greenScore=0; currentRound=1;
+            updateAllLogos();
+            document.getElementById('label-team1').textContent = settings.team1;
+            document.getElementById('label-team2').textContent = settings.team2;
+            document.getElementById('modal-team1').textContent = settings.team1;
+            document.getElementById('modal-team2').textContent = settings.team2;
+            document.getElementById('score-g').textContent = '0';
+            document.getElementById('score-o').textContent = '0';
+            document.getElementById('round-label').textContent = roundWords[1];
+            buildBoard();
+            runStartTransition(1);
+        }
 
-        const overlay = document.getElementById('round-win-overlay');
-        overlay.classList.add('active');
+        function showTeamChoice(cell) {
+            pendingCell = cell;
+            document.getElementById('team-choice-modal').classList.add('active');
+        }
 
-        // Auto-dismiss after 3 seconds
-        setTimeout(() => {
-            overlay.classList.remove('active');
-        }, 3000);
-    }
+        function hideTeamChoice() {
+            document.getElementById('team-choice-modal').classList.remove('active');
+            pendingCell = null;
+        }
 
-    function showGameOver(winner) {
-        const winnerName = winner === "green" ? settings.team1 : settings.team2;
-        const winnerEl = document.getElementById('game-winner-name');
-        winnerEl.textContent = winnerName;
-        winnerEl.className = 'winner-name ' + winner;
+        function chooseTeam(team) {
+            if (!pendingCell) return;
+            const cell = pendingCell;
+            hideTeamChoice();
 
-        document.getElementById('final-label-team1').textContent = settings.team1;
-        document.getElementById('final-label-team2').textContent = settings.team2;
-        document.getElementById('final-score-green').textContent = greenScore;
-        document.getElementById('final-score-orange').textContent = orangeScore;
+            cell.owner = team;
+            cell.el.classList.add(team + '-fill');
+            cell.text.style.display = 'none';
+            checkPaths();
+            syncGameState();
+        }
 
-        // Reset animations
-        const overlay = document.getElementById('game-over-overlay');
-        overlay.querySelector('.trophy-icon').style.animation = 'none';
-        overlay.querySelector('.winner-text').style.animation = 'none';
-        overlay.querySelector('.winner-name').style.animation = 'none';
-        overlay.querySelector('.final-score-container').style.animation = 'none';
-        overlay.querySelector('.play-again-btn').style.animation = 'none';
-        void overlay.offsetWidth;
-        overlay.querySelector('.trophy-icon').style.animation = '';
-        overlay.querySelector('.winner-text').style.animation = '';
-        overlay.querySelector('.winner-name').style.animation = '';
-        overlay.querySelector('.final-score-container').style.animation = '';
-        overlay.querySelector('.play-again-btn').style.animation = '';
+        /* ===== TRANSITION ===== */
+        function runStartTransition(roundNum) {
+            const overlay    = document.getElementById('transition-overlay');
+            const transLogo  = document.getElementById('trans-logo');
+            const transRound = document.getElementById('trans-round');
+            document.getElementById('trans-round-word').textContent = roundWords[roundNum]||roundNum;
+            document.querySelector('.hex-bg').style.display = 'block';
 
-        overlay.classList.add('active');
-    }
+            // Reset state
+            transLogo.classList.remove('zooming');
+            transRound.classList.remove('popping','fading');
+            transLogo.style.opacity='1'; transLogo.style.transform='scale(1)';
+            transRound.style.opacity='0';
+            overlay.classList.add('active');
 
-    function playAgain() {
-        document.getElementById('game-over-overlay').classList.remove('active');
-        startGame();
-    }
+            // Phase 1 — Logo zooms in (0ms)
+            void overlay.offsetWidth;
+            transLogo.classList.add('zooming');
 
-    function checkWin(team) {
-        const name=team==="green"?settings.team1:settings.team2;
-        const score=team==="green"?greenScore:orangeScore;
-        if(score>=settings.rounds){
-            showGameOver(team);
-        } else {
-            showRoundWin(team);
+            // Phase 2 — Round text pops (1300ms)
+            setTimeout(()=>{
+                transRound.classList.add('popping');
+            }, 1300);
+
+            // Phase 3 — Round text fades (2800ms)
+            setTimeout(()=>{
+                transRound.classList.remove('popping');
+                transRound.classList.add('fading');
+            }, 2800);
+
+            // Phase 4 — Show game (3700ms)
+            setTimeout(()=>{
+                overlay.classList.remove('active');
+                document.querySelector('.hex-bg').style.display='none';
+                document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+                const gs = document.getElementById('screen-game');
+                gs.classList.add('active','animating');
+                document.getElementById('options-btn').style.display = 'flex';
+                setTimeout(()=>gs.classList.remove('animating'), 800);
+            }, 3700);
+        }
+
+        /* ===== BOARD ===== */
+        function buildBoard() {
+            const svg = document.getElementById('board');
+            svg.innerHTML=''; cells=[]; lastOP=false; lastGP=false;
+            const letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"]
+                .sort(()=>Math.random()-0.5);
+
+            const R=50, hw=Math.sqrt(3)*R, hh=2*R;
+            const sx=250-2*hw, sy=250-2*hh*0.75;
+            for(let row=0;row<5;row++) for(let col=0;col<5;col++) {
+                const x=sx+col*hw+(row%2===1?hw/2:0), y=sy+row*hh*0.75;
+                createHex(svg,x,y,letters[row*5+col],row*5+col);
+            }
+            
+            // Broadcast letters for online sync
             setTimeout(() => {
-                currentRound++;
-                document.getElementById('round-label').textContent=roundWords[currentRound]||currentRound;
-                buildBoard();
-                // Wipe transition to next round
-                showNextRoundWipe(currentRound);
-            }, 3200);
+                channel.send({
+                    type: 'broadcast',
+                    event: 'letters_update',
+                    payload: { letters: letters, sessionId: sessionId }
+                });
+            }, 500);
         }
-    }
 
-    function showNextRoundWipe(roundNum) {
-        const wipeLeft = document.createElement('div');
-        const wipeRight = document.createElement('div');
-        wipeLeft.className = 'wipe-left';
-        wipeRight.className = 'wipe-right';
-        document.body.appendChild(wipeLeft);
-        document.body.appendChild(wipeRight);
-
-        setTimeout(() => {
-            wipeLeft.remove();
-            wipeRight.remove();
-            runStartTransition(roundNum);
-        }, 700);
-    }
-
-    /* ===== OPTIONS ===== */
-    function toggleOptions() {
-        const dd = document.getElementById('options-dropdown');
-        dd.classList.toggle('open');
-    }
-    function closeOptions() {
-        document.getElementById('options-dropdown').classList.remove('open');
-    }
-    // Close dropdown if clicking outside
-    document.addEventListener('click', function(e) {
-        const btn = document.getElementById('options-btn');
-        const dd  = document.getElementById('options-dropdown');
-        if (!btn.contains(e.target) && !dd.contains(e.target)) closeOptions();
-    });
-
-    /* ===== BELL ===== */
-    function playBell() {
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-            gain.gain.setValueAtTime(0.8, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 1.0);
-        } catch(e) {}
-    }
-
-    /* ===== NEW GAME ===== */
-    function confirmNewGame() {
-        document.getElementById('new-game-modal').classList.add('active');
-    }
-
-    function closeNewGameModal() {
-        document.getElementById('new-game-modal').classList.remove('active');
-    }
-
-    function newGameConfirmed() {
-        closeNewGameModal();
-        startGame();
-    }
-
-    /* ===== PRESENTER SCREEN - Open in new window ===== */
-    function showPresenterModal() {
-        closeOptions();
-
-        // New format: domain/host/?session=ID
-        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
-
-        // Open presenter screen in new window
-        const presenterWindow = window.open(presenterUrl, '_blank', 'width=800,height=900');
-
-        if (!presenterWindow) {
-            // If popup blocked, show modal with link
-            const modal = document.getElementById('presenter-modal');
-            modal.classList.add('active');
-            document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
-            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
-            document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
-            document.getElementById('presenter-url').textContent = presenterUrl;
-            generateQRCode(presenterUrl);
+        function createHex(svg,x,y,letter,id) {
+            const R=50, row=Math.floor(id/5), col=id%5;
+            const g=document.createElementNS("http://www.w3.org/2000/svg","g");
+            g.setAttribute("class","hexagon");
+            g.setAttribute("transform",`translate(${x},${y})`);
+            const poly=document.createElementNS("http://www.w3.org/2000/svg","polygon");
+            poly.setAttribute("points",Array.from({length:6},(_,i)=>{const a=Math.PI/180*(60*i-30);return `${R*Math.cos(a)},${R*Math.sin(a)}`;}).join(" "));
+            poly.setAttribute("class","hex-poly");
+            const text=document.createElementNS("http://www.w3.org/2000/svg","text");
+            text.setAttribute("class","hex-text"); text.textContent=letter; text.setAttribute("dy","5");
+            g.appendChild(poly); g.appendChild(text);
+            const cell={el:g,owner:null,text,row,col,id};
+            cells.push(cell);
+            g.onclick=()=>{
+                if(cell.owner) return;
+                showTeamChoice(cell);
+            };
+            svg.appendChild(g);
         }
-    }
 
-    /* ===== PLAYER SCREEN - Open in new window ===== */
-    function showPlayerScreen() {
-        closeOptions();
-
-        // New format: domain/player/?session=ID
-        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
-
-        // Open player screen in new window
-        const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
-
-        if (!playerWindow) {
-            // If popup blocked, show modal with link
-            const modal = document.getElementById('presenter-modal');
-            modal.classList.add('active');
-            document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
-            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
-            document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
-            document.getElementById('presenter-url').textContent = playerUrl;
-            generateQRCode(playerUrl);
+        function getNeighbors(id) {
+            const row=Math.floor(id/5), col=id%5;
+            return ((row%2===0)?[[-1,-1],[-1,0],[0,-1],[0,1],[1,-1],[1,0]]:[[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1]])
+                .map(([dr,dc])=>[row+dr,col+dc]).filter(([r,c])=>r>=0&&r<5&&c>=0&&c<5).map(([r,c])=>r*5+c);
         }
-    }
 
-    function closePresenterModal() {
-        document.getElementById('presenter-modal').classList.remove('active');
-    }
+        function hasPath(team) {
+            const visited=new Set(), queue=[];
+            if(team==="orange"){for(let i=0;i<5;i++)if(cells[i].owner==="orange"){queue.push(i);visited.add(i);}}
+            else{for(let i=0;i<5;i++){const idx=i*5+4;if(cells[idx].owner==="green"){queue.push(idx);visited.add(idx);}}}
+            while(queue.length){
+                const cur=queue.shift();
+                if(team==="orange"&&cells[cur].row===4)return true;
+                if(team==="green" &&cells[cur].col===0)return true;
+                getNeighbors(cur).forEach(n=>{if(!visited.has(n)&&cells[n].owner===team){visited.add(n);queue.push(n);}});
+            }
+            return false;
+        }
 
-    // Simple QR Code generation (using canvas)
-    function generateQRCode(text) {
-        const canvas = document.getElementById('presenter-qr-code');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function checkPaths() {
+            if(hasPath("orange")&&!lastOP){orangeScore++;lastOP=true;document.getElementById('score-o').textContent=orangeScore;checkWin("orange");}
+            if(hasPath("green") &&!lastGP){greenScore++; lastGP=true; document.getElementById('score-g').textContent=greenScore; checkWin("green");}
+        }
 
-        // Use a QR code library via CDN
-        const qrContainer = document.createElement('div');
-        qrContainer.style.display = 'none';
-        document.body.appendChild(qrContainer);
+        function showRoundWin(team) {
+            const name = team === "green" ? settings.team1 : settings.team2;
+            const winTeam = document.getElementById('win-team-name');
+            winTeam.textContent = name;
+            winTeam.className = 'win-team ' + team;
 
-        // Load QRCode.js from CDN
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-        script.onload = function() {
-            const qr = new QRCode(qrContainer, {
-                text: text,
-                width: 180,
-                height: 180,
-                colorDark: '#6a3093',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.M
+            document.querySelectorAll('.confetti').forEach(c => {
+                c.style.animation = 'none';
+                void c.offsetWidth;
+                c.style.animation = '';
             });
 
-            // Wait for QR code to be generated
+            const overlay = document.getElementById('round-win-overlay');
+            overlay.classList.add('active');
+
             setTimeout(() => {
-                const qrImg = qrContainer.querySelector('img');
-                if (qrImg) {
-                    ctx.drawImage(qrImg, 0, 0, 180, 180);
-                }
-                qrContainer.remove();
-            }, 100);
-        };
-        script.onerror = function() {
-            // Fallback: draw a simple placeholder
-            ctx.fillStyle = '#6a3093';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('تعذر إنشاء الباركود', canvas.width/2, canvas.height/2);
-            qrContainer.remove();
-        };
-        document.head.appendChild(script);
-    }
-
-    // Close modal on click outside
-    document.addEventListener('click', function(e) {
-        const modal = document.getElementById('presenter-modal');
-        const content = modal.querySelector('.presenter-modal-content');
-        if (modal.classList.contains('active') && !content.contains(e.target)) {
-            closePresenterModal();
+                overlay.classList.remove('active');
+            }, 3000);
         }
-    });
 
-    /* ===== REAL-TIME SYNC via Supabase ===== */
-    const supabaseUrl = 'https://rzblwgdvtiafqzhvcavr.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Ymx3Z2R2dGlhZnF6aHZjYXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTMwMzcsImV4cCI6MjA5MTU4OTAzN30.Dy2ZkzPykeKs55ZVKw5wK_ghhBs8Ibk_-5IHfEJnPE0';
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    const channel = _supabase.channel('huroof_' + sessionId);
+        function showGameOver(winner) {
+            const winnerName = winner === "green" ? settings.team1 : settings.team2;
+            const winnerEl = document.getElementById('game-winner-name');
+            winnerEl.textContent = winnerName;
+            winnerEl.className = 'winner-name ' + winner;
 
-    channel
-        .on('broadcast', { event: 'presenter_action' }, payload => {
-            handlePresenterAction(payload.payload);
-        })
-        .on('broadcast', { event: 'player_buzz' }, payload => {
-            const buzz = payload.payload;
-            if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
-                currentBuzz = buzz;
-                buzzDismissed = false;
-                showGameBuzzerAlert(buzz);
+            document.getElementById('final-label-team1').textContent = settings.team1;
+            document.getElementById('final-label-team2').textContent = settings.team2;
+            document.getElementById('final-score-green').textContent = greenScore;
+            document.getElementById('final-score-orange').textContent = orangeScore;
+
+            const overlay = document.getElementById('game-over-overlay');
+            overlay.querySelector('.trophy-icon').style.animation = 'none';
+            overlay.querySelector('.winner-text').style.animation = 'none';
+            overlay.querySelector('.winner-name').style.animation = 'none';
+            overlay.querySelector('.final-score-container').style.animation = 'none';
+            overlay.querySelector('.play-again-btn').style.animation = 'none';
+            void overlay.offsetWidth;
+            overlay.querySelector('.trophy-icon').style.animation = '';
+            overlay.querySelector('.winner-text').style.animation = '';
+            overlay.querySelector('.winner-name').style.animation = '';
+            overlay.querySelector('.final-score-container').style.animation = '';
+            overlay.querySelector('.play-again-btn').style.animation = '';
+
+            overlay.classList.add('active');
+        }
+
+        function playAgain() {
+            document.getElementById('game-over-overlay').classList.remove('active');
+            startGame();
+        }
+
+        function checkWin(team) {
+            const name=team==="green"?settings.team1:settings.team2;
+            const score=team==="green"?greenScore:orangeScore;
+            if(score>=settings.rounds){
+                showGameOver(team);
+            } else {
+                showRoundWin(team);
+                setTimeout(() => {
+                    currentRound++;
+                    document.getElementById('round-label').textContent=roundWords[currentRound]||currentRound;
+                    buildBoard();
+                    showNextRoundWipe(currentRound);
+                }, 3200);
             }
-        })
-        .on('broadcast', { event: 'buzzer_locked' }, payload => {
-            // Also handle buzzer_locked if it contains buzz info
-            const lock = payload.payload;
-            if (lock.locked && (!currentBuzz || currentBuzz.timestamp !== lock.timestamp)) {
-                const buzz = {
-                    name: lock.playerName,
-                    teamName: lock.teamName,
-                    team: lock.team || (lock.teamName === settings.team1 ? 'green' : 'orange'),
-                    timestamp: lock.timestamp,
-                    active: true
-                };
-                currentBuzz = buzz;
-                buzzDismissed = false;
-                showGameBuzzerAlert(buzz);
-            }
-        })
-        .on('broadcast', { event: 'reset_buzz' }, payload => {
-            if (payload.payload.reset) {
-                hideGameBuzzerAlert();
-                currentBuzz = null;
-            }
-        })
-        .on('broadcast', { event: 'request_sync' }, payload => {
-            // When a new screen joins, send current state
-            syncGameState();
-        })
-        .subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                // Request sync from any existing screen (though usually this is the master)
-                channel.send({ type: 'broadcast', event: 'request_sync', payload: {} });
-            }
-        });
+        }
 
-    function syncGameState() {
-        if (!cells || cells.length === 0) return;
-        const state = {
-            settings: settings,
-            greenScore: greenScore,
-            orangeScore: orangeScore,
-            currentRound: currentRound,
-            cells: cells.map(c => ({
-                id: c.id,
-                letter: c.el.querySelector('.hex-text').textContent,
-                owner: c.owner,
-                isPending: c.isPending || false
-            })),
-            timestamp: Date.now()
-        };
-        
-        // Broadcast state to other screens
-        channel.send({
-            type: 'broadcast',
-            event: 'game_state',
-            payload: state
-        });
+        function showNextRoundWipe(roundNum) {
+            const wipeLeft = document.createElement('div');
+            const wipeRight = document.createElement('div');
+            wipeLeft.className = 'wipe-left';
+            wipeRight.className = 'wipe-right';
+            document.body.appendChild(wipeLeft);
+            document.body.appendChild(wipeRight);
 
-        // Keep localStorage for same-window fallback
-        localStorage.setItem('huroofGameState_' + sessionId, JSON.stringify(state));
-    }
+            setTimeout(() => {
+                wipeLeft.remove();
+                wipeRight.remove();
+                runStartTransition(roundNum);
+            }, 700);
+        }
 
-    function handlePresenterAction(action) {
-        switch(action.type) {
-            case 'cell_selected':
-                // Handle cell selection from presenter (show yellow pending)
-                if (action.cellId !== undefined) {
-                    // Clear any previous pending
-                    cells.forEach(c => {
-                        if (c.isPending) {
-                            c.isPending = false;
-                            c.el.classList.remove('pending-fill');
-                        }
-                    });
-                    // Set new pending
-                    const cell = cells[action.cellId];
-                    if (cell && !cell.owner) {
-                        cell.isPending = true;
-                        cell.el.classList.add('pending-fill');
-                    }
-                }
-                break;
-            case 'cell_unselected':
-                // Handle cell unselection (remove pending)
-                if (action.cellId !== undefined) {
-                    const cell = cells[action.cellId];
-                    if (cell) {
-                        cell.isPending = false;
-                        cell.el.classList.remove('pending-fill');
-                    }
-                }
-                break;
-            case 'team_selected':
-                if (action.cellId !== undefined) {
-                    const cell = cells[action.cellId];
-                    if (cell && !cell.owner) {
-                        cell.owner = action.team;
-                        cell.isPending = false;
-                        cell.el.classList.remove('pending-fill');
-                        cell.el.classList.add(action.team + '-fill');
-                        cell.text.style.display = 'none';
-                        checkPaths();
-                        syncGameState();
-                    }
-                }
-                break;
-            case 'game_reset':
+        /* ===== OPTIONS ===== */
+        function toggleOptions() {
+            const dd = document.getElementById('options-dropdown');
+            dd.classList.toggle('open');
+        }
+        function closeOptions() {
+            document.getElementById('options-dropdown').classList.remove('open');
+        }
+
+        function showPresenterScreen() {
+            closeOptions();
+            const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            const hostUrl = baseUrl + 'host/index.html?session=' + sessionId;
+            const hostWindow = window.open(hostUrl, '_blank', 'width=1000,height=800');
+            if (!hostWindow) {
+                const modal = document.getElementById('presenter-modal');
+                modal.classList.add('active');
+                document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
+                document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
+                document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
+                document.getElementById('presenter-url').textContent = hostUrl;
+                generateQRCode(hostUrl);
+            }
+        }
+
+        function showPlayerScreen() {
+            closeOptions();
+            const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
+            const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
+            if (!playerWindow) {
+                const modal = document.getElementById('presenter-modal');
+                modal.classList.add('active');
+                document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
+                document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
+                document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
+                document.getElementById('presenter-url').textContent = playerUrl;
+                generateQRCode(playerUrl);
+            }
+        }
+
+        function closePresenterModal() {
+            document.getElementById('presenter-modal').classList.remove('active');
+        }
+
+        function generateQRCode(text) {
+            const canvas = document.getElementById('presenter-qr-code');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const qrContainer = document.createElement('div');
+            qrContainer.style.display = 'none';
+            document.body.appendChild(qrContainer);
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+            script.onload = function() {
+                const qr = new QRCode(qrContainer, {
+                    text: text, width: 180, height: 180, colorDark: '#6a3093', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M
+                });
+                setTimeout(() => {
+                    const qrImg = qrContainer.querySelector('img');
+                    if (qrImg) ctx.drawImage(qrImg, 0, 0, 180, 180);
+                    qrContainer.remove();
+                }, 100);
+            };
+            document.head.appendChild(script);
+        }
+
+        function copyPresenterUrl() {
+            const url = document.getElementById('presenter-url').textContent;
+            navigator.clipboard.writeText(url).then(() => alert('تم نسخ الرابط!'));
+        }
+
+        function resetCurrentGame() {
+            if(confirm('هل أنت متأكد من إعادة ضبط اللعبة؟ سيتم مسح جميع النقاط.')) {
+                closeOptions();
                 startGame();
-                break;
-        }
-    }
-
-    // Override chooseTeam to sync state
-    const originalChooseTeam = chooseTeam;
-    chooseTeam = function(team) {
-        originalChooseTeam(team);
-        syncGameState();
-    };
-
-    // Override startGame to sync state
-    const originalStartGame = startGame;
-    startGame = function() {
-        originalStartGame();
-        syncGameState();
-    };
-
-    // Initial sync
-    syncGameState();
-
-    /* ===== BUZZER ALERT HANDLING ===== */
-    let currentBuzz = null;
-    let buzzDismissed = false;
-
-    function showGameBuzzerAlert(buzz) {
-        const overlay = document.getElementById('buzzerOverlay');
-        const container = document.getElementById('buzzerAlert');
-        const teamEl = document.getElementById('buzzerAlertTeam');
-        const playerEl = document.getElementById('buzzerAlertPlayer');
-
-        teamEl.textContent = buzz.teamName;
-        teamEl.className = 'buzzer-alert-team ' + buzz.team;
-        playerEl.textContent = buzz.name;
-
-        overlay.classList.add('active');
-        container.classList.add('active');
-
-        // Play bell sound
-        playBell();
-        // NO auto hide - stays until presenter resets
-    }
-
-    function hideGameBuzzerAlert() {
-        buzzDismissed = true;
-        document.getElementById('buzzerOverlay').classList.remove('active');
-        document.getElementById('buzzerAlert').classList.remove('active');
-    }
-
-    // Click overlay to dismiss (only if not buzzed again)
-    document.getElementById('buzzerOverlay').addEventListener('click', () => {
-        // Only hide if no new buzz
-        if (currentBuzz && localStorage.getItem('playerBuzz_' + sessionId)) {
-            const latestBuzz = JSON.parse(localStorage.getItem('playerBuzz_' + sessionId));
-            if (latestBuzz.timestamp === currentBuzz.timestamp) {
-                hideGameBuzzerAlert();
             }
-        } else {
-            hideGameBuzzerAlert();
         }
-    });
 
-    // Hide only when presenter explicitly resets (not auto)
-    // Handled via Supabase broadcast above
-</script>
+        /* ===== REAL-TIME SYNC via Supabase ===== */
+        const supabaseUrl = 'https://rzblwgdvtiafqzhvcavr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Ymx3Z2R2dGlhZnF6aHZjYXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTMwMzcsImV4cCI6MjA5MTU4OTAzN30.Dy2ZkzPykeKs55ZVKw5wK_ghhBs8Ibk_-5IHfEJnPE0';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const channel = _supabase.channel('huroof_' + sessionId);
+
+        channel
+            .on('broadcast', { event: 'presenter_action' }, payload => {
+                handlePresenterAction(payload.payload);
+            })
+            .on('broadcast', { event: 'player_buzz' }, payload => {
+                const buzz = payload.payload;
+                if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
+                    currentBuzz = buzz;
+                    showGameBuzzerAlert(buzz);
+                }
+            })
+            .on('broadcast', { event: 'buzzer_locked' }, payload => {
+                const lock = payload.payload;
+                if (lock.locked && (!currentBuzz || currentBuzz.timestamp !== lock.timestamp)) {
+                    const buzz = {
+                        name: lock.playerName, teamName: lock.teamName,
+                        team: lock.team || (lock.teamName === settings.team1 ? 'green' : 'orange'),
+                        timestamp: lock.timestamp, active: true
+                    };
+                    currentBuzz = buzz;
+                    showGameBuzzerAlert(buzz);
+                }
+            })
+            .on('broadcast', { event: 'reset_buzz' }, payload => {
+                if (payload.payload.reset) {
+                    hideGameBuzzerAlert();
+                    currentBuzz = null;
+                }
+            })
+            .on('broadcast', { event: 'request_sync' }, payload => {
+                syncGameState();
+            })
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    channel.send({ type: 'broadcast', event: 'request_sync', payload: {} });
+                }
+            });
+
+        function syncGameState() {
+            if (!cells || cells.length === 0) return;
+            const state = {
+                settings: settings, greenScore: greenScore, orangeScore: orangeScore, currentRound: currentRound,
+                cells: cells.map(c => ({
+                    id: c.id, letter: c.el.querySelector('.hex-text').textContent,
+                    owner: c.owner, isPending: c.isPending || false
+                })),
+                timestamp: Date.now()
+            };
+            channel.send({ type: 'broadcast', event: 'game_state', payload: state });
+        }
+
+        function handlePresenterAction(action) {
+            switch(action.type) {
+                case 'cell_selected':
+                    if (action.cellId !== undefined) {
+                        cells.forEach(c => { if (c.isPending) { c.isPending = false; c.el.classList.remove('pending-fill'); } });
+                        const cell = cells[action.cellId];
+                        if (cell && !cell.owner) { cell.isPending = true; cell.el.classList.add('pending-fill'); }
+                    }
+                    break;
+                case 'cell_unselected':
+                    if (action.cellId !== undefined) {
+                        const cell = cells[action.cellId];
+                        if (cell) { cell.isPending = false; cell.el.classList.remove('pending-fill'); }
+                    }
+                    break;
+                case 'team_selected':
+                    if (action.cellId !== undefined) {
+                        const cell = cells[action.cellId];
+                        if (cell && !cell.owner) {
+                            cell.owner = action.team; cell.isPending = false;
+                            cell.el.classList.remove('pending-fill'); cell.el.classList.add(action.team + '-fill');
+                            cell.text.style.display = 'none'; checkPaths(); syncGameState();
+                        }
+                    }
+                    break;
+                case 'game_reset':
+                    startGame();
+                    break;
+            }
+        }
+
+        let currentBuzz = null;
+        function showGameBuzzerAlert(buzz) {
+            const overlay = document.getElementById('buzzerOverlay');
+            const teamEl = document.getElementById('buzzerAlertTeam');
+            const playerEl = document.getElementById('buzzerAlertPlayer');
+            teamEl.textContent = buzz.teamName;
+            teamEl.className = 'buzzer-alert-team ' + buzz.team;
+            playerEl.textContent = buzz.name;
+            overlay.classList.add('active');
+            playBell();
+        }
+
+        function hideGameBuzzerAlert() {
+            document.getElementById('buzzerOverlay').classList.remove('active');
+        }
+
+        function playBell() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.8, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.0);
+            } catch (e) {}
+        }
+    </script>
 </body>
 </html>
