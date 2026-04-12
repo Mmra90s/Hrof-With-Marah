@@ -1187,7 +1187,11 @@
         const letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"]
             .sort(()=>Math.random()-0.5);
 
-        // Store letters for presenter sync
+        // Store letters for presenter sync (Firebase + localStorage)
+        firebaseUpdate('games/' + sessionId + '/letters', letters).catch(err => {
+            console.error('Firebase letters error:', err);
+            localStorage.setItem('huroofLetters_' + sessionId, JSON.stringify(letters));
+        });
         localStorage.setItem('huroofLetters_' + sessionId, JSON.stringify(letters));
         window.dispatchEvent(new StorageEvent('storage', {
             key: 'huroofLetters_' + sessionId,
@@ -1516,6 +1520,12 @@
             // Fallback to localStorage
             localStorage.setItem('huroofGameState_' + sessionId, JSON.stringify(state));
         });
+        
+        // Also save settings separately for quick access
+        firebaseUpdate('games/' + sessionId + '/settings', settings).catch(err => {
+            localStorage.setItem('huroofSettings_' + sessionId, JSON.stringify(settings));
+        });
+        
         // Force sync for same-window listeners
         window.dispatchEvent(new StorageEvent('storage', {
             key: 'huroofGameState_' + sessionId,
