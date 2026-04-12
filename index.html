@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لعبة الحروف</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -1480,18 +1481,31 @@
         }
     });
 
-    /* ===== REAL-TIME SYNC via localStorage ===== */
-    // Poll for presenter actions (for same-origin sync)
-    setInterval(() => {
-        const actionStr = localStorage.getItem('huroofPresenterActions_' + sessionId);
-        if (actionStr) {
-            const action = JSON.parse(actionStr);
-            handlePresenterAction(action);
-            localStorage.removeItem('huroofPresenterActions_' + sessionId);
-        }
-    }, 300);
+    /* ===== REAL-TIME SYNC via Supabase ===== */
+    const supabaseUrl = 'https://rzblwgdvtiafqzhvcavr.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Ymx3Z2R2dGlhZnF6aHZjYXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTMwMzcsImV4cCI6MjA5MTU4OTAzN30.Dy2ZkzPykeKs55ZVKw5wK_ghhBs8Ibk_-5IHfEJnPE0';
+    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const channel = _supabase.channel('huroof_' + sessionId);
 
-    // Sync state to localStorage for presenter screen to read
+    channel
+        .on('broadcast', { event: 'presenter_action' }, payload => {
+            handlePresenterAction(payload.payload);
+        })
+        .on('broadcast', { event: 'player_buzz' }, payload => {
+            const buzz = payload.payload;
+            if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
+                currentBuzz = buzz;
+                buzzDismissed = false;
+                showGameBuzzerAlert(buzz);
+            }
+        })
+        .on('broadcast', { event: 'reset_buzz' }, payload => {
+            if (payload.payload.reset) {
+                hideGameBuzzerAlert();
+            }
+        })
+        .subscribe();
+
     function syncGameState() {
         const state = {
             settings: settings,
@@ -1506,23 +1520,17 @@
             })),
             timestamp: Date.now()
         };
-        localStorage.setItem('huroofGameState_' + sessionId, JSON.stringify(state));
-        // Force sync for same-window listeners
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'huroofGameState_' + sessionId,
-            newValue: JSON.stringify(state)
-        }));
-    }
+        
+        // Broadcast state to other screens
+        channel.send({
+            type: 'broadcast',
+            event: 'game_state',
+            payload: state
+        });
 
-    // Listen for storage changes (sync from presenter)
-    window.addEventListener('storage', function(e) {
-        if (e.key === ('huroofPresenterActions_' + sessionId) && e.newValue) {
-            const action = JSON.parse(e.newValue);
-            handlePresenterAction(action);
-            // Clear the action after handling
-            localStorage.removeItem('huroofPresenterActions_' + sessionId);
-        }
-    });
+        // Keep localStorage for same-window fallback
+        localStorage.setItem('huroofGameState_' + sessionId, JSON.stringify(state));
+    }
 
     function handlePresenterAction(action) {
         switch(action.type) {
@@ -1595,21 +1603,6 @@
     let currentBuzz = null;
     let buzzDismissed = false;
 
-    // Listen for player buzz
-    setInterval(() => {
-        const buzzStr = localStorage.getItem('playerBuzz_' + sessionId);
-        if (buzzStr) {
-            try {
-                const buzz = JSON.parse(buzzStr);
-                if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
-                    currentBuzz = buzz;
-                    buzzDismissed = false;
-                    showGameBuzzerAlert(buzz);
-                }
-            } catch(e) {}
-        }
-    }, 200);
-
     function showGameBuzzerAlert(buzz) {
         const overlay = document.getElementById('buzzerOverlay');
         const container = document.getElementById('buzzerAlert');
@@ -1648,16 +1641,7 @@
     });
 
     // Hide only when presenter explicitly resets (not auto)
-    window.addEventListener('storage', function(e) {
-        if (e.key === ('resetBuzz_' + sessionId) && e.newValue) {
-            try {
-                const reset = JSON.parse(e.newValue);
-                if (reset.reset) {
-                    hideGameBuzzerAlert();
-                }
-            } catch(e) {}
-        }
-    });
+    // Handled via Supabase broadcast above
 </script>
 </body>
 </html>
