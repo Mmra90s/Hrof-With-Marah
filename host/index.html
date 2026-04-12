@@ -708,7 +708,12 @@
 
         /* ===== SESSION MANAGEMENT ===== */
         const urlParams = new URLSearchParams(window.location.search);
-        let sessionId = urlParams.get('session') || 'default';
+        let sessionId = urlParams.get('session');
+        if (!sessionId) {
+            sessionId = Math.random().toString(36).substring(2, 11);
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?session=' + sessionId;
+            window.history.replaceState({path:newUrl}, '', newUrl);
+        }
 
         /* ===== Supabase Setup ===== */
         const supabaseUrl = 'https://rzblwgdvtiafqzhvcavr.supabase.co';
@@ -939,7 +944,7 @@
             cells = [];
 
             // Check if there's shared letters from game screen
-            const sharedLetters = localStorage.getItem('huroofLetters');
+            const sharedLetters = localStorage.getItem('huroofLetters_' + sessionId);
             if (sharedLetters) {
                 try {
                     letters = JSON.parse(sharedLetters);
