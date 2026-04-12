@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>شاشة اللاعب - حروف مع مراح</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -593,6 +594,35 @@
             sessionId = 'default'; // Fallback
         }
 
+        /* ===== Supabase Setup ===== */
+        const supabaseUrl = 'https://rzblwgdvtiafqzhvcavr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Ymx3Z2R2dGlhZnF6aHZjYXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTMwMzcsImV4cCI6MjA5MTU4OTAzN30.Dy2ZkzPykeKs55ZVKw5wK_ghhBs8Ibk_-5IHfEJnPE0';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const channel = _supabase.channel('huroof_' + sessionId);
+
+        channel
+            .on('broadcast', { event: 'reset_buzz' }, payload => {
+                if (payload.payload.reset) {
+                    resetBuzzer();
+                }
+            })
+            .on('broadcast', { event: 'game_state' }, payload => {
+                const state = payload.payload;
+                if (state.settings) {
+                    settings = { ...settings, ...state.settings };
+                    updateLogoFromSettings();
+                }
+            })
+            .on('broadcast', { event: 'buzzer_locked' }, payload => {
+                const lock = payload.payload;
+                if (lock.locked && !isBuzzLocked && lock.playerName !== playerName) {
+                    isBuzzLocked = true;
+                    document.getElementById('buzzerBtn').style.opacity = '0.5';
+                    document.getElementById('buzzerBtn').style.pointerEvents = 'none';
+                }
+            })
+            .subscribe();
+
         // Settings
         let settings = {
             name: 'مراح',
@@ -718,18 +748,30 @@
                 active: true
             };
 
+            // Send via Supabase
+            channel.send({
+                type: 'broadcast',
+                event: 'player_buzz',
+                payload: buzzData
+            });
+
+            channel.send({
+                type: 'broadcast',
+                event: 'buzzer_locked',
+                payload: {
+                    locked: true,
+                    playerName: playerName,
+                    teamName: teamName,
+                    timestamp: Date.now()
+                }
+            });
+
             localStorage.setItem('playerBuzz_' + sessionId, JSON.stringify(buzzData));
             localStorage.setItem('buzzerLocked_' + sessionId, JSON.stringify({
                 locked: true,
                 playerName: playerName,
                 teamName: teamName,
                 timestamp: Date.now()
-            }));
-
-            // Broadcast lock event
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'buzzerLocked_' + sessionId,
-                newValue: JSON.stringify({ locked: true, playerName: playerName, teamName: teamName, timestamp: Date.now() })
             }));
         }
 
