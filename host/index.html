@@ -1230,6 +1230,23 @@
         // Initialize
         updateAllLogos();
         fetchQuestions();
+        
+        // Load settings and letters from Firebase first
+        firebaseListener('games/' + sessionId + '/settings', (fbSettings) => {
+            if (fbSettings) {
+                settings = fbSettings;
+                updateAllLogos();
+            }
+        });
+        
+        firebaseListener('games/' + sessionId + '/letters', (fbLetters) => {
+            if (fbLetters && fbLetters.length > 0) {
+                letters = fbLetters;
+                buildBoard();
+            }
+        });
+        
+        // Build board with initial letters
         buildBoard();
 
         // Initialize hashes after buildBoard
