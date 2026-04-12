@@ -17,485 +17,298 @@
         * {
             font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
             box-sizing: border-box; margin: 0; padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
             height: 100%;
-            height: 100dvh;
             overflow: hidden;
-            overscroll-behavior: none;
-            -webkit-overflow-scrolling: touch;
+            background: #6a3093;
         }
 
         body {
-            background: #6a3093;
-            min-height: 100vh;
-            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
             padding: 15px;
-            padding-top: max(15px, env(safe-area-inset-top));
-            padding-bottom: max(15px, env(safe-area-inset-bottom));
-            gap: 15px;
             position: relative;
-            overflow-x: hidden;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         /* Hex Background */
         .hex-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: #6a3093;
             overflow: hidden;
             z-index: 0;
         }
         .hex-bg svg {
-            width: 100%;
-            height: 100%;
-            opacity: 0.18;
+            width: 100%; height: 100%;
+            opacity: 0.15;
         }
 
         /* Screens */
         .screen {
             display: none;
-            width: 100%;
-            max-width: 500px;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
-            position: relative;
+            width: 100%;
+            max-width: 400px;
             z-index: 1;
-            flex-shrink: 0;
+            animation: fadeIn 0.5s ease-out;
         }
-        .screen.active { display: flex; }
+        .screen.active {
+            display: flex;
+        }
 
-        /* Logo */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Registration Form */
+        .reg-card {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            width: 100%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .logo-stack {
             display: flex;
             flex-direction: column;
             align-items: center;
-            line-height: 1;
-            pointer-events: none;
-            flex-shrink: 0;
+            line-height: 0.85;
+            margin-bottom: 10px;
         }
-        .logo-word {
-            font-weight: 900;
-            text-align: center;
-            display: inline-block;
-        }
-        .logo-huroof {
-            color: #fdd835;
-            font-size: clamp(32px, 7vw, 55px);
-            text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
-                4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 6px 6px 0 #2c1b4d,
-                7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 15px rgba(0,0,0,0.6);
-        }
-        .logo-ma {
-            color: #26c6da;
-            font-size: clamp(24px, 5vw, 42px);
-            letter-spacing: clamp(5px, 1.2vw, 10px);
-            text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
-                4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 7px 7px 15px rgba(0,0,0,0.6);
-        }
-        .logo-marah {
-            color: #ef5350;
-            font-size: clamp(32px, 7vw, 55px);
-            text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
-                4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 6px 6px 0 #2c1b4d,
-                7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 15px rgba(0,0,0,0.6);
-        }
-
-        /* Player Label */
-        .player-label {
-            color: white;
-            font-size: clamp(14px, 3.5vw, 22px);
-            font-weight: 900;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-            text-align: center;
-        }
-
-        /* Registration Form */
-        .reg-form {
-            background: #2c1b4d;
-            border-radius: 20px;
-            padding: clamp(15px, 4vw, 25px);
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
+        .logo-word { font-weight: 900; text-align: center; }
+        .logo-huroof { color: #fdd835; font-size: 50px; text-shadow: 2px 2px 0 #2c1b4d; }
+        .logo-ma { color: #26c6da; font-size: 25px; letter-spacing: 10px; margin-right: 10px; }
+        .logo-marah { color: #ef5350; font-size: 50px; text-shadow: 2px 2px 0 #2c1b4d; }
 
         .input-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
-
-        .input-label {
-            color: #fdd835;
-            font-size: clamp(14px, 3vw, 20px);
+        .input-group label {
             font-weight: 900;
-            text-align: center;
+            color: #2c1b4d;
+            font-size: 16px;
         }
-
-        .name-input {
-            width: 100%;
-            padding: clamp(14px, 3vw, 20px);
-            border: none;
-            border-radius: 50px;
-            background: white;
-            color: #6a3093;
-            font-size: clamp(16px, 4vw, 24px);
-            font-weight: 900;
-            text-align: center;
+        .input-group input {
+            padding: 12px;
+            border: 3px solid #eee;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
             outline: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: center;
         }
-        .name-input::placeholder {
-            color: #b39ddb;
-            font-size: clamp(14px, 3vw, 18px);
-        }
-        .name-input:focus {
-            box-shadow: 0 0 0 4px #fdd835, 0 4px 20px rgba(253,216,53,0.4);
-        }
+        .input-group input:focus { border-color: #6a3093; }
 
-        /* Team Selection */
-        .team-selection {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
+        .team-choice {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
-
         .team-btn {
-            flex: 1;
-            max-width: 160px;
-            padding: clamp(16px, 4vw, 24px);
+            padding: 15px 10px;
             border: none;
-            border-radius: 18px;
-            font-size: clamp(14px, 3.5vw, 20px);
+            border-radius: 15px;
+            font-size: 16px;
             font-weight: 900;
+            color: white;
             cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            color: white;
+            gap: 5px;
         }
-
-        .team-btn.green {
-            background: #2ecc00;
-            box-shadow: 0 4px 15px rgba(46, 204, 0, 0.4);
-        }
-        .team-btn.orange {
-            background: #ff6d00;
-            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.4);
-        }
-
-        .team-btn:hover:not(.selected) {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
+        .team-btn.green { background: #2ecc00; box-shadow: 0 5px 0 #27ae60; }
+        .team-btn.orange { background: #ff6d00; box-shadow: 0 5px 0 #e67e22; }
         .team-btn.selected {
-            background: #fdd835 !important;
-            color: #2c1b4d !important;
-            box-shadow: 0 0 0 4px white, 0 8px 25px rgba(253,216,53,0.5) !important;
-            transform: scale(1.05);
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+            outline: 4px solid #fdd835;
         }
+        .team-btn:not(.selected) { opacity: 0.6; }
 
-        .team-icon {
-            font-size: clamp(28px, 6vw, 40px);
-        }
-
-        /* Confirm Button */
         .confirm-btn {
-            width: 100%;
-            padding: clamp(16px, 4vw, 22px);
-            border: none;
-            border-radius: 50px;
-            background: linear-gradient(90deg, #B366FF, #FF5599);
+            padding: 15px;
+            background: #6a3093;
             color: white;
-            font-size: clamp(16px, 4vw, 22px);
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
             font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            transition: all 0.2s;
             margin-top: 10px;
         }
-        .confirm-btn:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-        .confirm-btn:active:not(:disabled) {
-            transform: translateY(1px);
-        }
-        .confirm-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .confirm-btn:disabled { background: #ccc; cursor: not-allowed; }
 
         /* Buzzer Screen */
-        .buzzer-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
+        .player-header {
             width: 100%;
-            min-height: 0;
-            flex: 1;
-            padding-bottom: 20px;
-        }
-
-        .player-info {
-            background: #2c1b4d;
-            border-radius: 18px;
-            padding: clamp(15px, 4vw, 25px);
-            width: 100%;
-            max-width: 350px;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-            flex-shrink: 0;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
         }
+        .player-info { display: flex; flex-direction: column; }
+        .player-name { color: white; font-size: 18px; font-weight: 900; }
+        .player-team-display { font-size: 14px; font-weight: 700; }
+        .player-team-display.green { color: #2ecc00; }
+        .player-team-display.orange { color: #ff6d00; }
 
-        .player-name-display {
-            font-size: clamp(22px, 5vw, 32px);
-            font-weight: 900;
-            color: white;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-        }
-
-        .player-team-display {
-            font-size: clamp(16px, 3.5vw, 22px);
-            font-weight: 900;
-            padding: 6px 20px;
-            border-radius: 25px;
-            color: white;
-        }
-        .player-team-display.green {
-            background: #2ecc00;
-            box-shadow: 0 4px 15px rgba(46, 204, 0, 0.4);
-        }
-        .player-team-display.orange {
-            background: #ff6d00;
-            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.4);
-        }
-
-        /* Buzzer Button */
         .buzzer-container {
-            position: relative;
+            flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
+            width: 100%;
         }
 
         .buzzer-btn {
-            width: clamp(140px, 40vw, 200px);
-            height: clamp(140px, 40vw, 200px);
-            border: none;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #ff5252, #b71c1c);
+            border: 10px solid #801313;
             border-radius: 50%;
-            background: linear-gradient(145deg, #ef5350, #c62828);
-            color: white;
-            font-size: clamp(22px, 6vw, 36px);
-            font-weight: 900;
+            box-shadow: 0 15px 0 #600;
             cursor: pointer;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            box-shadow:
-                0 8px 25px rgba(0,0,0,0.4),
-                inset 0 -6px 15px rgba(0,0,0,0.3),
-                inset 0 6px 15px rgba(255,255,255,0.2);
             transition: all 0.1s;
             position: relative;
-            z-index: 1;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
+        }
+        .buzzer-btn:active, .buzzer-btn.pressed {
+            transform: translateY(10px);
+            box-shadow: 0 5px 0 #600;
+            background: radial-gradient(circle, #ff1744, #d50000);
+        }
+        .buzzer-btn::after {
+            content: 'اضغط!';
+            color: white;
+            font-size: 40px;
+            font-weight: 900;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        .buzzer-btn:active:not(.pressed) {
-            transform: scale(0.95);
-            box-shadow:
-                0 4px 15px rgba(0,0,0,0.4),
-                inset 0 -3px 8px rgba(0,0,0,0.3);
+        .edit-btn {
+            margin-top: 40px;
+            background: none;
+            border: 2px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.6);
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
         }
 
-        .buzzer-btn.pressed {
-            background: #424242;
-            transform: scale(0.9) translateY(4px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            cursor: not-allowed;
-        }
-
-        .buzzer-btn.pressed .buzzer-icon {
-            opacity: 0.5;
-        }
-
-        .buzzer-icon {
-            font-size: clamp(40px, 10vw, 60px);
-        }
-
-        /* Status Overlay */
+        /* Buzz Status Overlay */
         .buzz-status {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0,0,0,0.8);
             z-index: 100;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 20px;
-            animation: fadeIn 0.3s ease-out;
+            backdrop-filter: blur(10px);
         }
         .buzz-status.active { display: flex; }
+        .buzz-status-icon { font-size: 100px; margin-bottom: 20px; animation: pulse 1s infinite; }
+        .buzz-status-text { color: white; font-size: 32px; font-weight: 900; text-align: center; }
 
-        .buzz-status-icon {
-            font-size: 80px;
-            animation: pulse 1s infinite;
-        }
-        .buzz-status-text {
-            color: white;
-            font-size: 32px;
-            font-weight: 900;
-            text-align: center;
-            padding: 0 20px;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         /* Connection Status */
         .connection-status {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(0,0,0,0.4);
-            padding: 4px 10px;
+            gap: 8px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 15px;
             border-radius: 20px;
             z-index: 10;
         }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        .status-dot.connected { background: #2ecc00; box-shadow: 0 0 8px #2ecc00; }
-        .status-dot.disconnected { background: #ef5350; box-shadow: 0 0 8px #ef5350; }
-        .status-text { color: white; font-size: 10px; font-weight: 700; }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Settings/Edit Button */
-        .edit-btn {
-            position: fixed;
-            top: max(15px, env(safe-area-inset-top));
-            left: 15px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            z-index: 10;
-        }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .status-dot.connected { background: #2ecc00; box-shadow: 0 0 10px #2ecc00; }
+        .status-dot.disconnected { background: #ef5350; box-shadow: 0 0 10px #ef5350; }
+        .status-text { color: white; font-size: 12px; font-weight: 700; }
     </style>
 </head>
 <body>
-    <!-- Hex Background -->
     <div class="hex-bg">
         <svg xmlns="http://www.w3.org/2000/svg" id="hex-pattern-svg"></svg>
     </div>
 
-    <!-- Edit/Reset Button -->
-    <button class="edit-btn" onclick="editPlayer()">
-        <i class="fas fa-user-edit"></i>
-    </button>
-
     <!-- Registration Screen -->
     <div class="screen active" id="screen-reg">
-        <div class="logo-stack">
-            <span class="logo-word logo-huroof">حروف</span>
-            <span class="logo-word logo-ma">مع</span>
-            <span class="logo-word logo-marah" id="logoName">مراح</span>
-        </div>
-
-        <div class="player-label">تسجيل اللاعب</div>
-
-        <div class="reg-form">
-            <div class="input-group">
-                <label class="input-label">اسم اللاعب</label>
-                <input type="text" class="name-input" id="playerName" placeholder="اكتب اسمك هنا..." maxlength="15" oninput="validateForm()">
+        <div class="reg-card">
+            <div class="logo-stack">
+                <span class="logo-word logo-huroof">حروف</span>
+                <span class="logo-word logo-ma">مع</span>
+                <span class="logo-word logo-marah" id="logoName">مراح</span>
             </div>
-
             <div class="input-group">
-                <label class="input-label">اختر فريقك</label>
-                <div class="team-selection">
+                <label>اسمك</label>
+                <input type="text" id="playerName" placeholder="اكتب اسمك هنا..." oninput="validateForm()">
+            </div>
+            <div class="input-group">
+                <label>اختر فريقك</label>
+                <div class="team-choice">
                     <button class="team-btn green" id="btn-green" onclick="selectTeam('green')">
-                        <span class="team-icon">🌿</span>
+                        <i class="fas fa-leaf"></i>
                         <span id="team1Name">الفريق الأول</span>
                     </button>
                     <button class="team-btn orange" id="btn-orange" onclick="selectTeam('orange')">
-                        <span class="team-icon">🍊</span>
+                        <i class="fas fa-fire"></i>
                         <span id="team2Name">الفريق الثاني</span>
                     </button>
                 </div>
             </div>
-
             <button class="confirm-btn" id="confirmBtn" onclick="confirmRegistration()" disabled>دخول اللعبة</button>
         </div>
     </div>
 
     <!-- Buzzer Screen -->
     <div class="screen" id="screen-buzzer">
-        <div class="logo-stack">
-            <span class="logo-word logo-huroof">حروف</span>
-            <span class="logo-word logo-ma">مع</span>
-            <span class="logo-word logo-marah" id="logoNameBuzzer">مراح</span>
-        </div>
-
-        <div class="player-info">
-            <div class="player-name-display" id="display-name">اللاعب</div>
-            <div class="player-team-display" id="display-team">الفريق</div>
-        </div>
-
-        <div class="buzzer-screen">
-            <div class="buzzer-container">
-                <button class="buzzer-btn" id="buzzerBtn" onclick="pressBuzzer()">
-                    <span class="buzzer-icon">🔔</span>
-                    <span>اضغط!</span>
-                </button>
+        <div class="player-header">
+            <div class="player-info">
+                <div class="player-name" id="display-name">اسم اللاعب</div>
+                <div class="player-team-display" id="display-team">الفريق الأول</div>
             </div>
+            <div class="logo-stack" style="margin:0; transform: scale(0.4);">
+                <span class="logo-word logo-huroof">حروف</span>
+                <span class="logo-word logo-marah" id="logoNameBuzzer">مراح</span>
+            </div>
+        </div>
+        <div class="buzzer-container">
+            <button class="buzzer-btn" id="buzzerBtn" onclick="pressBuzzer()"></button>
+            <button class="edit-btn" onclick="editPlayer()">تغيير الفريق أو الاسم</button>
         </div>
     </div>
 
@@ -516,29 +329,21 @@
     <script>
         // Hex Pattern
         function drawHexPattern(svgEl) {
-            const R = 50;
-            const w = Math.sqrt(3) * R;
-            const h = 2 * R;
-            const cols = Math.ceil(window.innerWidth / w) + 2;
-            const rows = Math.ceil(window.innerHeight / (h * 0.75)) + 2;
-            let d = '';
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cx = c * w + (r % 2 === 1 ? w / 2 : 0);
-                    const cy = r * h * 0.75;
-                    let pts = '';
-                    for (let i = 0; i < 6; i++) {
-                        const a = Math.PI / 180 * (60 * i - 30);
-                        pts += (i === 0 ? 'M' : 'L') + (cx + R * Math.cos(a)).toFixed(1) + ',' + (cy + R * Math.sin(a)).toFixed(1);
-                    }
-                    d += pts + 'Z ';
+            const R=50, w=Math.sqrt(3)*R, h=2*R;
+            const cols=Math.ceil(window.innerWidth/w)+2, rows=Math.ceil(window.innerHeight/(h*0.75))+2;
+            let d='';
+            for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) {
+                const cx=c*w+(r%2===1?w/2:0), cy=r*h*0.75;
+                let pts='';
+                for(let i=0;i<6;i++) {
+                    const a=Math.PI/180*(60*i-30);
+                    pts+=(i===0?'M':'L')+(cx+R*Math.cos(a)).toFixed(1)+','+(cy+R*Math.sin(a)).toFixed(1);
                 }
+                d+=pts+'Z ';
             }
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', d);
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', 'white');
-            path.setAttribute('stroke-width', '2');
+            const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+            path.setAttribute('d',d); path.setAttribute('fill','none');
+            path.setAttribute('stroke','white'); path.setAttribute('stroke-width','2');
             svgEl.appendChild(path);
         }
         drawHexPattern(document.getElementById('hex-pattern-svg'));
@@ -581,49 +386,19 @@
             })
             .subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
-                    channel.send({
-                        type: 'broadcast',
-                        event: 'request_sync',
-                        payload: { timestamp: Date.now() }
-                    });
+                    channel.send({ type: 'broadcast', event: 'request_sync', payload: { timestamp: Date.now() } });
                 }
             });
 
         // Player State
-        let playerName = '';
-        let playerTeam = null;
-        let hasBuzzed = false;
+        let playerName = '', playerTeam = null, hasBuzzed = false, isBuzzLocked = false;
         let settings = { name: 'مراح', team1: 'الفريق الأول', team2: 'الفريق الثاني' };
-
-        // Load saved player info
-        window.onload = function() {
-            const saved = localStorage.getItem('playerInfo_' + sessionId);
-            if (saved) {
-                const info = JSON.parse(saved);
-                playerName = info.name;
-                playerTeam = info.team;
-                
-                // Show buzzer screen directly
-                document.getElementById('screen-reg').classList.remove('active');
-                document.getElementById('screen-buzzer').classList.add('active');
-                
-                // Update display
-                document.getElementById('display-name').textContent = playerName;
-                const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-                const teamDisplay = document.getElementById('display-team');
-                teamDisplay.textContent = teamName;
-                teamDisplay.className = 'player-team-display ' + playerTeam;
-            }
-            updateLogoFromSettings();
-        };
 
         function updateLogoFromSettings() {
             document.getElementById('logoName').textContent = settings.name;
             document.getElementById('logoNameBuzzer').textContent = settings.name;
             document.getElementById('team1Name').textContent = settings.team1;
             document.getElementById('team2Name').textContent = settings.team2;
-            
-            // If already registered, update team display
             if (playerTeam) {
                 const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
                 const teamDisplay = document.getElementById('display-team');
@@ -646,187 +421,75 @@
         function confirmRegistration() {
             playerName = document.getElementById('playerName').value.trim();
             if (!playerName || !playerTeam) return;
-
-            // Save player info
             const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-
-            localStorage.setItem('playerInfo_' + sessionId, JSON.stringify({
-                name: playerName,
-                team: playerTeam,
-                teamName: teamName,
-                timestamp: Date.now()
-            }));
-
-            // Show buzzer screen
             document.getElementById('screen-reg').classList.remove('active');
             document.getElementById('screen-buzzer').classList.add('active');
-
-            // Update display
             document.getElementById('display-name').textContent = playerName;
             const teamDisplay = document.getElementById('display-team');
             teamDisplay.textContent = teamName;
             teamDisplay.className = 'player-team-display ' + playerTeam;
         }
 
-        // Press Buzzer
-        let isBuzzLocked = false;
-
         function pressBuzzer() {
             if (hasBuzzed || isBuzzLocked) return;
             hasBuzzed = true;
-
-            // Visual feedback
-            const btn = document.getElementById('buzzerBtn');
-            btn.classList.add('pressed');
-
-            // Play bell sound
+            document.getElementById('buzzerBtn').classList.add('pressed');
             playBell();
-
-            // Show buzz status
             showBuzzStatus();
-
-            // Send buzz to other screens and lock all buzzers
             const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-
-            const buzzData = {
-                name: playerName,
-                team: playerTeam,
-                teamName: teamName,
-                timestamp: Date.now(),
-                active: true
-            };
-
-            // Send via Supabase
-            channel.send({
-                type: 'broadcast',
-                event: 'player_buzz',
-                payload: buzzData
-            });
-
-            channel.send({
-                type: 'broadcast',
-                event: 'buzzer_locked',
-                payload: {
-                    locked: true,
-                    playerName: playerName,
-                    teamName: teamName,
-                    timestamp: Date.now()
-                }
-            });
+            const buzzData = { name: playerName, team: playerTeam, teamName: teamName, timestamp: Date.now(), active: true };
+            channel.send({ type: 'broadcast', event: 'player_buzz', payload: buzzData });
+            channel.send({ type: 'broadcast', event: 'buzzer_locked', payload: { locked: true, playerName: playerName, teamName: teamName, timestamp: Date.now() } });
         }
 
-        // Reset buzzer (called by presenter)
         function resetBuzzer() {
-            hasBuzzed = false;
-            isBuzzLocked = false;
+            hasBuzzed = false; isBuzzLocked = false;
             const btn = document.getElementById('buzzerBtn');
-            if (btn) {
-                btn.classList.remove('pressed');
-                btn.style.opacity = '';
-                btn.style.pointerEvents = '';
-            }
+            if (btn) { btn.classList.remove('pressed'); btn.style.opacity = ''; btn.style.pointerEvents = ''; }
             hideBuzzStatus();
         }
 
-        // Show buzz status overlay
         function showBuzzStatus() {
             const status = document.getElementById('buzzStatus');
             const text = document.getElementById('buzzStatusText');
             const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-
             text.textContent = playerName + ' - ' + teamName;
             status.classList.add('active');
-
-            // Vibrate if supported
-            if (navigator.vibrate) {
-                navigator.vibrate([100, 50, 100]);
-            }
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
         }
 
-        // Hide buzz status
-        function hideBuzzStatus() {
-            document.getElementById('buzzStatus').classList.remove('active');
-        }
+        function hideBuzzStatus() { document.getElementById('buzzStatus').classList.remove('active'); }
 
-        // Play bell sound
         function playBell() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-
                 gain.gain.setValueAtTime(0.8, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 1.0);
+                osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.0);
             } catch (e) {}
         }
 
-        // Edit player (name and team)
         function editPlayer() {
             if (!confirm('هل تريد تغيير معلومات اللاعب؟')) return;
-            
-            // Reset state
-            hasBuzzed = false;
-            isBuzzLocked = false;
-            
-            // Show registration screen
+            hasBuzzed = false; isBuzzLocked = false;
             document.getElementById('screen-buzzer').classList.remove('active');
             document.getElementById('screen-reg').classList.add('active');
-            
-            // Focus name input for editing
-            setTimeout(() => {
-                document.getElementById('playerName').focus();
-            }, 100);
         }
 
-        // Connection monitoring
-        function updateConnectionStatus(connected) {
+        setInterval(() => {
             const status = document.getElementById('connectionStatus');
             const text = document.getElementById('connectionText');
-
-            if (connected) {
-                status.classList.remove('disconnected');
-                status.classList.add('connected');
-                text.textContent = 'متصل';
+            if (channel && channel.state === 'joined') {
+                status.classList.remove('disconnected'); status.classList.add('connected'); text.textContent = 'متصل';
             } else {
-                status.classList.remove('connected');
-                status.classList.add('disconnected');
-                text.textContent = 'غير متصل';
+                status.classList.remove('connected'); status.classList.add('disconnected'); text.textContent = 'غير متصل';
             }
-        }
-
-        // Initial connection check
-        setInterval(() => {
-            updateConnectionStatus(channel && channel.state === 'joined');
         }, 2000);
-
-        // Prevent sleep on mobile
-        let wakeLock = null;
-        async function requestWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                }
-            } catch (e) {}
-        }
-
-        if (document.visibilityState === 'visible') {
-            requestWakeLock();
-        }
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                requestWakeLock();
-            }
-        });
     </script>
 </body>
 </html>
