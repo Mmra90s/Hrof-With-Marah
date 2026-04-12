@@ -27,18 +27,25 @@
             height: 100dvh;
             overflow: hidden;
             overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
             background: #6a3093;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             padding: 15px;
+            padding-top: max(15px, env(safe-area-inset-top));
+            padding-bottom: max(15px, env(safe-area-inset-bottom));
             gap: 15px;
             position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Hex Background */
@@ -68,6 +75,7 @@
             gap: 15px;
             position: relative;
             z-index: 1;
+            flex-shrink: 0;
         }
         .screen.active { display: flex; }
 
@@ -78,6 +86,7 @@
             align-items: center;
             line-height: 1;
             pointer-events: none;
+            flex-shrink: 0;
         }
         .logo-word {
             font-weight: 900;
@@ -104,6 +113,15 @@
             text-shadow: 1px 1px 0 #2c1b4d, 2px 2px 0 #2c1b4d, 3px 3px 0 #2c1b4d,
                 4px 4px 0 #2c1b4d, 5px 5px 0 #2c1b4d, 6px 6px 0 #2c1b4d,
                 7px 7px 0 #2c1b4d, 8px 8px 0 #2c1b4d, 10px 10px 15px rgba(0,0,0,0.6);
+        }
+
+        /* Player Label */
+        .player-label {
+            color: white;
+            font-size: clamp(14px, 3.5vw, 22px);
+            font-weight: 900;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            text-align: center;
         }
 
         /* Registration Form */
@@ -142,6 +160,14 @@
             font-weight: 900;
             text-align: center;
             outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .name-input::placeholder {
+            color: #b39ddb;
+            font-size: clamp(14px, 3vw, 18px);
+        }
+        .name-input:focus {
+            box-shadow: 0 0 0 4px #fdd835, 0 4px 20px rgba(253,216,53,0.4);
         }
 
         /* Team Selection */
@@ -168,14 +194,29 @@
             color: white;
         }
 
-        .team-btn.green { background: #2ecc00; }
-        .team-btn.orange { background: #ff6d00; }
+        .team-btn.green {
+            background: #2ecc00;
+            box-shadow: 0 4px 15px rgba(46, 204, 0, 0.4);
+        }
+        .team-btn.orange {
+            background: #ff6d00;
+            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.4);
+        }
+
+        .team-btn:hover:not(.selected) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
 
         .team-btn.selected {
             background: #fdd835 !important;
             color: #2c1b4d !important;
             box-shadow: 0 0 0 4px white, 0 8px 25px rgba(253,216,53,0.5) !important;
             transform: scale(1.05);
+        }
+
+        .team-icon {
+            font-size: clamp(28px, 6vw, 40px);
         }
 
         /* Confirm Button */
@@ -193,7 +234,18 @@
             transition: all 0.2s;
             margin-top: 10px;
         }
-        .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .confirm-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .confirm-btn:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+        .confirm-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         /* Buzzer Screen */
         .buzzer-screen {
@@ -203,7 +255,9 @@
             justify-content: center;
             gap: 20px;
             width: 100%;
+            min-height: 0;
             flex: 1;
+            padding-bottom: 20px;
         }
 
         .player-info {
@@ -217,196 +271,707 @@
             align-items: center;
             gap: 10px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            flex-shrink: 0;
         }
 
-        .player-name-display { font-size: clamp(22px, 5vw, 32px); font-weight: 900; color: white; }
+        .player-name-display {
+            font-size: clamp(22px, 5vw, 32px);
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
 
         .player-team-display {
-            font-size: clamp(16px, 3.5vw, 22px); font-weight: 900;
-            padding: 6px 20px; border-radius: 25px; color: white;
+            font-size: clamp(16px, 3.5vw, 22px);
+            font-weight: 900;
+            padding: 6px 20px;
+            border-radius: 25px;
+            color: white;
         }
-        .player-team-display.green { background: #2ecc00; }
-        .player-team-display.orange { background: #ff6d00; }
+        .player-team-display.green {
+            background: #2ecc00;
+            box-shadow: 0 4px 15px rgba(46, 204, 0, 0.4);
+        }
+        .player-team-display.orange {
+            background: #ff6d00;
+            box-shadow: 0 4px 15px rgba(255, 109, 0, 0.4);
+        }
 
         /* Buzzer Button */
+        .buzzer-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
         .buzzer-btn {
-            width: clamp(160px, 45vw, 240px);
-            height: clamp(160px, 45vw, 240px);
+            width: clamp(140px, 40vw, 200px);
+            height: clamp(140px, 40vw, 200px);
             border: none;
             border-radius: 50%;
             background: linear-gradient(145deg, #ef5350, #c62828);
             color: white;
-            font-size: clamp(28px, 8vw, 42px);
+            font-size: clamp(22px, 6vw, 36px);
             font-weight: 900;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 -6px 15px rgba(0,0,0,0.3);
+            gap: 8px;
+            box-shadow:
+                0 8px 25px rgba(0,0,0,0.4),
+                inset 0 -6px 15px rgba(0,0,0,0.3),
+                inset 0 6px 15px rgba(255,255,255,0.2);
             transition: all 0.1s;
+            position: relative;
+            z-index: 1;
+            touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
         }
 
-        .buzzer-btn:active:not(:disabled) {
-            transform: scale(0.92);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4), inset 0 6px 15px rgba(0,0,0,0.3);
+        .buzzer-btn:hover {
+            transform: scale(1.02);
         }
 
-        .buzzer-btn:disabled {
-            background: #444;
-            opacity: 0.6;
-            cursor: not-allowed;
+        .buzzer-btn:active {
+            transform: scale(0.95);
+            box-shadow:
+                0 5px 15px rgba(0,0,0,0.4),
+                inset 0 5px 15px rgba(0,0,0,0.4);
         }
 
-        .buzzer-btn.locked {
-            background: #2c1b4d;
-            border: 4px solid #fdd835;
-            color: #fdd835;
-            animation: pulse 1.5s infinite;
+        .buzzer-btn.pressed {
+            background: linear-gradient(145deg, #ffeb3b, #ffc107) !important;
+            color: #2c1b4d !important;
+            animation: buzzerPulse 0.5s ease-out;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(253,216,53,0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(253,216,53,0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(253,216,53,0); }
+        /* Edit Button */
+        .edit-btn {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            padding: 10px 24px;
+            color: white;
+            font-size: clamp(12px, 3vw, 16px);
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            margin-top: 5px;
+        }
+        .edit-btn:hover {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.5);
+            transform: translateY(-2px);
+        }
+        .edit-btn:active {
+            transform: translateY(0);
+        }
+        .edit-btn i {
+            font-size: clamp(14px, 3.5vw, 18px);
         }
 
-        .status-text {
-            color: white; font-size: 18px; font-weight: 700; opacity: 0.8;
-            text-align: center; margin-top: 10px;
+        @keyframes buzzerPulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        .buzzer-icon {
+            font-size: clamp(40px, 10vw, 60px);
+        }
+
+        /* Buzz Status */
+        .buzz-status {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .buzz-status.active {
+            display: flex;
+        }
+        .buzz-status-bg {
+            position: absolute;
+            inset: 0;
+            background: rgba(253, 216, 53, 0.3);
+            animation: flashBg 0.5s ease-out;
+        }
+        @keyframes flashBg {
+            0% { background: rgba(253, 216, 53, 0.6); }
+            100% { background: rgba(253, 216, 53, 0); }
+        }
+        .buzz-status-text {
+            font-size: clamp(32px, 8vw, 50px);
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Animations */
+        @keyframes floatUp {
+            0%,100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes glow-yellow {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(253,216,53,0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(253,216,53,1)) drop-shadow(0 0 36px rgba(253,216,53,0.6)); }
+        }
+        @keyframes glow-cyan {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(38,198,218,0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(38,198,218,1)) drop-shadow(0 0 36px rgba(38,198,218,0.6)); }
+        }
+        @keyframes glow-red {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(239,83,80,0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(239,83,80,1)) drop-shadow(0 0 36px rgba(239,83,80,0.6)); }
+        }
+
+        .logo-huroof { animation: floatUp 4s ease-in-out infinite, glow-yellow 4s ease-in-out infinite; }
+        .logo-ma { animation: floatUp 4s ease-in-out 0.5s infinite, glow-cyan 4s ease-in-out 0.5s infinite; }
+        .logo-marah { animation: floatUp 4s ease-in-out 1s infinite, glow-red 4s ease-in-out 1s infinite; }
+
+        /* Responsive */
+        @media (max-height: 650px) and (orientation: portrait) {
+            html, body { overflow-y: auto; }
+            .screen { gap: 10px; }
+            .reg-form { padding: 12px; gap: 10px; }
+            .buzzer-btn { width: 120px; height: 120px; font-size: 18px; }
+            .buzzer-icon { font-size: 35px; }
+            .logo-stack { transform: scale(0.7); }
+            .buzzer-screen { gap: 12px; }
+        }
+
+        @media (max-width: 360px) {
+            .team-btn { padding: 10px; }
+            .buzzer-btn { width: 120px; height: 120px; }
+        }
+
+        @media (max-height: 500px) {
+            .logo-stack { display: none; }
+            .player-label { display: none; }
+            .buzzer-btn { width: 100px; height: 100px; }
+            .buzzer-icon { font-size: 30px; }
         }
     </style>
 </head>
 <body>
-
+    <!-- Hex Background -->
     <div class="hex-bg">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
-            <pattern id="hexagons" width="10" height="17.32" patternUnits="userSpaceOnUse" patternTransform="scale(1.2)">
-                <path d="M5 0 L10 2.88 L10 8.66 L5 11.54 L0 8.66 L0 2.88 Z" fill="none" stroke="currentColor" stroke-width="0.15" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#hexagons)" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" id="hex-pattern-svg"></svg>
     </div>
 
-    <!-- Screen 1: Registration -->
-    <div id="regScreen" class="screen active">
+    <!-- Registration Screen -->
+    <div class="screen active" id="screen-reg">
         <div class="logo-stack">
             <span class="logo-word logo-huroof">حروف</span>
-            <span class="logo-word logo-ma">مـع</span>
+            <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logoName">مراح</span>
         </div>
+
+        <div class="player-label">شاشة اللاعب</div>
+
         <div class="reg-form">
             <div class="input-group">
-                <div class="input-label">أدخل اسمك</div>
-                <input type="text" id="playerName" class="name-input" placeholder="اكتب اسمك هنا..." maxlength="15">
+                <label class="input-label">اسمك</label>
+                <input
+                    type="text"
+                    class="name-input"
+                    id="playerName"
+                    placeholder="اكتب اسمك هنا..."
+                    maxlength="20"
+                    autocomplete="off"
+                >
             </div>
+
             <div class="input-group">
-                <div class="input-label">اختر فريقك</div>
+                <label class="input-label">اختر فريقك</label>
                 <div class="team-selection">
-                    <button class="team-btn green" id="teamGreen" onclick="selectTeam('green')">
-                        <span class="team-icon">🟢</span>
-                        <span id="team1Name">الفريق الأول</span>
+                    <button class="team-btn green" id="btn-green" onclick="selectTeam('green')">
+                        <span class="team-icon">🚩</span>
+                        <span class="team-name">أخضر</span>
                     </button>
-                    <button class="team-btn orange" id="teamOrange" onclick="selectTeam('orange')">
-                        <span class="team-icon">🟠</span>
-                        <span id="team2Name">الفريق الثاني</span>
+                    <button class="team-btn orange" id="btn-orange" onclick="selectTeam('orange')">
+                        <span class="team-icon">🚩</span>
+                        <span class="team-name">برتقالي</span>
                     </button>
                 </div>
             </div>
-            <button class="confirm-btn" id="confirmBtn" onclick="confirmReg()" disabled>دخول اللعبة</button>
+
+            <button class="confirm-btn" id="confirmBtn" onclick="confirmRegistration()" disabled>
+                تأكيد الدخول
+            </button>
         </div>
     </div>
 
-    <!-- Screen 2: Buzzer -->
-    <div id="buzzerScreen" class="screen">
-        <div class="player-info">
-            <div class="player-name-display" id="displayName">اللاعب</div>
-            <div class="player-team-display" id="displayTeam">الفريق</div>
-        </div>
+    <!-- Buzzer Screen -->
+    <div class="screen" id="screen-buzzer">
         <div class="buzzer-screen">
-            <button class="buzzer-btn" id="buzzerBtn" onclick="buzz()">
-                <span>🔔</span>
-                <span>اضغط!</span>
-            </button>
-            <div class="status-text" id="statusText">انتظر سؤال المقدم...</div>
+            <div class="logo-stack" style="transform: scale(0.6); flex-shrink: 0;">
+                <span class="logo-word logo-huroof">حروف</span>
+                <span class="logo-word logo-ma">مع</span>
+                <span class="logo-word logo-marah" id="logoName2">مراح</span>
+            </div>
+
+            <div class="player-info">
+                <div class="player-name-display" id="display-name"></div>
+                <div class="player-team-display" id="display-team"></div>
+                <button class="edit-btn" id="editBtn" onclick="editPlayer()">
+                    <span>✏️</span>
+                    <span>تغيير الاسم أو الفريق</span>
+                </button>
+            </div>
+
+            <div class="buzzer-container">
+                <button class="buzzer-btn" id="buzzerBtn" onclick="pressBuzzer()">
+                    <span class="buzzer-icon">🔔</span>
+                    <span>BUZZER</span>
+                </button>
+            </div>
         </div>
     </div>
+
+    <!-- Buzz Status Overlay -->
+    <div class="buzz-status" id="buzzStatus">
+        <div class="buzz-status-bg"></div>
+        <div class="buzz-status-text" id="buzzStatusText"></div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script>
-        const sessionId = new URLSearchParams(window.location.search).get('session');
-        if (!sessionId) alert('خطأ: لا يوجد معرف للجلسة.');
+        // Hex Pattern
+        function drawHexPattern(svgEl) {
+            const R = 50;
+            const w = Math.sqrt(3) * R;
+            const h = 2 * R;
+            const cols = Math.ceil(window.innerWidth / w) + 2;
+            const rows = Math.ceil(window.innerHeight / (h * 0.75)) + 2;
+            let d = '';
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cx = c * w + (r % 2 === 1 ? w / 2 : 0);
+                    const cy = r * h * 0.75;
+                    let pts = '';
+                    for (let i = 0; i < 6; i++) {
+                        const a = Math.PI / 180 * (60 * i - 30);
+                        pts += (i === 0 ? 'M' : 'L') + (cx + R * Math.cos(a)).toFixed(1) + ',' + (cy + R * Math.sin(a)).toFixed(1);
+                    }
+                    d += pts + 'Z ';
+                }
+            }
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', d);
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', 'white');
+            path.setAttribute('stroke-width', '2');
+            svgEl.appendChild(path);
+        }
+        drawHexPattern(document.getElementById('hex-pattern-svg'));
 
-        let player = { name: '', team: '', teamName: '' };
-        let isLocked = false;
+        // Player State
+        let playerName = '';
+        let playerTeam = null;
+        let hasBuzzed = false;
 
+        /* ===== SESSION MANAGEMENT ===== */
+        const urlParams = new URLSearchParams(window.location.search);
+        let sessionId = urlParams.get('session');
+        if (!sessionId) {
+            sessionId = 'default'; // Fallback
+        }
+
+        // Settings
+        let settings = {
+            name: 'مراح',
+            team1: 'الفريق الأول',
+            team2: 'الفريق الثاني',
+            rounds: 2
+        };
+        function loadSettings() {
+            try {
+                const stored = localStorage.getItem('huroofSettings_' + sessionId);
+                if (stored) {
+                    settings = { ...settings, ...JSON.parse(stored) };
+                }
+            } catch(e) {}
+            updateLogoFromSettings();
+        }
+
+        function updateLogoFromSettings() {
+            document.getElementById('logoName').textContent = settings.name;
+            const logo2 = document.getElementById('logoName2');
+            if (logo2) logo2.textContent = settings.name;
+
+            // Update team button names
+            document.getElementById('btn-green').querySelector('.team-name').textContent = settings.team1;
+            document.getElementById('btn-orange').querySelector('.team-name').textContent = settings.team2;
+        }
+
+        // Poll for settings changes
+        setInterval(() => {
+            try {
+                const stored = localStorage.getItem('huroofSettings_' + sessionId);
+                if (stored) {
+                    const newSettings = JSON.parse(stored);
+                    if (JSON.stringify(newSettings) !== JSON.stringify(settings)) {
+                        settings = { ...settings, ...newSettings };
+                        updateLogoFromSettings();
+                    }
+                }
+            } catch(e) {}
+        }, 500);
+
+        // Load settings on start
+        loadSettings();
+
+        // Team Selection
         function selectTeam(team) {
-            player.team = team;
-            player.teamName = document.getElementById(team === 'green' ? 'team1Name' : 'team2Name').textContent;
-            document.getElementById('teamGreen').classList.toggle('selected', team === 'green');
-            document.getElementById('teamOrange').classList.toggle('selected', team === 'orange');
-            checkForm();
+            playerTeam = team;
+            document.getElementById('btn-green').classList.toggle('selected', team === 'green');
+            document.getElementById('btn-orange').classList.toggle('selected', team === 'orange');
+            checkCanConfirm();
         }
 
-        document.getElementById('playerName').addEventListener('input', checkForm);
-        function checkForm() {
+        // Check if can confirm
+        function checkCanConfirm() {
             const name = document.getElementById('playerName').value.trim();
-            document.getElementById('confirmBtn').disabled = !(name && player.team);
+            const canConfirm = name.length > 0 && playerTeam !== null;
+            document.getElementById('confirmBtn').disabled = !canConfirm;
         }
 
-        function confirmReg() {
-            player.name = document.getElementById('playerName').value.trim();
-            document.getElementById('regScreen').classList.remove('active');
-            document.getElementById('buzzerScreen').classList.add('active');
-            document.getElementById('displayName').textContent = player.name;
-            document.getElementById('displayTeam').textContent = player.teamName;
-            document.getElementById('displayTeam').className = 'player-team-display ' + player.team;
+        // Name input handler
+        document.getElementById('playerName').addEventListener('input', checkCanConfirm);
+        document.getElementById('playerName').addEventListener('change', checkCanConfirm);
+
+        // Team buttons click handler
+        document.getElementById('btn-green').addEventListener('click', function() {
+            selectTeam('green');
+        });
+        document.getElementById('btn-orange').addEventListener('click', function() {
+            selectTeam('orange');
+        });
+
+        // Confirm Registration
+        function confirmRegistration() {
+            playerName = document.getElementById('playerName').value.trim();
+            if (!playerName || !playerTeam) return;
+
+            // Save player info using settings variable
+            const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+
+            localStorage.setItem('playerInfo_' + sessionId, JSON.stringify({
+                name: playerName,
+                team: playerTeam,
+                teamName: teamName,
+                timestamp: Date.now()
+            }));
+
+            // Show buzzer screen
+            document.getElementById('screen-reg').classList.remove('active');
+            document.getElementById('screen-buzzer').classList.add('active');
+
+            // Update display
+            document.getElementById('display-name').textContent = playerName;
+            const teamDisplay = document.getElementById('display-team');
+            teamDisplay.textContent = teamName;
+            teamDisplay.className = 'player-team-display ' + playerTeam;
         }
 
-        function buzz() {
-            if (isLocked) return;
-            const buzzData = { name: player.name, team: player.team, teamName: player.teamName, timestamp: Date.now(), active: true };
-            firebaseUpdate('games/' + sessionId + '/playerBuzz', buzzData);
-            firebaseUpdate('games/' + sessionId + '/buzzerLocked', { locked: true, playerName: player.name, teamName: player.teamName, timestamp: Date.now() });
-            lockBuzzer();
-        }
+        // Press Buzzer
+        let isBuzzLocked = false;
 
-        function lockBuzzer() {
-            isLocked = true;
+        function pressBuzzer() {
+            if (hasBuzzed || isBuzzLocked) return;
+            hasBuzzed = true;
+
+            // Visual feedback
             const btn = document.getElementById('buzzerBtn');
-            btn.classList.add('locked');
-            btn.disabled = true;
-            document.getElementById('statusText').textContent = 'تم إرسال الإشارة!';
+            btn.classList.add('pressed');
+
+            // Play bell sound
+            playBell();
+
+            // Show buzz status
+            showBuzzStatus();
+
+            // Send buzz to other screens and lock all buzzers
+            const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+
+            const buzzData = {
+                name: playerName,
+                team: playerTeam,
+                teamName: teamName,
+                timestamp: Date.now(),
+                active: true
+            };
+
+            // Save to Firebase
+            firebaseUpdate('games/' + sessionId + '/playerBuzz', buzzData).catch(err => {
+                console.error('Firebase buzz error:', err);
+                // Fallback to localStorage
+                localStorage.setItem('playerBuzz_' + sessionId, JSON.stringify(buzzData));
+            });
+
+            firebaseUpdate('games/' + sessionId + '/buzzerLocked', {
+                locked: true,
+                playerName: playerName,
+                teamName: teamName,
+                timestamp: Date.now()
+            }).catch(err => {
+                localStorage.setItem('buzzerLocked_' + sessionId, JSON.stringify({
+                    locked: true,
+                    playerName: playerName,
+                    teamName: teamName,
+                    timestamp: Date.now()
+                }));
+            });
+
+            // Broadcast lock event
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'buzzerLocked_' + sessionId,
+                newValue: JSON.stringify({ locked: true, playerName: playerName, teamName: teamName, timestamp: Date.now() })
+            }));
         }
 
-        function unlockBuzzer() {
-            isLocked = false;
-            const btn = document.getElementById('buzzerBtn');
-            btn.classList.remove('locked');
-            btn.disabled = false;
-            document.getElementById('statusText').textContent = 'جاهز للضغط!';
-        }
-
-        // Firebase Listeners
-        firebaseListener('games/' + sessionId + '/settings', (s) => {
-            if (s) {
-                document.getElementById('logoName').textContent = s.name;
-                document.getElementById('team1Name').textContent = s.team1;
-                document.getElementById('team2Name').textContent = s.team2;
-                if (player.team) player.teamName = (player.team === 'green' ? s.team1 : s.team2);
+        // Listen for buzz lock from Firebase
+        firebaseListener('games/' + sessionId + '/buzzerLocked', (lock) => {
+            if (lock && lock.locked && !isBuzzLocked && lock.playerName !== playerName) {
+                isBuzzLocked = true;
+                document.getElementById('buzzerBtn').style.opacity = '0.5';
+                document.getElementById('buzzerBtn').style.pointerEvents = 'none';
             }
         });
 
-        firebaseListener('games/' + sessionId + '/resetBuzz', (data) => {
-            if (data && data.reset) unlockBuzzer();
+        // Fallback: Listen for buzz lock from localStorage
+        setInterval(() => {
+            const lockStr = localStorage.getItem('buzzerLocked_' + sessionId);
+            if (lockStr) {
+                try {
+                    const lock = JSON.parse(lockStr);
+                    // Lock if there's an active lock from another player
+                    if (lock.locked && !isBuzzLocked && lock.playerName !== playerName) {
+                        isBuzzLocked = true;
+                        document.getElementById('buzzerBtn').style.opacity = '0.5';
+                        document.getElementById('buzzerBtn').style.pointerEvents = 'none';
+                    }
+                } catch(e) {}
+            }
+        }, 200);
+
+        // Reset buzzer (called by presenter)
+        function resetBuzzer() {
+            hasBuzzed = false;
+            isBuzzLocked = false;
+            const btn = document.getElementById('buzzerBtn');
+            btn.classList.remove('pressed');
+            btn.style.opacity = '';
+            btn.style.pointerEvents = '';
+            hideBuzzStatus();
+            
+            // Reset in Firebase
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
+            firebaseRemove('games/' + sessionId + '/buzzerLocked').catch(err => {
+                localStorage.removeItem('buzzerLocked_' + sessionId);
+            });
+        }
+
+        // Listen for reset from Firebase
+        firebaseListener('games/' + sessionId + '/resetBuzz', (reset) => {
+            if (reset && reset.reset) {
+                resetBuzzer();
+            }
         });
 
-        firebaseListener('games/' + sessionId + '/buzzerLocked', (lock) => {
-            if (lock && lock.locked && lock.playerName !== player.name) {
-                isLocked = true;
-                document.getElementById('buzzerBtn').disabled = true;
-                document.getElementById('statusText').textContent = 'لاعب آخر ضغط أولاً!';
+        // Auto-reset buzzer when presenter resets (fallback)
+        window.addEventListener('storage', function(e) {
+            if (e.key === ('resetBuzz_' + sessionId) && e.newValue) {
+                try {
+                    const reset = JSON.parse(e.newValue);
+                    if (reset.reset) {
+                        resetBuzzer();
+                    }
+                } catch(e) {}
+            }
+        });
+
+        // Show buzz status overlay
+        function showBuzzStatus() {
+            const status = document.getElementById('buzzStatus');
+            const text = document.getElementById('buzzStatusText');
+            const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+
+            text.textContent = playerName + ' - ' + teamName;
+            status.classList.add('active');
+
+            // Vibrate if supported
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+        }
+
+        // Hide buzz status
+        function hideBuzzStatus() {
+            document.getElementById('buzzStatus').classList.remove('active');
+        }
+
+        // Play bell sound
+        function playBell() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
+
+                gain.gain.setValueAtTime(0.8, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 1.0);
+            } catch (e) {}
+        }
+
+        // Reset player
+        function resetPlayer() {
+            if (!confirm('هل تريد تغيير اللاعب؟')) return;
+
+            // Clear buzz
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
+
+            // Reset state
+            playerName = '';
+            playerTeam = null;
+            hasBuzzed = false;
+
+            // Clear form
+            document.getElementById('playerName').value = '';
+            document.getElementById('btn-green').classList.remove('selected');
+            document.getElementById('btn-orange').classList.remove('selected');
+            document.getElementById('confirmBtn').disabled = true;
+            document.getElementById('buzzerBtn').classList.remove('pressed');
+
+            // Show registration screen
+            document.getElementById('screen-buzzer').classList.remove('active');
+            document.getElementById('screen-reg').classList.add('active');
+        }
+
+        // Edit player (name and team)
+        function editPlayer() {
+            // Clear buzz
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
+
+            // Reset state but keep the buzzer screen showing
+            hasBuzzed = false;
+            document.getElementById('buzzerBtn').classList.remove('pressed');
+
+            // Show registration screen with current values
+            document.getElementById('playerName').value = playerName;
+            if (playerTeam) {
+                selectTeam(playerTeam);
+            }
+
+            // Show registration screen
+            document.getElementById('screen-buzzer').classList.remove('active');
+            document.getElementById('screen-reg').classList.add('active');
+
+            // Focus name input for editing
+            setTimeout(() => {
+                document.getElementById('playerName').focus();
+                document.getElementById('playerName').select();
+            }, 100);
+        }
+
+        // Connection monitoring
+        function checkConnection() {
+            const testKey = 'connectionTest_' + Date.now();
+            try {
+                localStorage.setItem(testKey, '1');
+                localStorage.removeItem(testKey);
+                updateConnectionStatus(true);
+            } catch {
+                updateConnectionStatus(false);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            const text = document.getElementById('connectionText');
+
+            if (connected) {
+                status.classList.remove('disconnected');
+                status.classList.add('connected');
+                text.textContent = 'متصل';
+            } else {
+                status.classList.remove('connected');
+                status.classList.add('disconnected');
+                text.textContent = 'غير متصل';
+            }
+        }
+
+        // Initial connection check
+        checkConnection();
+        setInterval(checkConnection, 5000);
+
+        // Listen for storage changes from other tabs
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'playerBuzz') {
+                if (e.newValue) {
+                    // Buzz happened somewhere
+                    const buzz = JSON.parse(e.newValue);
+                    if (buzz.active) {
+                        // Show notification if this is a different player or same player re-buzz
+                        if (buzz.timestamp !== localStorage.getItem('lastBuzzSeen')) {
+                            localStorage.setItem('lastBuzzSeen', buzz.timestamp);
+                        }
+                    }
+                }
+            }
+        });
+
+        // Prevent sleep on mobile
+        let wakeLock = null;
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                }
+            } catch (e) {}
+        }
+
+        if (document.visibilityState === 'visible') {
+            requestWakeLock();
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                requestWakeLock();
             }
         });
     </script>
