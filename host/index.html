@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شاشة المقدم - حروف مع مراح</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -709,6 +710,38 @@
         const urlParams = new URLSearchParams(window.location.search);
         let sessionId = urlParams.get('session') || 'default';
 
+        /* ===== Supabase Setup ===== */
+        const supabaseUrl = 'https://rzblwgdvtiafqzhvcavr.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6Ymx3Z2R2dGlhZnF6aHZjYXZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTMwMzcsImV4cCI6MjA5MTU4OTAzN30.Dy2ZkzPykeKs55ZVKw5wK_ghhBs8Ibk_-5IHfEJnPE0';
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const channel = _supabase.channel('huroof_' + sessionId);
+
+        channel
+            .on('broadcast', { event: 'game_state' }, payload => {
+                applyGameState(payload.payload);
+            })
+            .on('broadcast', { event: 'player_buzz' }, payload => {
+                const buzz = payload.payload;
+                if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
+                    currentBuzz = buzz;
+                    showBuzzerAlert(buzz);
+                }
+            })
+            .on('broadcast', { event: 'buzzer_locked' }, payload => {
+                const lock = payload.payload;
+                if (lock.locked && (!currentBuzz || currentBuzz.playerName !== lock.playerName)) {
+                    currentBuzz = {
+                        name: lock.playerName,
+                        teamName: lock.teamName,
+                        timestamp: lock.timestamp,
+                        active: true,
+                        team: lock.team || (lock.teamName === settings.team1 ? 'green' : 'orange')
+                    };
+                    showBuzzerAlert(currentBuzz);
+                }
+            })
+            .subscribe();
+
         // Game State
         let letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"];
         let cells = [];
@@ -1363,12 +1396,14 @@
 
         // Broadcast action to game screen
         function broadcastAction(action) {
+            // Send via Supabase
+            channel.send({
+                type: 'broadcast',
+                event: 'presenter_action',
+                payload: action
+            });
+
             localStorage.setItem('huroofPresenterActions_' + sessionId, JSON.stringify(action));
-            // Dispatch storage event for same-origin pages
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'huroofPresenterActions_' + sessionId,
-                newValue: JSON.stringify(action)
-            }));
         }
 
         // Override resetGame to broadcast
@@ -1383,18 +1418,7 @@
         let lastSelectedTeam = null; // آخر فريق اختاره المقدم
 
         // Listen for player buzz
-        setInterval(() => {
-            const buzzStr = localStorage.getItem('playerBuzz_' + sessionId);
-            if (buzzStr) {
-                try {
-                    const buzz = JSON.parse(buzzStr);
-                    if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
-                        currentBuzz = buzz;
-                        showBuzzerAlert(buzz);
-                    }
-                } catch(e) {}
-            }
-        }, 200);
+        // Handled via Supabase broadcast above
 
         function showBuzzerAlert(buzz) {
             const container = document.getElementById('buzzerAlert');
@@ -1435,36 +1459,20 @@
             document.getElementById('buzzerAlert').classList.remove('active');
             currentBuzz = null;
 
+            // Send reset via Supabase
+            channel.send({
+                type: 'broadcast',
+                event: 'reset_buzz',
+                payload: { reset: true, timestamp: Date.now() }
+            });
+
             // Reset buzz in localStorage
             localStorage.removeItem('playerBuzz_' + sessionId);
             localStorage.removeItem('buzzerLocked_' + sessionId);
-
-            // Broadcast reset to all players
-            localStorage.setItem('resetBuzz_' + sessionId, JSON.stringify({ reset: true, timestamp: Date.now() }));
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'resetBuzz_' + sessionId,
-                newValue: JSON.stringify({ reset: true, timestamp: Date.now() })
-            }));
-            localStorage.removeItem('resetBuzz_' + sessionId);
         }
 
         // Listen for buzz lock events
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'buzzerLocked_' + sessionId && e.newValue) {
-                try {
-                    const lock = JSON.parse(e.newValue);
-                    if (lock.locked && (!currentBuzz || currentBuzz.playerName !== lock.playerName)) {
-                        currentBuzz = {
-                            name: lock.playerName,
-                            teamName: lock.teamName,
-                            timestamp: lock.timestamp,
-                            active: true
-                        };
-                        showBuzzerAlert(currentBuzz);
-                    }
-                } catch(e) {}
-            }
-        });
+        // Handled via Supabase broadcast above
     </script>
 </body>
 </html>
