@@ -13,7 +13,7 @@ const firebaseConfig = {
     measurementId: "G-9WZ1GSGC79"
 };
 
-// Initialize Firebase (طريقة الربط المباشر للمتصفح )
+// Initialize Firebase (طريقة الربط المباشر للمتصفح)
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
