@@ -1,57 +1,22 @@
-// ===== FIREBASE CONFIGURATION =====
-// تم تحديث البيانات تلقائياً بناءً على ملف الـ JSON المرفق
-// Data updated automatically based on the attached JSON file
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    // ملاحظة: ملف الـ JSON لا يحتوي على apiKey أو appId لأنها بيانات خاصة بالواجهة الأمامية (Web App)
-    // سأضع الـ project_id والـ databaseURL وسأترك الـ apiKey كقالب ليقوم المستخدم بوضعه إذا لزم الأمر
-    // ولكن غالباً الـ Realtime Database ستعمل بالـ databaseURL والـ project_id في حال كانت القواعد مفتوحة
-    
-    apiKey: "AIzaSy" + "PLEASE_GET_API_KEY_FROM_FIREBASE_CONSOLE", // يجب الحصول عليه من إعدادات المشروع في Firebase
-    authDomain: "hrof-with-marah.firebaseapp.com",
-    projectId: "hrof-with-marah",
-    storageBucket: "hrof-with-marah.appspot.com",
-    messagingSenderId: "114203081433", // مستخرج من الجزء الأول من client_id
-    appId: "PLEASE_GET_APP_ID_FROM_FIREBASE_CONSOLE", // يجب الحصول عليه من إعدادات المشروع في Firebase
-    databaseURL: "https://hrof-with-marah-default-rtdb.firebaseio.com"
+  apiKey: "AIzaSyCJryCJ50khZKLczrs8pTHVBn7AYqWZt-o",
+  authDomain: "hrof-with-marah.firebaseapp.com",
+  databaseURL: "https://hrof-with-marah-default-rtdb.firebaseio.com",
+  projectId: "hrof-with-marah",
+  storageBucket: "hrof-with-marah.firebasestorage.app",
+  messagingSenderId: "935326971899",
+  appId: "1:935326971899:web:ea3a0e77e30a9c48923d5e",
+  measurementId: "G-9WZ1GSGC79"
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
-// ===== FIREBASE HELPER FUNCTIONS =====
-
-// Save data to Firebase
-function firebaseSave(path, data) {
-    return database.ref(path).set(data);
-}
-
-// Read data from Firebase
-function firebaseRead(path, callback) {
-    database.ref(path).on('value', (snapshot) => {
-        callback(snapshot.val());
-    });
-}
-
-// Update data in Firebase
-function firebaseUpdate(path, data) {
-    return database.ref(path).update(data);
-}
-
-// Remove data from Firebase
-function firebaseRemove(path) {
-    return database.ref(path).remove();
-}
-
-// Listen for real-time changes
-function firebaseListener(path, callback) {
-    database.ref(path).on('value', (snapshot) => {
-        callback(snapshot.val());
-    });
-}
-
-// Remove listener
-function firebaseRemoveListener(path) {
-    database.ref(path).off();
-}
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
