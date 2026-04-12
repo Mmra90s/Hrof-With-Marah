@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>شاشة اللاعب - حروف مع مراح</title>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <script src="../firebase-config.js"></script>
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -718,13 +722,26 @@
                 active: true
             };
 
-            localStorage.setItem('playerBuzz_' + sessionId, JSON.stringify(buzzData));
-            localStorage.setItem('buzzerLocked_' + sessionId, JSON.stringify({
+            // Save to Firebase
+            firebaseUpdate('games/' + sessionId + '/playerBuzz', buzzData).catch(err => {
+                console.error('Firebase buzz error:', err);
+                // Fallback to localStorage
+                localStorage.setItem('playerBuzz_' + sessionId, JSON.stringify(buzzData));
+            });
+
+            firebaseUpdate('games/' + sessionId + '/buzzerLocked', {
                 locked: true,
                 playerName: playerName,
                 teamName: teamName,
                 timestamp: Date.now()
-            }));
+            }).catch(err => {
+                localStorage.setItem('buzzerLocked_' + sessionId, JSON.stringify({
+                    locked: true,
+                    playerName: playerName,
+                    teamName: teamName,
+                    timestamp: Date.now()
+                }));
+            });
 
             // Broadcast lock event
             window.dispatchEvent(new StorageEvent('storage', {
@@ -733,7 +750,16 @@
             }));
         }
 
-        // Listen for buzz lock from presenter
+        // Listen for buzz lock from Firebase
+        firebaseListener('games/' + sessionId + '/buzzerLocked', (lock) => {
+            if (lock && lock.locked && !isBuzzLocked && lock.playerName !== playerName) {
+                isBuzzLocked = true;
+                document.getElementById('buzzerBtn').style.opacity = '0.5';
+                document.getElementById('buzzerBtn').style.pointerEvents = 'none';
+            }
+        });
+
+        // Fallback: Listen for buzz lock from localStorage
         setInterval(() => {
             const lockStr = localStorage.getItem('buzzerLocked_' + sessionId);
             if (lockStr) {
@@ -758,11 +784,24 @@
             btn.style.opacity = '';
             btn.style.pointerEvents = '';
             hideBuzzStatus();
-            localStorage.removeItem('playerBuzz_' + sessionId);
-            localStorage.removeItem('buzzerLocked_' + sessionId);
+            
+            // Reset in Firebase
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
+            firebaseRemove('games/' + sessionId + '/buzzerLocked').catch(err => {
+                localStorage.removeItem('buzzerLocked_' + sessionId);
+            });
         }
 
-        // Auto-reset buzzer when presenter resets
+        // Listen for reset from Firebase
+        firebaseListener('games/' + sessionId + '/resetBuzz', (reset) => {
+            if (reset && reset.reset) {
+                resetBuzzer();
+            }
+        });
+
+        // Auto-reset buzzer when presenter resets (fallback)
         window.addEventListener('storage', function(e) {
             if (e.key === ('resetBuzz_' + sessionId) && e.newValue) {
                 try {
@@ -821,7 +860,9 @@
             if (!confirm('هل تريد تغيير اللاعب؟')) return;
 
             // Clear buzz
-            localStorage.removeItem('playerBuzz_' + sessionId);
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
 
             // Reset state
             playerName = '';
@@ -843,7 +884,9 @@
         // Edit player (name and team)
         function editPlayer() {
             // Clear buzz
-            localStorage.removeItem('playerBuzz_' + sessionId);
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
 
             // Reset state but keep the buzzer screen showing
             hasBuzzed = false;
