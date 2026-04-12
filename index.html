@@ -1499,14 +1499,41 @@
                 showGameBuzzerAlert(buzz);
             }
         })
+        .on('broadcast', { event: 'buzzer_locked' }, payload => {
+            // Also handle buzzer_locked if it contains buzz info
+            const lock = payload.payload;
+            if (lock.locked && (!currentBuzz || currentBuzz.timestamp !== lock.timestamp)) {
+                const buzz = {
+                    name: lock.playerName,
+                    teamName: lock.teamName,
+                    team: lock.team || (lock.teamName === settings.team1 ? 'green' : 'orange'),
+                    timestamp: lock.timestamp,
+                    active: true
+                };
+                currentBuzz = buzz;
+                buzzDismissed = false;
+                showGameBuzzerAlert(buzz);
+            }
+        })
         .on('broadcast', { event: 'reset_buzz' }, payload => {
             if (payload.payload.reset) {
                 hideGameBuzzerAlert();
+                currentBuzz = null;
             }
         })
-        .subscribe();
+        .on('broadcast', { event: 'request_sync' }, payload => {
+            // When a new screen joins, send current state
+            syncGameState();
+        })
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                // Request sync from any existing screen (though usually this is the master)
+                channel.send({ type: 'broadcast', event: 'request_sync', payload: {} });
+            }
+        });
 
     function syncGameState() {
+        if (!cells || cells.length === 0) return;
         const state = {
             settings: settings,
             greenScore: greenScore,
