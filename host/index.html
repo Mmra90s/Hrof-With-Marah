@@ -328,295 +328,151 @@
             50% { filter: drop-shadow(0 0 16px rgba(239,83,80,1)) drop-shadow(0 0 36px rgba(239,83,80,0.6)); }
         }
 
-        .cell-pop {
-            animation: none !important;
-        }
-
-        @keyframes bellRing {
-            0%, 100% { transform: scale(1); }
-            25% { transform: scale(1.1); }
-            75% { transform: scale(0.95); }
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        .bell-active {
-            animation: bellRing 0.4s ease-in-out;
-        }
-
-        /* Buzzer Alert Display - Shows only when someone buzzes */
-        .buzzer-alert-container {
-            display: none;
+        /* Question Area */
+        .question-area {
             width: 100%;
             max-width: 500px;
-            border-radius: 15px;
-            padding: 15px 25px;
+            background: white;
+            border-radius: 20px;
+            padding: clamp(15px, 3vw, 25px);
+            display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            animation: buzzSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transition: all 0.3s ease;
-        }
-        .buzzer-alert-container.active {
-            display: flex;
-        }
-        .buzzer-alert-container.green {
-            background: linear-gradient(135deg, #2ecc00, #27ae60);
-            box-shadow: 0 4px 25px rgba(46, 204, 113, 0.5);
-        }
-        .buzzer-alert-container.orange {
-            background: linear-gradient(135deg, #ff6d00, #e67e22);
-            box-shadow: 0 4px 25px rgba(255, 109, 0, 0.5);
-        }
-        .buzzer-alert-container.green .buzzer-alert-text,
-        .buzzer-alert-container.green .buzzer-alert-player {
-            color: white;
-        }
-        .buzzer-alert-container.orange .buzzer-alert-text,
-        .buzzer-alert-container.orange .buzzer-alert-player {
-            color: white;
-        }
-
-        @keyframes buzzSlideIn {
-            0% { transform: translateY(-20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes buzzPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        .buzzer-alert {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
             gap: 15px;
-            width: 100%;
-            flex-wrap: wrap;
-            animation: buzzPulse 1s ease-in-out infinite;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            min-height: 180px;
+            position: relative;
         }
 
-        .buzzer-alert-icon {
-            font-size: 40px;
-            animation: bounce 0.5s ease-in-out infinite;
+        .instruction {
+            color: #6a3093;
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 5px;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .buzzer-alert-text {
-            color: #2c1b4d;
-            font-size: clamp(18px, 4vw, 24px);
-            font-weight: 900;
+        .question-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             text-align: center;
         }
 
-        .buzzer-alert-info {
+        .question-letter {
+            font-size: 32px;
+            font-weight: 900;
+            color: #6a3093;
+            background: #fdd835;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .question-text {
+            font-size: clamp(18px, 3.5vw, 24px);
+            font-weight: 700;
+            color: #2c1b4d;
+            line-height: 1.4;
+        }
+
+        .question-answer {
+            font-size: clamp(16px, 3vw, 20px);
+            font-weight: 900;
+            color: #2ecc00;
+            margin-top: 5px;
+            padding: 10px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            display: none;
+        }
+        .question-answer.visible { display: block; }
+
+        /* Buzzer Alert */
+        .buzzer-alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 4px solid #fdd835;
+        }
+        .buzzer-alert.active {
+            transform: translateX(-50%) translateY(0);
         }
 
+        .buzzer-alert-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #6a3093;
+        }
         .buzzer-alert-team {
-            font-size: clamp(14px, 3vw, 18px);
-            padding: 5px 18px;
-            border-radius: 18px;
+            font-size: 28px;
+            font-weight: 900;
+            padding: 5px 20px;
+            border-radius: 10px;
             color: white;
-            font-weight: 700;
         }
         .buzzer-alert-team.green { background: #2ecc00; }
         .buzzer-alert-team.orange { background: #ff6d00; }
 
         .buzzer-alert-player {
+            font-size: 24px;
+            font-weight: 700;
             color: #2c1b4d;
-            font-size: clamp(14px, 2.5vw, 18px);
-            opacity: 0.9;
         }
 
-        .reset-buzz-btn {
-            padding: 10px 25px;
-            border: none;
-            border-radius: 12px;
-            background: #2c1b4d;
-            color: white;
-            font-size: clamp(14px, 2.5vw, 18px);
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
+        .bell-active {
+            animation: bellShake 0.4s ease-in-out;
         }
-        .reset-buzz-btn:hover {
-            transform: scale(1.05);
-            background: #3d2a5f;
+        @keyframes bellShake {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(15deg); }
+            40% { transform: rotate(-15deg); }
+            60% { transform: rotate(10deg); }
+            80% { transform: rotate(-10deg); }
         }
 
-        /* Instruction text - Hidden */
-        .instruction {
-            display: none;
-        }
-
-        /* Question Display */
-        .question-box {
-            background: #2c1b4d;
-            border-radius: 15px;
-            padding: 15px 20px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
-        .question-letter {
-            font-size: clamp(28px, 5vw, 40px);
-            font-weight: 900;
-            color: #fdd835;
-            margin-bottom: 8px;
-        }
-
-        .question-text {
-            font-size: clamp(16px, 3vw, 22px);
-            color: white;
-            line-height: 1.5;
-            margin-bottom: 10px;
-        }
-
-        .question-answer {
-            font-size: clamp(18px, 3vw, 24px);
-            color: #fdd835;
-            font-weight: 700;
-        }
-
-        .loading-text {
-            color: #888;
-            font-size: 14px;
-        }
-
-        /* Responsive - Mobile Full Screen - No Scroll */
-        @media (max-width: 500px), (max-height: 600px) {
-            html, body {
-                height: 100%;
-                min-height: 100vh;
-                min-height: 100dvh;
-                padding: 4px 3px;
-                overflow: hidden;
-            }
-
-            body {
-                justify-content: flex-start;
-                gap: 3px;
-            }
-
-            .content {
-                gap: 4px;
-                width: 100%;
-                max-width: 100%;
-                height: 100%;
-            }
-
-            .logo-stack {
-                transform: scale(0.55);
-                transform-origin: top center;
-            }
-
-            .presenter-label {
-                margin-top: 0;
-                font-size: 13px;
-            }
-
-            .score-section {
-                gap: 10px;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .score-box {
-                width: 50px;
-                height: 50px;
-                font-size: 24px;
-                border-radius: 10px;
-            }
-
-            .team-label {
-                font-size: 11px;
-            }
-
-            .instruction {
-                display: none;
-            }
-
-            .question-box {
-                padding: 10px 12px;
-                border-radius: 12px;
-            }
-
-            .question-letter {
-                font-size: 24px;
-                margin-bottom: 5px;
-            }
-
-            .question-text {
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-
-            .question-answer {
-                font-size: 16px;
-            }
-
-            .hex-board {
-                max-width: 100%;
-                flex: 1;
-                min-height: 0;
-                padding: 8px;
-                border-radius: 15px;
-            }
-
-            .control-panel {
-                max-width: 100%;
-                padding: 6px;
-                gap: 6px;
-                border-radius: 15px;
-            }
-
-            /* الأزرار أكبر على الهاتف */
-            .control-btn {
-                padding: 12px 8px;
-                font-size: 14px;
-                min-height: 50px;
-                border-radius: 10px;
-            }
-
-            .bell-btn {
-                padding: 12px 8px;
-                font-size: 14px;
-                border-radius: 10px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <!-- Hex Background -->
     <div class="hex-bg">
-        <svg xmlns="http://www.w3.org/2000/svg" id="hex-pattern-svg"></svg>
+        <svg id="hex-bg-svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice"></svg>
     </div>
 
-    <!-- Content -->
+    <div class="buzzer-alert" id="buzzerAlert">
+        <div class="buzzer-alert-title">🔔 جرس اللاعب!</div>
+        <div id="buzzerAlertTeam" class="buzzer-alert-team">الفريق</div>
+        <div id="buzzerAlertPlayer" class="buzzer-alert-player">اسم اللاعب</div>
+    </div>
+
     <div class="content">
-        <!-- Logo -->
         <div class="logo-stack">
-            <span class="logo-word logo-huroof">حروف</span>
-            <span class="logo-word logo-ma">مع</span>
-            <span class="logo-word logo-marah" id="logoName">مراح</span>
+            <div class="logo-word logo-huroof">حروف</div>
+            <div class="logo-word logo-ma">مع</div>
+            <div class="logo-word logo-marah" id="logoName">مراح</div>
+            <div class="presenter-label">شاشة المقدم</div>
         </div>
 
-        <!-- Score Section -->
         <div class="score-section">
             <div class="score-card">
                 <div class="team-label green" id="team1Label">الفريق الأول</div>
@@ -628,29 +484,17 @@
             </div>
         </div>
 
-        <!-- Question Display -->
-        <div class="question-box" id="questionBox">
-            <div class="loading-text">جاري تحميل الأسئلة...</div>
-        </div>
-
-        <!-- Hex Board -->
         <div class="hex-board">
-            <svg viewBox="0 0 400 400" id="board"></svg>
+            <svg id="board" viewBox="0 0 400 400"></svg>
         </div>
 
-        <!-- Buzzer Alert - Shows only when someone buzzes -->
-        <div class="buzzer-alert-container" id="buzzerAlert">
-            <div class="buzzer-alert">
-                <div class="buzzer-alert-icon">🔔</div>
-                <div class="buzzer-alert-info">
-                    <div class="buzzer-alert-text">ضغط الجرس!</div>
-                    <div class="buzzer-alert-team" id="buzzerAlertTeam"></div>
-                    <div class="buzzer-alert-player" id="buzzerAlertPlayer"></div>
-                </div>
+        <div class="question-area">
+            <div class="instruction" id="instruction">اختر حرفاً من اللوحة</div>
+            <div class="question-box" id="questionBox">
+                <div class="question-text">بانتظار اختيار حرف...</div>
             </div>
         </div>
 
-        <!-- Control Panel -->
         <div class="control-panel">
             <div class="control-grid">
                 <button class="control-btn btn-team1" id="btnTeam1" onclick="selectTeam('green')" disabled>
@@ -659,203 +503,68 @@
                 <button class="control-btn btn-team2" id="btnTeam2" onclick="selectTeam('orange')" disabled>
                     <span id="btnTeam2Text">الفريق الثاني</span>
                 </button>
-                <button class="control-btn btn-undo" id="btnUndo" onclick="undoSelection()" disabled>
-                    إلغاء التحديد
-                </button>
-                <button class="control-btn btn-change" id="btnChangeQuestion" onclick="changeQuestion()" disabled>
-                    تغيير السؤال
-                </button>
+                <button class="control-btn btn-undo" id="btnUndo" onclick="undoSelection()" disabled>تراجع</button>
+                <button class="control-btn btn-change" id="btnChangeQuestion" onclick="changeQuestion()" disabled>تغيير السؤال</button>
             </div>
-
-            <button class="bell-btn" onclick="resetBuzzFromPresenter()">
-                إعادة تعيين الجرس
+            <button class="bell-btn" id="bellBtn" onclick="playBellManually()">
+                <span>🔔 رنة الجرس</span>
             </button>
         </div>
     </div>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <script>
-        // Hex Pattern
-        function drawHexPattern(svgEl) {
-            const R = 50;
-            const w = Math.sqrt(3) * R;
-            const h = 2 * R;
-            const cols = Math.ceil(window.innerWidth / w) + 2;
-            const rows = Math.ceil(window.innerHeight / (h * 0.75)) + 2;
-            let d = '';
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cx = c * w + (r % 2 === 1 ? w / 2 : 0);
-                    const cy = r * h * 0.75;
-                    let pts = '';
-                    for (let i = 0; i < 6; i++) {
-                        const a = Math.PI / 180 * (60 * i - 30);
-                        pts += (i === 0 ? 'M' : 'L') + (cx + R * Math.cos(a)).toFixed(1) + ',' + (cy + R * Math.sin(a)).toFixed(1);
-                    }
-                    d += pts + 'Z ';
-                }
-            }
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', d);
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', 'white');
-            path.setAttribute('stroke-width', '2');
-            svgEl.appendChild(path);
+        /* ===== SESSION MANAGEMENT ===== */
+        const urlParams = new URLSearchParams(window.location.search);
+        let sessionId = urlParams.get('session');
+        if (!sessionId) {
+            sessionId = 'default'; // Fallback
         }
-        drawHexPattern(document.getElementById('hex-pattern-svg'));
 
-        // Game State
-        let letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"];
+        /* ===== DATA ===== */
+        let questionsData = {};
+        let letters = [];
         let cells = [];
-        let selectedCell = null; // الخلية المختارة حالياً (pending)
+        let selectedCell = null;
+        let currentQuestionLetter = null;
         let greenScore = 0;
         let orangeScore = 0;
-        let currentRound = 1;
-        let lastGreenPath = false;
-        let lastOrangePath = false;
+        let settings = { name: 'مراح', team1: 'الفريق الأول', team2: 'الفريق الثاني', rounds: 2 };
+        let usedQuestions = {};
 
-        // Questions Data from Google Sheets
-        let questionsData = {};
-        let usedQuestions = {}; // Track used questions per letter
-        let currentQuestionLetter = null; // Track the current letter for question change
+        /* ===== BACKGROUND ===== */
+        function drawHexPattern(svgEl) {
+            const R = 50, w = Math.sqrt(3)*R, h = 2*R;
+            const cols = 15, rows = 15;
+            let d = '';
+            for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) {
+                const cx = c*w+(r%2===1?w/2:0), cy = r*h*0.75;
+                let pts='';
+                for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);pts+=(i===0?'M':'L')+(cx+R*Math.cos(a)).toFixed(1)+','+(cy+R*Math.sin(a)).toFixed(1);}
+                d+=pts+'Z ';
+            }
+            const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+            path.setAttribute('d',d); path.setAttribute('fill','none');
+            path.setAttribute('stroke','white'); path.setAttribute('stroke-width','2');
+            svgEl.appendChild(path);
+        }
+        drawHexPattern(document.getElementById('hex-bg-svg'));
 
-        // Google Sheets CSV URL
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Hcb18FCPMzLibTjyN_9Qqgklsla4AaZS_k8cngBYZG8/export?format=csv&gid=1257728758';
-
-        // Fetch questions from Google Sheets
+        /* ===== CORE FUNCTIONS ===== */
         async function fetchQuestions() {
             try {
-                const response = await fetch(SHEET_URL);
-                const csvText = await response.text();
-                parseCSV(csvText);
-                document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
-            } catch (error) {
-                console.error('Error fetching questions:', error);
-                document.getElementById('questionBox').innerHTML = '<div class="loading-text">تعذر تحميل الأسئلة</div>';
-            }
+                // In a real app, this would be a JSON file. For now, we'll use a placeholder.
+                // We'll simulate fetching by creating a basic set.
+                const lettersArr = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"];
+                lettersArr.forEach(l => {
+                    questionsData[l] = [
+                        { question: `سؤال يبدأ بحرف (${l})... ما هو؟`, answer: `إجابة حرف (${l})` },
+                        { question: `سؤال آخر بحرف (${l})... ما هو؟`, answer: `إجابة ثانية لـ (${l})` }
+                    ];
+                    usedQuestions[l] = [];
+                });
+            } catch (e) { console.error("Error fetching questions", e); }
         }
 
-        // Parse CSV data
-        function parseCSV(csvText) {
-            const lines = csvText.split('\n');
-            questionsData = {};
-
-            // Group questions by first letter
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (!line) continue;
-
-                // Simple CSV parsing (handle quoted fields)
-                const cols = parseCSVLine(line);
-                if (cols.length >= 2) {
-                    // cols[0] = #, cols[1] = السؤال, cols[2] = الإجابة
-                    const question = cols[1].trim();
-                    const answer = cols[2].trim();
-
-                    if (answer && question) {
-                        // Get first Arabic letter from answer
-                        const firstLetter = answer.charAt(0);
-
-                        if (!questionsData[firstLetter]) {
-                            questionsData[firstLetter] = [];
-                            usedQuestions[firstLetter] = [];
-                        }
-
-                        // Add if not duplicate
-                        if (!questionsData[firstLetter].some(q => q.answer === answer)) {
-                            questionsData[firstLetter].push({ question, answer });
-                        }
-                    }
-                }
-            }
-        }
-
-        // Simple CSV line parser
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current.trim());
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current.trim());
-            return result;
-        }
-
-        // Get random question for a letter
-        function getRandomQuestion(letter) {
-            const questions = questionsData[letter] || [];
-            if (questions.length === 0) {
-                return { question: 'لا توجد أسئلة لهذا الحرف', answer: '' };
-            }
-
-            // Get available questions (not used yet)
-            const available = questions.filter((q, i) => !usedQuestions[letter].includes(i));
-
-            // Reset if all questions used
-            if (available.length === 0) {
-                usedQuestions[letter] = [];
-                return questions[Math.floor(Math.random() * questions.length)];
-            }
-
-            const randomQ = available[Math.floor(Math.random() * available.length)];
-            const index = questions.indexOf(randomQ);
-            usedQuestions[letter].push(index);
-
-            return randomQ;
-        }
-
-        // Display question
-        function displayQuestion(letter) {
-            const q = getRandomQuestion(letter);
-            currentQuestionLetter = letter;
-            document.getElementById('questionBox').innerHTML = `
-                <div class="question-letter">${letter}</div>
-                <div class="question-text">${q.question}</div>
-                <div class="question-answer" id="currentAnswer">الإجابة: ${q.answer}</div>
-            `;
-            // Enable the change question button when a question is displayed
-            document.getElementById('btnChangeQuestion').disabled = false;
-        }
-
-        // Change question for the same letter
-        function changeQuestion() {
-            if (!currentQuestionLetter) return;
-
-            const q = getRandomQuestion(currentQuestionLetter);
-            document.getElementById('questionBox').innerHTML = `
-                <div class="question-letter">${currentQuestionLetter}</div>
-                <div class="question-text">${q.question}</div>
-                <div class="question-answer" id="currentAnswer">الإجابة: ${q.answer}</div>
-            `;
-
-            // Add animation to the question box
-            const questionBox = document.getElementById('questionBox');
-            questionBox.style.animation = 'none';
-            questionBox.offsetHeight; // Trigger reflow
-            questionBox.style.animation = 'fadeIn 0.3s ease-out';
-        }
-
-        // Settings
-        let settings = {
-            name: 'مراح',
-            team1: 'الفريق الأول',
-            team2: 'الفريق الثاني',
-            rounds: 2
-        };
-
-        // Update logos
         function updateAllLogos() {
             document.getElementById('logoName').textContent = settings.name;
             document.getElementById('team1Label').textContent = settings.team1;
@@ -864,7 +573,6 @@
             document.getElementById('btnTeam2Text').textContent = settings.team2;
         }
 
-        // Update instruction text
         function updateInstruction() {
             const inst = document.getElementById('instruction');
             if (!selectedCell) {
@@ -874,36 +582,26 @@
             }
         }
 
-        // Enable/Disable team buttons
         function setTeamButtonsEnabled(enabled) {
             document.getElementById('btnTeam1').disabled = !enabled;
             document.getElementById('btnTeam2').disabled = !enabled;
         }
 
-        // Build Hex Board
         function buildBoard() {
             const svg = document.getElementById('board');
             svg.innerHTML = '';
             cells = [];
 
-            // Check if there's shared letters from game screen
-            const sharedLetters = localStorage.getItem('huroofLetters');
+            const sharedLetters = localStorage.getItem('huroofLetters_' + sessionId);
             if (sharedLetters) {
-                try {
-                    letters = JSON.parse(sharedLetters);
-                } catch(e) {
-                    letters = letters.sort(() => Math.random() - 0.5);
-                }
+                try { letters = JSON.parse(sharedLetters); } 
+                catch(e) { letters = generateRandomLetters(); }
             } else {
-                letters = letters.sort(() => Math.random() - 0.5);
+                letters = generateRandomLetters();
             }
 
-            const R = 38;
-            const w = Math.sqrt(3) * R;
-            const h = 2 * R;
-
-            const startX = 200 - 2 * w - 10;
-            const startY = 200 - 2 * h * 0.75 + 5;
+            const R = 38, w = Math.sqrt(3) * R, h = 2 * R;
+            const startX = 200 - 2 * w - 10, startY = 200 - 2 * h * 0.75 + 5;
 
             for (let row = 0; row < 5; row++) {
                 for (let col = 0; col < 5; col++) {
@@ -914,21 +612,24 @@
             }
         }
 
+        function generateRandomLetters() {
+            return ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"].sort(() => Math.random() - 0.5);
+        }
+
         function createHexagon(svg, x, y, letter, id) {
             const R = 38;
             const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
             g.setAttribute("class", "hexagon");
             g.setAttribute("transform", `translate(${x}, ${y})`);
-            g.setAttribute("data-id", id);
-
-            const points = [];
+            
+            const pts = [];
             for (let i = 0; i < 6; i++) {
-                const angle = (Math.PI / 180) * (60 * i - 30);
-                points.push(`${(R * Math.cos(angle)).toFixed(1)},${(R * Math.sin(angle)).toFixed(1)}`);
+                const a = (Math.PI / 180) * (60 * i - 30);
+                pts.push(`${(R * Math.cos(a)).toFixed(1)},${(R * Math.sin(a)).toFixed(1)}`);
             }
 
             const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-            poly.setAttribute("points", points.join(" "));
+            poly.setAttribute("points", pts.join(" "));
             poly.setAttribute("class", "hex-poly");
 
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -939,523 +640,196 @@
             g.appendChild(poly);
             g.appendChild(text);
 
-            const cell = {
-                el: g,
-                owner: null, // null, 'green', 'orange'
-                isPending: false,
-                text: text,
-                row: Math.floor(id / 5),
-                col: id % 5,
-                id: id
-            };
+            const cell = { el: g, owner: null, isPending: false, text: text, id: id };
             cells.push(cell);
-
             g.onclick = () => selectCell(cell);
             svg.appendChild(g);
         }
 
-        // اختيار الخلية - الخلية تضيء أصفر
         function selectCell(cell) {
-            // لا تختار خلية already owned
             if (cell.owner) return;
-
-            // إذا كانت هناك خلية pending سابقة، أزل منها الpending
             if (selectedCell && selectedCell !== cell) {
                 selectedCell.isPending = false;
                 selectedCell.el.classList.remove('pending-fill');
-                // Broadcast unselect to game
-                broadcastAction({
-                    type: 'cell_unselected',
-                    cellId: selectedCell.id
-                });
+                broadcastAction({ type: 'cell_unselected', cellId: selectedCell.id });
             }
 
-            // احصل على الحرف من الخلية
-            const letter = cell.el.querySelector('.hex-text').textContent;
-
-            // اضبط الخلية الجديدة كـ pending
             selectedCell = cell;
             cell.isPending = true;
-            cell.el.classList.remove('green-fill', 'orange-fill');
             cell.el.classList.add('pending-fill');
-            cell.text.style.display = 'block';
-
-            // Broadcast selection to game
-            broadcastAction({
-                type: 'cell_selected',
-                cellId: cell.id
-            });
-
-            // اعرض السؤال
+            
+            const letter = cell.text.textContent;
             displayQuestion(letter);
-
-            // فعل أزرار الفرق
             setTeamButtonsEnabled(true);
             document.getElementById('btnUndo').disabled = false;
-
-            // احذف الselected من الأزرار
-            document.getElementById('btnTeam1').classList.remove('selected');
-            document.getElementById('btnTeam2').classList.remove('selected');
-
-            // حدث التعليمات
+            broadcastAction({ type: 'cell_selected', cellId: cell.id });
             updateInstruction();
         }
 
-        // اختيار الفريق - الخلية تنسب للفريق
+        function displayQuestion(letter) {
+            currentQuestionLetter = letter;
+            const questions = questionsData[letter] || [{question: "لا يوجد سؤال", answer: "لا يوجد"}];
+            const q = questions[0]; // Simple for now
+            document.getElementById('questionBox').innerHTML = `
+                <div class="question-letter">${letter}</div>
+                <div class="question-text">${q.question}</div>
+                <div class="question-answer" id="currentAnswer">الإجابة: ${q.answer}</div>
+            `;
+            document.getElementById('btnChangeQuestion').disabled = false;
+        }
+
         function selectTeam(team) {
             if (!selectedCell) return;
-
-            // احفظ معلومات الخلية قبل ما تغيّرها
             const cellId = selectedCell.id;
-
-            // احذف الpending state
+            selectedCell.owner = team;
             selectedCell.isPending = false;
             selectedCell.el.classList.remove('pending-fill');
-
-            // اضبط لون الفريق
-            selectedCell.owner = team;
             selectedCell.el.classList.add(team + '-fill');
             selectedCell.text.style.display = 'none';
-            selectedCell.el.classList.add('cell-pop');
 
-            // احذف الاختيار من الأزرار
-            document.getElementById('btnTeam1').classList.remove('selected');
-            document.getElementById('btnTeam2').classList.remove('selected');
-
-            // لغي تفعيل أزرار الفرق
             setTeamButtonsEnabled(false);
             document.getElementById('btnUndo').disabled = true;
             document.getElementById('btnChangeQuestion').disabled = true;
-
-            currentQuestionLetter = null;
-
-            // احفظ الخلية واخليها null للجولة القادمة
-            const answeredCell = selectedCell;
+            
+            broadcastAction({ type: 'team_selected', cellId: cellId, team: team });
             selectedCell = null;
-
-            // Broadcast to game screen BEFORE checking paths
-            broadcastAction({
-                type: 'team_selected',
-                cellId: cellId,
-                team: team
-            });
-
-            // افحص المسارات
-            checkWinPaths(answeredCell, team);
-
-            // احفظ لون الفريق للأداة
-            lastSelectedTeam = team;
-
-            // إعادة تعيين الجرس تلقائياً بعد اختيار الفريق
+            updateInstruction();
             resetBuzzFromPresenter();
         }
 
-        function getNeighbors(id) {
-            const row = Math.floor(id / 5);
-            const col = id % 5;
-
-            const neighbors = (row % 2 === 0)
-                ? [[-1, -1], [-1, 0], [0, -1], [0, 1], [1, -1], [1, 0]]
-                : [[-1, 0], [-1, 1], [0, -1], [0, 1], [1, 0], [1, 1]];
-
-            return neighbors
-                .map(([dr, dc]) => [row + dr, col + dc])
-                .filter(([r, c]) => r >= 0 && r < 5 && c >= 0 && c < 5)
-                .map(([r, c]) => r * 5 + c);
-        }
-
-        function hasPath(team) {
-            const visited = new Set();
-            const queue = [];
-
-            if (team === 'orange') {
-                for (let i = 0; i < 5; i++) {
-                    if (cells[i].owner === 'orange') {
-                        queue.push(i);
-                        visited.add(i);
-                    }
-                }
-            } else {
-                for (let i = 0; i < 5; i++) {
-                    const idx = i * 5 + 4;
-                    if (cells[idx].owner === 'green') {
-                        queue.push(idx);
-                        visited.add(idx);
-                    }
-                }
-            }
-
-            while (queue.length > 0) {
-                const current = queue.shift();
-
-                if (team === 'orange' && cells[current].row === 4) return true;
-                if (team === 'green' && cells[current].col === 0) return true;
-
-                getNeighbors(current).forEach(n => {
-                    if (!visited.has(n) && cells[n].owner === team) {
-                        visited.add(n);
-                        queue.push(n);
-                    }
-                });
-            }
-            return false;
-        }
-
-        function checkWinPaths(answeredCell, team) {
-            if (hasPath('orange') && !lastOrangePath) {
-                orangeScore++;
-                document.getElementById('score2').textContent = orangeScore;
-                lastOrangePath = true;
-
-                if (orangeScore >= settings.rounds) {
-                    setTimeout(() => {
-                        alert('🏆 ' + settings.team2 + ' فاز!');
-                        resetGame();
-                    }, 300);
-                } else {
-                    nextRound();
-                }
-            }
-
-            if (hasPath('green') && !lastGreenPath) {
-                greenScore++;
-                document.getElementById('score1').textContent = greenScore;
-                lastGreenPath = true;
-
-                if (greenScore >= settings.rounds) {
-                    setTimeout(() => {
-                        alert('🏆 ' + settings.team1 + ' فاز!');
-                        resetGame();
-                    }, 300);
-                } else {
-                    nextRound();
-                }
-            }
-        }
-
-        function nextRound() {
-            currentRound++;
-            buildBoard();
-            lastGreenPath = false;
-            lastOrangePath = false;
-            selectedCell = null;
-            setTeamButtonsEnabled(false);
-            document.getElementById('btnUndo').disabled = true;
-            document.getElementById('btnChangeQuestion').disabled = true;
-            updateInstruction();
-        }
-
-        // إلغاء التحديد - يرجع الخلية للون الأبيض
         function undoSelection() {
-            if (selectedCell) {
-                const cellId = selectedCell.id;
-                selectedCell.isPending = false;
-                selectedCell.el.classList.remove('pending-fill');
-                selectedCell = null;
-
-                // Broadcast unselect to game
-                broadcastAction({
-                    type: 'cell_unselected',
-                    cellId: cellId
-                });
-            }
-
-            setTeamButtonsEnabled(false);
-            document.getElementById('btnUndo').disabled = true;
-            document.getElementById('btnChangeQuestion').disabled = true;
-            document.getElementById('btnTeam1').classList.remove('selected');
-            document.getElementById('btnTeam2').classList.remove('selected');
-
-            // ارجع خانة السؤال للوضع الافتراضي
-            document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
-
-            currentQuestionLetter = null;
-        }
-
-        function resetGame() {
-            greenScore = 0;
-            orangeScore = 0;
-            currentRound = 1;
-            lastGreenPath = false;
-            lastOrangePath = false;
+            if (!selectedCell) return;
+            selectedCell.isPending = false;
+            selectedCell.el.classList.remove('pending-fill');
+            broadcastAction({ type: 'cell_unselected', cellId: selectedCell.id });
             selectedCell = null;
-
-            document.getElementById('score1').textContent = '0';
-            document.getElementById('score2').textContent = '0';
-
             setTeamButtonsEnabled(false);
             document.getElementById('btnUndo').disabled = true;
-            document.getElementById('btnChangeQuestion').disabled = true;
-            document.getElementById('btnTeam1').classList.remove('selected');
-            document.getElementById('btnTeam2').classList.remove('selected');
-
-            buildBoard();
+            document.getElementById('questionBox').innerHTML = `<div class="question-text">بانتظار اختيار حرف...</div>`;
             updateInstruction();
         }
 
-        function playBell() {
-            const btn = document.querySelector('.bell-btn');
-            btn.classList.add('bell-active');
-
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-
-                gain.gain.setValueAtTime(0.8, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 1.0);
-            } catch (e) {}
-
-            setTimeout(() => btn.classList.remove('bell-active'), 400);
+        function changeQuestion() {
+            if (!currentQuestionLetter) return;
+            displayQuestion(currentQuestionLetter); // Simple toggle for now
         }
 
-        // Initialize
-        updateAllLogos();
-        fetchQuestions();
-        buildBoard();
-
-        // Initialize hashes after buildBoard
-        setTimeout(() => {
-            if (letters.length > 0) {
-                lastLettersHash = letters.join(',');
-            }
-            if (cells.length > 0) {
-                lastCellsHash = cells.map(c => c.id + ':' + c.owner).join(',');
-            }
-        }, 100);
-
-        /* ===== REAL-TIME SYNC via localStorage ===== */
-        let lastLettersHash = '';
-        let lastCellsHash = '';
-
-        // Listen for game state changes
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'huroofGameState' && e.newValue) {
-                const state = JSON.parse(e.newValue);
-                applyGameState(state);
-            }
-            if (e.key === 'huroofLetters' && e.newValue) {
-                // Letters changed - rebuild board
-                const newLetters = JSON.parse(e.newValue);
-                const hash = newLetters.join(',');
-                if (hash !== lastLettersHash) {
-                    lastLettersHash = hash;
-                    letters = newLetters;
-                    rebuildBoardWithLetters();
-                }
-            }
-        });
-
-        // Poll for changes (for same-origin)
-        setInterval(() => {
-            // Check for settings changes
-            const settingsStr = localStorage.getItem('huroofSettings');
-            if (settingsStr) {
-                try {
-                    const newSettings = JSON.parse(settingsStr);
-                    if (JSON.stringify(newSettings) !== JSON.stringify(settings)) {
-                        settings = newSettings;
-                        updateAllLogos();
-                    }
-                } catch(e) {}
-            }
-
-            // Check for letter changes
-            const sharedLetters = localStorage.getItem('huroofLetters');
-            if (sharedLetters) {
-                const newLetters = JSON.parse(sharedLetters);
-                const hash = newLetters.join(',');
-                if (hash !== lastLettersHash && cells.length > 0) {
-                    lastLettersHash = hash;
-                    letters = newLetters;
-                    rebuildBoardWithLetters();
-                }
-            }
-
-            const stateStr = localStorage.getItem('huroofGameState');
-            if (stateStr) {
-                const state = JSON.parse(stateStr);
-                applyGameState(state);
-            }
-        }, 300);
-
-        function rebuildBoardWithLetters() {
-            const svg = document.getElementById('board');
-            svg.innerHTML = '';
-            cells = [];
-
-            const R = 38;
-            const w = Math.sqrt(3) * R;
-            const h = 2 * R;
-
-            const startX = 200 - 2 * w - 10;
-            const startY = 200 - 2 * h * 0.75 + 5;
-
-            for (let row = 0; row < 5; row++) {
-                for (let col = 0; col < 5; col++) {
-                    const x = startX + col * w + (row % 2 === 1 ? w / 2 : 0);
-                    const y = startY + row * h * 0.75;
-                    createHexagon(svg, x, y, letters[row * 5 + col], row * 5 + col);
-                }
-            }
+        /* ===== SYNC SYSTEM ===== */
+        function broadcastAction(action) {
+            const key = 'huroofPresenterActions_' + sessionId;
+            localStorage.setItem(key, JSON.stringify(action));
+            window.dispatchEvent(new StorageEvent('storage', { key: key, newValue: JSON.stringify(action) }));
         }
 
         function applyGameState(state) {
-            // Update settings (names)
-            if (state.settings) {
-                settings = { ...settings, ...state.settings };
+            if (state.settings) { settings = state.settings; updateAllLogos(); }
+            if (state.greenScore !== undefined) { greenScore = state.greenScore; document.getElementById('score1').textContent = greenScore; }
+            if (state.orangeScore !== undefined) { orangeScore = state.orangeScore; document.getElementById('score2').textContent = orangeScore; }
+            if (state.cells) {
+                state.cells.forEach(cData => {
+                    const cell = cells[cData.id];
+                    if (cell) {
+                        cell.owner = cData.owner;
+                        cell.isPending = cData.isPending;
+                        cell.el.classList.remove('green-fill', 'orange-fill', 'pending-fill');
+                        if (cell.owner) {
+                            cell.el.classList.add(cell.owner + '-fill');
+                            cell.text.style.display = 'none';
+                        } else if (cell.isPending) {
+                            cell.el.classList.add('pending-fill');
+                            cell.text.style.display = 'block';
+                        } else {
+                            cell.text.style.display = 'block';
+                        }
+                    }
+                });
+            }
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'huroofGameState_' + sessionId && e.newValue) {
+                applyGameState(JSON.parse(e.newValue));
+            }
+            if (e.key === 'huroofSettings_' + sessionId && e.newValue) {
+                settings = JSON.parse(e.newValue);
                 updateAllLogos();
             }
-
-            // Update scores
-            if (state.greenScore !== undefined) {
-                greenScore = state.greenScore;
-                document.getElementById('score1').textContent = greenScore;
+            if (e.key === 'huroofLetters_' + sessionId && e.newValue) {
+                letters = JSON.parse(e.newValue);
+                buildBoard();
             }
-            if (state.orangeScore !== undefined) {
-                orangeScore = state.orangeScore;
-                document.getElementById('score2').textContent = orangeScore;
+            if (e.key === 'playerBuzz_' + sessionId && e.newValue) {
+                const buzz = JSON.parse(e.newValue);
+                if (buzz.active) showBuzzerAlert(buzz);
             }
+            if (e.key === 'buzzerLocked_' + sessionId && e.newValue) {
+                const lock = JSON.parse(e.newValue);
+                if (lock.locked) showBuzzerAlert({ name: lock.playerName, teamName: lock.teamName, team: lock.team, active: true });
+            }
+        });
 
-            // Update cells
-            if (state.cells && state.cells.length > 0) {
-                const cellsHash = state.cells.map(c => c.id + ':' + c.owner + ':' + (c.isPending ? '1' : '0')).join(',');
-                if (cellsHash !== lastCellsHash) {
-                    lastCellsHash = cellsHash;
-                    state.cells.forEach(cellData => {
-                        const cell = cells[cellData.id];
-                        if (cell) {
-                            cell.owner = cellData.owner;
-                            cell.isPending = cellData.isPending || false;
-                            cell.el.classList.remove('green-fill', 'orange-fill', 'pending-fill');
-                            if (cell.owner) {
-                                cell.el.classList.add(cell.owner + '-fill');
-                                cell.text.style.display = 'none';
-                            } else if (cell.isPending) {
-                                cell.el.classList.add('pending-fill');
-                                cell.text.style.display = 'block';
-                            } else {
-                                cell.text.style.display = 'block';
-                            }
-                        }
-                    });
+        // Polling Fallback
+        setInterval(() => {
+            const stateStr = localStorage.getItem('huroofGameState_' + sessionId);
+            if (stateStr) {
+                const state = JSON.parse(stateStr);
+                if (!window.lastStateTime || state.timestamp > window.lastStateTime) {
+                    window.lastStateTime = state.timestamp;
+                    applyGameState(state);
                 }
             }
-        }
+        }, 500);
 
-        // Broadcast action to game screen
-        function broadcastAction(action) {
-            localStorage.setItem('huroofPresenterActions', JSON.stringify(action));
-            // Dispatch storage event for same-origin pages
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'huroofPresenterActions',
-                newValue: JSON.stringify(action)
-            }));
-        }
-
-        // Override resetGame to broadcast
-        const originalResetGame = resetGame;
-        resetGame = function() {
-            originalResetGame();
-            broadcastAction({ type: 'game_reset' });
-        };
-
-        /* ===== BUZZER ALERT HANDLING ===== */
+        /* ===== BUZZER ===== */
         let currentBuzz = null;
-        let lastSelectedTeam = null; // آخر فريق اختاره المقدم
-
-        // Listen for player buzz
-        setInterval(() => {
-            const buzzStr = localStorage.getItem('playerBuzz_' + sessionId);
-            if (buzzStr) {
-                try {
-                    const buzz = JSON.parse(buzzStr);
-                    if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
-                        currentBuzz = buzz;
-                        showBuzzerAlert(buzz);
-                    }
-                } catch(e) {}
-            }
-        }, 200);
-
         function showBuzzerAlert(buzz) {
-            const container = document.getElementById('buzzerAlert');
-            const teamEl = document.getElementById('buzzerAlertTeam');
-            const playerEl = document.getElementById('buzzerAlertPlayer');
+            const alert = document.getElementById('buzzerAlert');
+            document.getElementById('buzzerAlertTeam').textContent = buzz.teamName;
+            document.getElementById('buzzerAlertTeam').className = 'buzzer-alert-team ' + (buzz.team || 'green');
+            document.getElementById('buzzerAlertPlayer').textContent = buzz.name;
+            alert.classList.add('active');
+            playBell();
+        }
 
-            // Remove previous team classes
-            container.classList.remove('green', 'orange');
+        function resetBuzzFromPresenter() {
+            document.getElementById('buzzerAlert').classList.remove('active');
+            localStorage.removeItem('playerBuzz_' + sessionId);
+            localStorage.removeItem('buzzerLocked_' + sessionId);
+            const resetKey = 'resetBuzz_' + sessionId;
+            localStorage.setItem(resetKey, JSON.stringify({ reset: true, timestamp: Date.now() }));
+            window.dispatchEvent(new StorageEvent('storage', { key: resetKey, newValue: localStorage.getItem(resetKey) }));
+            localStorage.removeItem(resetKey);
+        }
 
-            teamEl.textContent = buzz.teamName;
-            teamEl.className = 'buzzer-alert-team ' + buzz.team;
-            playerEl.textContent = buzz.name;
-
-            // Use last selected team color for container, fallback to buzz team
-            const containerTeam = lastSelectedTeam || buzz.team;
-            container.classList.add(containerTeam);
-            container.classList.add('active');
-
-            // Play alert sound (without triggering bell-btn animation)
+        function playBell() {
+            const btn = document.getElementById('bellBtn');
+            btn.classList.add('bell-active');
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.8, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 1.0);
-            } catch (e) {}
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                osc.start(); osc.stop(ctx.currentTime + 0.5);
+            } catch(e){}
+            setTimeout(() => btn.classList.remove('bell-active'), 500);
         }
 
-        function resetBuzzFromPresenter() {
-            // Hide alert but keep color class
-            document.getElementById('buzzerAlert').classList.remove('active');
-            currentBuzz = null;
-
-            // Reset buzz in localStorage
-            localStorage.removeItem('playerBuzz_' + sessionId);
-            localStorage.removeItem('buzzerLocked_' + sessionId);
-
-            // Broadcast reset to all players
-            localStorage.setItem('resetBuzz_' + sessionId, JSON.stringify({ reset: true, timestamp: Date.now() }));
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'resetBuzz_' + sessionId,
-                newValue: JSON.stringify({ reset: true, timestamp: Date.now() })
-            }));
-            localStorage.removeItem('resetBuzz_' + sessionId);
+        function playBellManually() {
+            playBell();
+            // Optional: broadcast bell to other screens
         }
 
-        // Listen for buzz lock events
-        window.addEventListener('storage', function(e) {
-            if (e.key === ('buzzerLocked_' + sessionId) && e.newValue) {
-                try {
-                    const lock = JSON.parse(e.newValue);
-                    if (lock.locked && (!currentBuzz || currentBuzz.playerName !== lock.playerName)) {
-                        currentBuzz = {
-                            name: lock.playerName,
-                            teamName: lock.teamName,
-                            timestamp: lock.timestamp,
-                            active: true
-                        };
-                        showBuzzerAlert(currentBuzz);
-                    }
-                } catch(e) {}
-            }
+        /* ===== INIT ===== */
+        fetchQuestions().then(() => {
+            const storedSettings = localStorage.getItem('huroofSettings_' + sessionId);
+            if (storedSettings) settings = JSON.parse(storedSettings);
+            updateAllLogos();
+            buildBoard();
+            updateInstruction();
         });
     </script>
 </body>
