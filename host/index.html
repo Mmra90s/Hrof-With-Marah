@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شاشة المقدم - حروف مع مراح</title>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <script src="../firebase-config.js"></script>
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -1242,7 +1246,27 @@
         let lastLettersHash = '';
         let lastCellsHash = '';
 
-        // Listen for game state changes
+        // Listen for game state changes from Firebase
+        firebaseListener('games/' + sessionId + '/gameState', (state) => {
+            if (state) applyGameState(state);
+        });
+
+        firebaseListener('games/' + sessionId + '/letters', (newLetters) => {
+            if (newLetters) {
+                const hash = newLetters.join(',');
+                if (hash !== lastLettersHash) {
+                    lastLettersHash = hash;
+                    letters = newLetters;
+                    rebuildBoardWithLetters();
+                }
+            }
+        });
+
+        firebaseListener('games/' + sessionId + '/playerBuzz', (buzz) => {
+            if (buzz && buzz.active) showBuzzerAlert(buzz);
+        });
+
+        // Fallback: Listen for storage changes from localStorage
         window.addEventListener('storage', function(e) {
             if (e.key === 'huroofGameState_' + sessionId && e.newValue) {
                 const state = JSON.parse(e.newValue);
@@ -1363,7 +1387,11 @@
 
         // Broadcast action to game screen
         function broadcastAction(action) {
-            localStorage.setItem('huroofPresenterActions_' + sessionId, JSON.stringify(action));
+            firebaseUpdate('games/' + sessionId + '/presenterActions', action).catch(err => {
+                console.error('Firebase broadcast error:', err);
+                // Fallback to localStorage
+                localStorage.setItem('huroofPresenterActions_' + sessionId, JSON.stringify(action));
+            });
             // Dispatch storage event for same-origin pages
             window.dispatchEvent(new StorageEvent('storage', {
                 key: 'huroofPresenterActions_' + sessionId,
@@ -1382,7 +1410,15 @@
         let currentBuzz = null;
         let lastSelectedTeam = null; // آخر فريق اختاره المقدم
 
-        // Listen for player buzz
+        // Listen for player buzz from Firebase
+        firebaseListener('games/' + sessionId + '/playerBuzz', (buzz) => {
+            if (buzz && buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
+                currentBuzz = buzz;
+                showBuzzerAlert(buzz);
+            }
+        });
+
+        // Fallback: Listen for player buzz from localStorage
         setInterval(() => {
             const buzzStr = localStorage.getItem('playerBuzz_' + sessionId);
             if (buzzStr) {
@@ -1435,17 +1471,21 @@
             document.getElementById('buzzerAlert').classList.remove('active');
             currentBuzz = null;
 
-            // Reset buzz in localStorage
-            localStorage.removeItem('playerBuzz_' + sessionId);
-            localStorage.removeItem('buzzerLocked_' + sessionId);
+            // Reset buzz in Firebase
+            firebaseRemove('games/' + sessionId + '/playerBuzz').catch(err => {
+                console.error('Firebase reset error:', err);
+                // Fallback to localStorage
+                localStorage.removeItem('playerBuzz_' + sessionId);
+            });
+            firebaseRemove('games/' + sessionId + '/buzzerLocked').catch(err => {
+                // Fallback
+                localStorage.removeItem('buzzerLocked_' + sessionId);
+            });
 
             // Broadcast reset to all players
-            localStorage.setItem('resetBuzz_' + sessionId, JSON.stringify({ reset: true, timestamp: Date.now() }));
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'resetBuzz_' + sessionId,
-                newValue: JSON.stringify({ reset: true, timestamp: Date.now() })
-            }));
-            localStorage.removeItem('resetBuzz_' + sessionId);
+            firebaseUpdate('games/' + sessionId + '/resetBuzz', { reset: true, timestamp: Date.now() }).catch(err => {
+                localStorage.setItem('resetBuzz_' + sessionId, JSON.stringify({ reset: true, timestamp: Date.now() }));
+            });
         }
 
         // Listen for buzz lock events
