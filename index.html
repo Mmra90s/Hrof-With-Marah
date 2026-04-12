@@ -1089,6 +1089,10 @@
         showStart();
         // Sync settings to presenter
         localStorage.setItem('huroofSettings_' + sessionId, JSON.stringify(settings));
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'huroofSettings_' + sessionId,
+            newValue: JSON.stringify(settings)
+        }));
     }
 
     /* ===== GAME ===== */
@@ -1181,6 +1185,10 @@
 
         // Store letters for presenter sync
         localStorage.setItem('huroofLetters_' + sessionId, JSON.stringify(letters));
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'huroofLetters_' + sessionId,
+            newValue: JSON.stringify(letters)
+        }));
 
         const R=50, hw=Math.sqrt(3)*R, hh=2*R;
         const sx=250-2*hw, sy=250-2*hh*0.75;
@@ -1372,8 +1380,8 @@
         closeOptions();
 
         // New format: domain/host/?session=ID
-        const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const presenterUrl = baseUrl + 'host/?session=' + sessionId;
+        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
 
         // Open presenter screen in new window
         const presenterWindow = window.open(presenterUrl, '_blank', 'width=800,height=900');
@@ -1395,8 +1403,8 @@
         closeOptions();
 
         // New format: domain/player/?session=ID
-        const baseUrl = window.location.protocol + "//" + window.location.host + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-        const playerUrl = baseUrl + 'player/?session=' + sessionId;
+        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
 
         // Open player screen in new window
         const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
@@ -1499,6 +1507,11 @@
             timestamp: Date.now()
         };
         localStorage.setItem('huroofGameState_' + sessionId, JSON.stringify(state));
+        // Force sync for same-window listeners
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'huroofGameState_' + sessionId,
+            newValue: JSON.stringify(state)
+        }));
     }
 
     // Listen for storage changes (sync from presenter)
