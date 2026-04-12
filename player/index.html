@@ -547,7 +547,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         let sessionId = urlParams.get('session');
         if (!sessionId) {
-            sessionId = 'default'; // Fallback
+            sessionId = Math.random().toString(36).substring(2, 11);
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?session=' + sessionId;
+            window.history.replaceState({path:newUrl}, '', newUrl);
         }
 
         /* ===== Supabase Setup ===== */
