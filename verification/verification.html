@@ -10,12 +10,12 @@
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
-            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXY.otf' );
+            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXY.otf');
         }
 
         @font-face {
             font-family: 'AA-GALAXY-BOLD';
-            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXYBold.otf' );
+            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXYBold.otf');
         }
 
         * {
@@ -110,6 +110,7 @@
         .title-section {
             text-align: center;
             margin-bottom: 3rem;
+            animation: fadeIn 0.6s ease-out;
         }
 
         .title-section h1 {
@@ -132,6 +133,7 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             padding: 2rem;
             margin-bottom: 3rem;
+            animation: slideUp 0.6s ease-out;
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -145,6 +147,7 @@
             font-weight: 600;
             color: #512b70;
             margin-bottom: 1rem;
+            text-align: right;
         }
 
         /* Game Display */
@@ -188,6 +191,31 @@
             width: 100%;
         }
 
+        .country-select-wrapper {
+            flex: 0 0 auto;
+            width: 90px;
+        }
+
+        .country-select {
+            width: 100%;
+            padding: 0.75rem 0.25rem;
+            background-color: #f3f4f6;
+            border-radius: 0.5rem;
+            border: 2px solid #e2e8f0;
+            color: #512b70;
+            font-weight: 500;
+            font-family: 'AA-GALAXY', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23512b70' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 0.4rem center;
+            padding-left: 1.2rem;
+            text-align: center;
+        }
+
         .phone-input {
             flex: 1;
             min-width: 0;
@@ -198,7 +226,7 @@
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             color: #512b70;
-            text-align: center;
+            text-align: right;
         }
 
         .phone-input:focus {
@@ -230,14 +258,14 @@
             transform: translateY(-2px);
         }
 
-        .secondary-button {
+        .buy-game-button {
             width: 100%;
             padding: 0.75rem 1rem;
-            border: 2px solid #fdd835;
-            background-color: white;
-            color: #fdd835;
+            background: #fdd835;
+            color: #512b70;
+            border: none;
             border-radius: 0.5rem;
-            font-weight: 600;
+            font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -245,9 +273,95 @@
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            box-shadow: 0 4px 12px rgba(253, 216, 53, 0.3);
         }
 
-        /* Footer */
+        .buy-game-button:hover {
+            background: #fbc02d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 216, 53, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #512b70;
+            margin-bottom: 1rem;
+        }
+
+        .modal-text {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .modal-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-play { background: #4caf50; color: white; }
+        .btn-buy { background: #fdd835; color: #512b70; }
+        .btn-close { background: #eee; color: #666; }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            animation: slideUp 0.6s ease-out 0.1s both;
+        }
+
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+        .feature-card h3 { color: #512b70; margin-bottom: 0.5rem; }
+        .feature-card p { color: #666; font-size: 0.9rem; }
+
         footer {
             background-color: rgba(44, 27, 77, 0.9);
             padding: 2rem 1rem;
@@ -255,10 +369,11 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .footer-bottom p {
-            font-size: 0.875rem;
-            color: #b39ddb;
-        }
+        .footer-bottom p { font-size: 0.875rem; color: #b39ddb; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -286,38 +401,90 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">رقم الجوال (بدون مفتاح الدولة )</label>
+                    <label class="form-label">رقم الجوال</label>
                     <div class="phone-input-group">
-                        <input type="tel" class="phone-input" id="phoneInput" placeholder="مثال: 0540364191" />
+                        <div class="country-select-wrapper">
+                            <select class="country-select" id="countrySelect" onchange="updatePlaceholder()">
+                                <option value="+966">🇸🇦 +966</option>
+                                <option value="+971">🇦🇪 +971</option>
+                                <option value="+965">🇰🇼 +965</option>
+                                <option value="+974">🇶🇦 +974</option>
+                                <option value="+973">🇧🇭 +973</option>
+                                <option value="+968">🇴🇲 +968</option>
+                                <option value="+20">🇪🇬 +20</option>
+                                <option value="+962">🇯🇴 +962</option>
+                                <option value="+961">🇱🇧 +961</option>
+                                <option value="+964">🇮🇶 +964</option>
+                                <option value="+970">🇵🇸 +970</option>
+                                <option value="+212">🇲🇦 +212</option>
+                                <option value="+213">🇩🇿 +213</option>
+                                <option value="+216">🇹🇳 +216</option>
+                                <option value="+218">🇱🇾 +218</option>
+                                <option value="+249">🇸🇩 +249</option>
+                                <option value="+967">🇾🇪 +967</option>
+                                <option value="+963">🇸🇾 +963</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+90">🇹🇷 +90</option>
+                            </select>
+                        </div>
+                        <input type="tel" class="phone-input" id="phoneInput" placeholder="05xxxxxxxx" />
                     </div>
                 </div>
 
                 <button class="verify-button" id="verifyBtn" onclick="handleVerify()">تحقق ودخول</button>
-                <a href="https://salla.sa/marah_games" class="secondary-button">🛒 اشترِ اللعبة</a>
+                <a href="https://www.marahgames.com/product/hrof" class="buy-game-button">🛒 شراء اللعبة الآن</a>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card"><div class="feature-icon">🎮</div><h3>لعبة تفاعلية</h3><p>تجربة لعب ممتعة وتفاعلية تجمع بين الحروف والكلمات</p></div>
+                <div class="feature-card"><div class="feature-icon">🔄</div><h3>تحديثات مستمرة</h3><p>نحصل على تحديثات منتظمة وميزات جديدة باستمرار</p></div>
+                <div class="feature-card"><div class="feature-icon">👨‍👩‍👧‍👦</div><h3>للعائلة والأصدقاء</h3><p>لعبة مناسبة للجميع تجمع العائلة والأصدقاء معاً</p></div>
+                <div class="feature-card"><div class="feature-icon">⚡</div><h3>تفعيل فوري</h3><p>تفعيل فوري وسهل بدون تأخير أو تعقيدات</p></div>
             </div>
         </div>
     </main>
 
-    <footer>
-        <div class="footer-bottom">
-            <p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p>
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">✅</div>
+            <h2 class="modal-title">تم التحقق بنجاح!</h2>
+            <p class="modal-text">أهلاً بك مجدداً، يمكنك الآن الاستمتاع باللعب.</p>
+            <a href="../index.html" class="modal-btn btn-play">العب الآن</a>
         </div>
-    </footer>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal-content">
+            <div class="modal-icon">❌</div>
+            <h2 class="modal-title">لم تقم بشراء اللعبة</h2>
+            <p class="modal-text">يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.</p>
+            <a href="https://www.marahgames.com/product/hrof" class="modal-btn btn-buy">شراء اللعبة الآن</a>
+            <button class="modal-btn btn-close" onclick="closeModal('errorModal')">إغلاق</button>
+        </div>
+    </div>
+
+    <footer><div class="footer-bottom"><p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p></div></footer>
 
     <script>
-        const SALES_FILE = '../sales.csv'; // ملف الأرقام في الجذر
+        const SALES_FILE = '../sales.csv'; 
         const COOKIE_NAME = 'game_verified';
-        const COOKIE_DAYS = 7; // مدة بقاء التحقق
+        const COOKIE_DAYS = 7;
 
-        async function handleVerify( ) {
+        function updatePlaceholder() {
+            const country = document.getElementById('countrySelect').value;
+            const input = document.getElementById('phoneInput');
+            input.placeholder = (country === '+966') ? '05xxxxxxxx' : 'ادخل رقم الهاتف';
+        }
+
+        async function handleVerify() {
             const phoneInput = document.getElementById('phoneInput');
             const phone = phoneInput.value.trim();
             const btn = document.getElementById('verifyBtn');
 
-            if (!phone) {
-                alert('الرجاء إدخال رقم الجوال');
-                return;
-            }
+            if (!phone) { alert('الرجاء إدخال رقم الجوال'); return; }
 
             btn.disabled = true;
             btn.textContent = 'جاري التحقق...';
@@ -329,10 +496,9 @@
 
                 if (numbers.includes(phone)) {
                     setCookie(COOKIE_NAME, 'true', COOKIE_DAYS);
-                    alert('✅ تم التحقق بنجاح! استمتع باللعب.');
-                    window.location.href = '../index.html'; // العودة للجذر
+                    showModal('successModal');
                 } else {
-                    alert('❌ الرقم غير موجود. الرجاء التحقق من شراء اللعبة.');
+                    showModal('errorModal');
                     btn.disabled = false;
                     btn.textContent = 'تحقق ودخول';
                 }
@@ -351,20 +517,14 @@
             document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
 
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0)==' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
+        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         document.getElementById('phoneInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') handleVerify();
         });
+
+        updatePlaceholder();
     </script>
 </body>
 </html>
