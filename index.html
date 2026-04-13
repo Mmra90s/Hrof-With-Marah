@@ -1013,7 +1013,23 @@
     </div>
 </div>
 
-<script>
+<script type="module">
+    /* ===== FIREBASE CONFIG ===== */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAEkMA_InJKZc52yrjv9Ql59hmPMGgTI90",
+        authDomain: "hrof-with-marah-bb9bc.firebaseapp.com",
+        databaseURL: "https://hrof-with-marah-bb9bc-default-rtdb.firebaseio.com",
+        projectId: "hrof-with-marah-bb9bc",
+        storageBucket: "hrof-with-marah-bb9bc.firebasestorage.app",
+        messagingSenderId: "840796662556",
+        appId: "1:840796662556:web:35298933d2c9af738168d9"
+    };
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getDatabase(fbApp);
+
     /* ===== HEX PATTERN ===== */
     function drawHexPattern(svgEl) {
         const R = 50, w = Math.sqrt(3)*R, h = 2*R;
@@ -1043,6 +1059,15 @@
         window.history.replaceState({path:newUrl}, '', newUrl);
     }
 
+    /* ===== FIREBASE REFS ===== */
+    const sessionRef   = () => ref(db, 'sessions/' + sessionId);
+    const settingsRef  = () => ref(db, 'sessions/' + sessionId + '/settings');
+    const lettersRef   = () => ref(db, 'sessions/' + sessionId + '/letters');
+    const gameStateRef = () => ref(db, 'sessions/' + sessionId + '/gameState');
+    const presenterActionsRef = () => ref(db, 'sessions/' + sessionId + '/presenterAction');
+    const buzzRef      = () => ref(db, 'sessions/' + sessionId + '/buzz');
+    const buzzResetRef = () => ref(db, 'sessions/' + sessionId + '/buzzReset');
+
     /* ===== STATE ===== */
     let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
     const roundWords = ['','الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
@@ -1060,7 +1085,6 @@
         document.querySelector('.hex-bg').style.display = 'block';
         document.getElementById('options-btn').style.display = 'none';
         closeOptions();
-        // Restart animations
         s.querySelectorAll('.logo-word,.menu-btn').forEach(el=>{
             el.style.animation='none'; void el.offsetWidth; el.style.animation='';
         });
@@ -1087,17 +1111,14 @@
         settings.team2 = document.getElementById('inp-team2').value.trim() || 'الفريق الثاني';
         updateAllLogos();
         showStart();
-        // Sync settings to presenter
-        localStorage.setItem('huroofSettings_' + sessionId, JSON.stringify(settings));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'huroofSettings_' + sessionId,
-            newValue: JSON.stringify(settings)
-        }));
+        // Sync settings to Firebase
+        set(settingsRef(), settings);
     }
 
     /* ===== GAME ===== */
     let orangeScore=0, greenScore=0, currentRound=1, cells=[], lastOP=false, lastGP=false;
     let pendingCell = null;
+    let _ignorePresenterAction = false;
 
     function startGame() {
         orangeScore=0; greenScore=0; currentRound=1;
@@ -1127,11 +1148,11 @@
         if (!pendingCell) return;
         const cell = pendingCell;
         hideTeamChoice();
-
         cell.owner = team;
         cell.el.classList.add(team + '-fill');
         cell.text.style.display = 'none';
         checkPaths();
+        syncGameState();
     }
 
     /* ===== TRANSITION ===== */
@@ -1141,30 +1162,15 @@
         const transRound = document.getElementById('trans-round');
         document.getElementById('trans-round-word').textContent = roundWords[roundNum]||roundNum;
         document.querySelector('.hex-bg').style.display = 'block';
-
-        // Reset state
         transLogo.classList.remove('zooming');
         transRound.classList.remove('popping','fading');
         transLogo.style.opacity='1'; transLogo.style.transform='scale(1)';
         transRound.style.opacity='0';
         overlay.classList.add('active');
-
-        // Phase 1 — Logo zooms in (0ms)
         void overlay.offsetWidth;
         transLogo.classList.add('zooming');
-
-        // Phase 2 — Round text pops (1300ms)
-        setTimeout(()=>{
-            transRound.classList.add('popping');
-        }, 1300);
-
-        // Phase 3 — Round text fades (2800ms)
-        setTimeout(()=>{
-            transRound.classList.remove('popping');
-            transRound.classList.add('fading');
-        }, 2800);
-
-        // Phase 4 — Show game (3700ms)
+        setTimeout(()=>{ transRound.classList.add('popping'); }, 1300);
+        setTimeout(()=>{ transRound.classList.remove('popping'); transRound.classList.add('fading'); }, 2800);
         setTimeout(()=>{
             overlay.classList.remove('active');
             document.querySelector('.hex-bg').style.display='none';
@@ -1183,13 +1189,21 @@
         const letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"]
             .sort(()=>Math.random()-0.5);
 
-        // Store letters for presenter sync
-        localStorage.setItem('huroofLetters_' + sessionId, JSON.stringify(letters));
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'huroofLetters_' + sessionId,
-            newValue: JSON.stringify(letters)
-        }));
+        // Store letters in Firebase
+        set(lettersRef(), letters);
 
+        const R=50, hw=Math.sqrt(3)*R, hh=2*R;
+        const sx=250-2*hw, sy=250-2*hh*0.75;
+        for(let row=0;row<5;row++) for(let col=0;col<5;col++) {
+            const x=sx+col*hw+(row%2===1?hw/2:0), y=sy+row*hh*0.75;
+            createHex(svg,x,y,letters[row*5+col],row*5+col);
+        }
+        syncGameState();
+    }
+
+    function buildBoardFromLetters(letters) {
+        const svg = document.getElementById('board');
+        svg.innerHTML=''; cells=[]; lastOP=false; lastGP=false;
         const R=50, hw=Math.sqrt(3)*R, hh=2*R;
         const sx=250-2*hw, sy=250-2*hh*0.75;
         for(let row=0;row<5;row++) for(let col=0;col<5;col++) {
@@ -1211,10 +1225,7 @@
         g.appendChild(poly); g.appendChild(text);
         const cell={el:g,owner:null,text,row,col,id};
         cells.push(cell);
-        g.onclick=()=>{
-            if(cell.owner) return;
-            showTeamChoice(cell);
-        };
+        g.onclick=()=>{ if(cell.owner) return; showTeamChoice(cell); };
         svg.appendChild(g);
     }
 
@@ -1247,21 +1258,12 @@
         const winTeam = document.getElementById('win-team-name');
         winTeam.textContent = name;
         winTeam.className = 'win-team ' + team;
-
-        // Reset confetti animations
         document.querySelectorAll('.confetti').forEach(c => {
-            c.style.animation = 'none';
-            void c.offsetWidth;
-            c.style.animation = '';
+            c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
         });
-
         const overlay = document.getElementById('round-win-overlay');
         overlay.classList.add('active');
-
-        // Auto-dismiss after 3 seconds
-        setTimeout(() => {
-            overlay.classList.remove('active');
-        }, 3000);
+        setTimeout(() => { overlay.classList.remove('active'); }, 3000);
     }
 
     function showGameOver(winner) {
@@ -1269,13 +1271,10 @@
         const winnerEl = document.getElementById('game-winner-name');
         winnerEl.textContent = winnerName;
         winnerEl.className = 'winner-name ' + winner;
-
         document.getElementById('final-label-team1').textContent = settings.team1;
         document.getElementById('final-label-team2').textContent = settings.team2;
         document.getElementById('final-score-green').textContent = greenScore;
         document.getElementById('final-score-orange').textContent = orangeScore;
-
-        // Reset animations
         const overlay = document.getElementById('game-over-overlay');
         overlay.querySelector('.trophy-icon').style.animation = 'none';
         overlay.querySelector('.winner-text').style.animation = 'none';
@@ -1288,7 +1287,6 @@
         overlay.querySelector('.winner-name').style.animation = '';
         overlay.querySelector('.final-score-container').style.animation = '';
         overlay.querySelector('.play-again-btn').style.animation = '';
-
         overlay.classList.add('active');
     }
 
@@ -1298,7 +1296,6 @@
     }
 
     function checkWin(team) {
-        const name=team==="green"?settings.team1:settings.team2;
         const score=team==="green"?greenScore:orangeScore;
         if(score>=settings.rounds){
             showGameOver(team);
@@ -1308,7 +1305,6 @@
                 currentRound++;
                 document.getElementById('round-label').textContent=roundWords[currentRound]||currentRound;
                 buildBoard();
-                // Wipe transition to next round
                 showNextRoundWipe(currentRound);
             }, 3200);
         }
@@ -1321,23 +1317,15 @@
         wipeRight.className = 'wipe-right';
         document.body.appendChild(wipeLeft);
         document.body.appendChild(wipeRight);
-
         setTimeout(() => {
-            wipeLeft.remove();
-            wipeRight.remove();
+            wipeLeft.remove(); wipeRight.remove();
             runStartTransition(roundNum);
         }, 700);
     }
 
     /* ===== OPTIONS ===== */
-    function toggleOptions() {
-        const dd = document.getElementById('options-dropdown');
-        dd.classList.toggle('open');
-    }
-    function closeOptions() {
-        document.getElementById('options-dropdown').classList.remove('open');
-    }
-    // Close dropdown if clicking outside
+    function toggleOptions() { document.getElementById('options-dropdown').classList.toggle('open'); }
+    function closeOptions() { document.getElementById('options-dropdown').classList.remove('open'); }
     document.addEventListener('click', function(e) {
         const btn = document.getElementById('options-btn');
         const dd  = document.getElementById('options-dropdown');
@@ -1356,38 +1344,22 @@
             osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
             gain.gain.setValueAtTime(0.8, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 1.0);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.0);
         } catch(e) {}
     }
 
     /* ===== NEW GAME ===== */
-    function confirmNewGame() {
-        document.getElementById('new-game-modal').classList.add('active');
-    }
+    function confirmNewGame() { document.getElementById('new-game-modal').classList.add('active'); }
+    function closeNewGameModal() { document.getElementById('new-game-modal').classList.remove('active'); }
+    function newGameConfirmed() { closeNewGameModal(); startGame(); }
 
-    function closeNewGameModal() {
-        document.getElementById('new-game-modal').classList.remove('active');
-    }
-
-    function newGameConfirmed() {
-        closeNewGameModal();
-        startGame();
-    }
-
-    /* ===== PRESENTER SCREEN - Open in new window ===== */
+    /* ===== PRESENTER / PLAYER SCREEN ===== */
     function showPresenterModal() {
         closeOptions();
-
-        // New format: domain/host/?session=ID
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
-
-        // Open presenter screen in new window
         const presenterWindow = window.open(presenterUrl, '_blank', 'width=800,height=900');
-
         if (!presenterWindow) {
-            // If popup blocked, show modal with link
             const modal = document.getElementById('presenter-modal');
             modal.classList.add('active');
             document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
@@ -1398,19 +1370,12 @@
         }
     }
 
-    /* ===== PLAYER SCREEN - Open in new window ===== */
     function showPlayerScreen() {
         closeOptions();
-
-        // New format: domain/player/?session=ID
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
-
-        // Open player screen in new window
         const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
-
         if (!playerWindow) {
-            // If popup blocked, show modal with link
             const modal = document.getElementById('presenter-modal');
             modal.classList.add('active');
             document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
@@ -1421,70 +1386,42 @@
         }
     }
 
-    function closePresenterModal() {
-        document.getElementById('presenter-modal').classList.remove('active');
-    }
+    function closePresenterModal() { document.getElementById('presenter-modal').classList.remove('active'); }
 
-    // Simple QR Code generation (using canvas)
     function generateQRCode(text) {
         const canvas = document.getElementById('presenter-qr-code');
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Use a QR code library via CDN
         const qrContainer = document.createElement('div');
         qrContainer.style.display = 'none';
         document.body.appendChild(qrContainer);
-
-        // Load QRCode.js from CDN
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
         script.onload = function() {
-            const qr = new QRCode(qrContainer, {
-                text: text,
-                width: 180,
-                height: 180,
-                colorDark: '#6a3093',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.M
-            });
-
-            // Wait for QR code to be generated
+            const qr = new QRCode(qrContainer, { text, width:180, height:180, colorDark:'#6a3093', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M });
             setTimeout(() => {
                 const qrImg = qrContainer.querySelector('img');
-                if (qrImg) {
-                    ctx.drawImage(qrImg, 0, 0, 180, 180);
-                }
+                if (qrImg) ctx.drawImage(qrImg, 0, 0, 180, 180);
                 qrContainer.remove();
             }, 100);
         };
         script.onerror = function() {
-            // Fallback: draw a simple placeholder
-            ctx.fillStyle = '#6a3093';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
+            ctx.fillStyle = '#6a3093'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle='white'; ctx.font='12px Arial'; ctx.textAlign='center';
             ctx.fillText('تعذر إنشاء الباركود', canvas.width/2, canvas.height/2);
-            qrContainer.remove();
         };
         document.head.appendChild(script);
     }
 
-    // Close modal on click outside
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('presenter-modal');
         const content = modal.querySelector('.presenter-modal-content');
-        if (modal.classList.contains('active') && !content.contains(e.target)) {
-            closePresenterModal();
-        }
+        if (modal.classList.contains('active') && !content.contains(e.target)) closePresenterModal();
     });
 
-    /* ===== REAL-TIME SYNC via Supabase Bridge ===== */
-    // All synchronization is now handled by supabase-bridge.js
-    // No local polling needed - Realtime updates are pushed automatically
+    /* ===== FIREBASE SYNC ===== */
 
-    // Sync state to localStorage for presenter screen to read
+    // Sync game state to Firebase
     function syncGameState() {
         const state = {
             settings: settings,
@@ -1494,42 +1431,31 @@
             cells: cells.map(c => ({
                 id: c.id,
                 letter: c.el.querySelector('.hex-text').textContent,
-                owner: c.owner,
+                owner: c.owner || null,
                 isPending: c.isPending || false
             })),
             timestamp: Date.now()
         };
-        localStorage.setItem('huroofGameState_' + sessionId, JSON.stringify(state));
-        // Force sync for same-window listeners
-        window.dispatchEvent(new StorageEvent('storage', {
-            key: 'huroofGameState_' + sessionId,
-            newValue: JSON.stringify(state)
-        }));
+        set(gameStateRef(), state);
     }
 
-    // Listen for storage changes (sync from presenter via Supabase Bridge)
-    window.addEventListener('storage', function(e) {
-        if (e.key === ('huroofPresenterActions_' + sessionId) && e.newValue) {
-            const action = JSON.parse(e.newValue);
-            handlePresenterAction(action);
-            // Clear the action after handling
-            localStorage.removeItem('huroofPresenterActions_' + sessionId);
-        }
+    // Listen for presenter actions from Firebase
+    onValue(presenterActionsRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const action = snapshot.val();
+        if (!action || !action.type) return;
+        // Ignore actions we just sent ourselves (avoid echo)
+        if (_ignorePresenterAction) return;
+        handlePresenterAction(action);
     });
 
     function handlePresenterAction(action) {
         switch(action.type) {
             case 'cell_selected':
-                // Handle cell selection from presenter (show yellow pending)
                 if (action.cellId !== undefined) {
-                    // Clear any previous pending
                     cells.forEach(c => {
-                        if (c.isPending) {
-                            c.isPending = false;
-                            c.el.classList.remove('pending-fill');
-                        }
+                        if (c.isPending) { c.isPending = false; c.el.classList.remove('pending-fill'); }
                     });
-                    // Set new pending
                     const cell = cells[action.cellId];
                     if (cell && !cell.owner) {
                         cell.isPending = true;
@@ -1538,13 +1464,9 @@
                 }
                 break;
             case 'cell_unselected':
-                // Handle cell unselection (remove pending)
                 if (action.cellId !== undefined) {
                     const cell = cells[action.cellId];
-                    if (cell) {
-                        cell.isPending = false;
-                        cell.el.classList.remove('pending-fill');
-                    }
+                    if (cell) { cell.isPending = false; cell.el.classList.remove('pending-fill'); }
                 }
                 break;
             case 'team_selected':
@@ -1567,94 +1489,100 @@
         }
     }
 
-    // Override chooseTeam to sync state
-    const originalChooseTeam = chooseTeam;
-    chooseTeam = function(team) {
-        originalChooseTeam(team);
-        syncGameState();
-    };
+    // Listen for settings changes from host
+    onValue(settingsRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const newSettings = snapshot.val();
+        if (!newSettings) return;
+        const changed = JSON.stringify(newSettings) !== JSON.stringify(settings);
+        if (changed) {
+            settings = { ...settings, ...newSettings };
+            updateAllLogos();
+            document.getElementById('label-team1').textContent = settings.team1;
+            document.getElementById('label-team2').textContent = settings.team2;
+            document.getElementById('modal-team1').textContent = settings.team1;
+            document.getElementById('modal-team2').textContent = settings.team2;
+        }
+    });
 
-    // Override startGame to sync state
-    const originalStartGame = startGame;
-    startGame = function() {
-        originalStartGame();
-        syncGameState();
-    };
-
-    // Initial sync
-    syncGameState();
+    // Listen for letters changes from host (rebuild board with same letters)
+    let _lastLettersHash = '';
+    onValue(lettersRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const newLetters = snapshot.val();
+        if (!newLetters) return;
+        const hash = newLetters.join(',');
+        if (hash !== _lastLettersHash && cells.length > 0) {
+            _lastLettersHash = hash;
+            buildBoardFromLetters(newLetters);
+            syncGameState();
+        }
+    });
 
     /* ===== BUZZER ALERT HANDLING ===== */
     let currentBuzz = null;
-    let buzzDismissed = false;
 
-    // Listen for player buzz
-    setInterval(() => {
-        const buzzStr = localStorage.getItem('playerBuzz_' + sessionId);
-        if (buzzStr) {
-            try {
-                const buzz = JSON.parse(buzzStr);
-                if (buzz.active && (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp)) {
-                    currentBuzz = buzz;
-                    buzzDismissed = false;
-                    showGameBuzzerAlert(buzz);
-                }
-            } catch(e) {}
+    onValue(buzzRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const buzz = snapshot.val();
+        if (!buzz || !buzz.active) return;
+        if (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp) {
+            currentBuzz = buzz;
+            showGameBuzzerAlert(buzz);
         }
-    }, 200);
+    });
 
     function showGameBuzzerAlert(buzz) {
         const overlay = document.getElementById('buzzerOverlay');
         const container = document.getElementById('buzzerAlert');
         const teamEl = document.getElementById('buzzerAlertTeam');
         const playerEl = document.getElementById('buzzerAlertPlayer');
-
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + buzz.team;
         playerEl.textContent = buzz.name;
-
         overlay.classList.add('active');
         container.classList.add('active');
-
-        // Play bell sound
         playBell();
-        // NO auto hide - stays until presenter resets
     }
 
     function hideGameBuzzerAlert() {
-        buzzDismissed = true;
         document.getElementById('buzzerOverlay').classList.remove('active');
         document.getElementById('buzzerAlert').classList.remove('active');
+        currentBuzz = null;
     }
 
-    // Click overlay to dismiss (only if not buzzed again)
-    document.getElementById('buzzerOverlay').addEventListener('click', () => {
-        // Only hide if no new buzz
-        if (currentBuzz && localStorage.getItem('playerBuzz_' + sessionId)) {
-            const latestBuzz = JSON.parse(localStorage.getItem('playerBuzz_' + sessionId));
-            if (latestBuzz.timestamp === currentBuzz.timestamp) {
-                hideGameBuzzerAlert();
-            }
-        } else {
-            hideGameBuzzerAlert();
-        }
+    document.getElementById('buzzerOverlay').addEventListener('click', () => { hideGameBuzzerAlert(); });
+
+    // Listen for buzz reset from host
+    onValue(buzzResetRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const reset = snapshot.val();
+        if (reset && reset.reset) hideGameBuzzerAlert();
     });
 
-    // Hide only when presenter explicitly resets (not auto)
-    window.addEventListener('storage', function(e) {
-        if (e.key === ('resetBuzz_' + sessionId) && e.newValue) {
-            try {
-                const reset = JSON.parse(e.newValue);
-                if (reset.reset) {
-                    hideGameBuzzerAlert();
-                }
-            } catch(e) {}
-        }
-    });
+    // Initial settings push
+    set(settingsRef(), settings);
 
-    // Supabase Bridge will handle all synchronization
-    // No additional polling or event listeners needed
-</script><script src="./supabase-sync.js"></script>
+    /* ===== EXPOSE FUNCTIONS TO GLOBAL SCOPE (for onclick attributes) ===== */
+    window.startGame        = startGame;
+    window.showSettings     = showSettings;
+    window.saveSettings     = saveSettings;
+    window.showStart        = showStart;
+    window.selectRounds     = selectRounds;
+    window.showTeamChoice   = showTeamChoice;
+    window.hideTeamChoice   = hideTeamChoice;
+    window.chooseTeam       = chooseTeam;
+    window.toggleOptions    = toggleOptions;
+    window.closeOptions     = closeOptions;
+    window.showPresenterModal = showPresenterModal;
+    window.showPlayerScreen = showPlayerScreen;
+    window.closePresenterModal = closePresenterModal;
+    window.confirmNewGame   = confirmNewGame;
+    window.closeNewGameModal = closeNewGameModal;
+    window.newGameConfirmed = newGameConfirmed;
+    window.playAgain        = playAgain;
+    window.hideGameBuzzerAlert = hideGameBuzzerAlert;
+
+</script>
 </body>
 </html>
-
