@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+    <script>
+        // نظام حماية الصفحة الرئيسية - حروف مع مراح
+        (function() {
+            const COOKIE_NAME = 'game_verified';
+            const VERIFY_PAGE = 'verification/verification.html'; // مسار صفحة التحقق
+
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for(let i=0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+
+            // التحقق من وجود الكوكيز
+            if (!getCookie(COOKIE_NAME)) {
+                // إذا لم يتم التحقق، يتم إخفاء المحتوى فوراً وتحويل المستخدم
+                document.documentElement.style.display = 'none';
+                window.location.href = VERIFY_PAGE;
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لعبة الحروف</title>
