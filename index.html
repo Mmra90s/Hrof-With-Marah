@@ -1516,26 +1516,63 @@
     function generateQRCode(text) {
         const canvas = document.getElementById('presenter-qr-code');
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const qrContainer = document.createElement('div');
-        qrContainer.style.display = 'none';
-        document.body.appendChild(qrContainer);
-        
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
-        script.onload = function() {
-            const qrSize = 1024;
-            const qr = new QRCode(qrContainer, { text, width: qrSize, height: qrSize, colorDark: '#512b70', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
-            setTimeout(() => {
+        const qrSize = 1024;
+        canvas.width = qrSize; canvas.height = qrSize;
+        ctx.clearRect(0, 0, qrSize, qrSize);
+
+        // Function to perform the actual generation
+        const doGenerate = () => {
+            const qrContainer = document.createElement('div');
+            qrContainer.style.cssText = 'position:absolute;left:-9999px;top:-9999px;opacity:0;';
+            document.body.appendChild(qrContainer);
+            
+            const qr = new QRCode(qrContainer, { 
+                text: text, 
+                width: qrSize, 
+                height: qrSize, 
+                colorDark: '#512b70', 
+                colorLight: '#ffffff', 
+                correctLevel: QRCode.CorrectLevel.H 
+            });
+
+            // Mobile browsers need a bit more time for the image to be ready
+            const checkInterval = setInterval(() => {
                 const qrImg = qrContainer.querySelector('img');
-                if (qrImg) {
-                    canvas.width = qrSize; canvas.height = qrSize;
+                if (qrImg && qrImg.complete && qrImg.naturalWidth > 0) {
                     ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+                    clearInterval(checkInterval);
+                    qrContainer.remove();
                 }
-                qrContainer.remove();
-            }, 150);
+            }, 100);
+
+            // Timeout after 3 seconds to avoid infinite loop
+            setTimeout(() => {
+                clearInterval(checkInterval);
+                if (qrContainer.parentNode) qrContainer.remove();
+            }, 3000);
         };
-        document.head.appendChild(script);
+
+        // Check if library is already loaded, otherwise load it
+        if (typeof QRCode !== 'undefined') {
+            doGenerate();
+        } else {
+            const scriptId = 'qr-lib-script';
+            if (!document.getElementById(scriptId)) {
+                const script = document.createElement('script');
+                script.id = scriptId;
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+                script.onload = doGenerate;
+                document.head.appendChild(script);
+            } else {
+                // Script exists but maybe not loaded yet
+                const waitLib = setInterval(() => {
+                    if (typeof QRCode !== 'undefined') {
+                        clearInterval(waitLib);
+                        doGenerate();
+                    }
+                }, 100);
+            }
+        }
     }
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('presenter-modal');
