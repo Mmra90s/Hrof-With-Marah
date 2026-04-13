@@ -714,53 +714,67 @@
         .opt-btn.disabled { opacity: 0.45; cursor: default; }
         .opt-btn.disabled:hover { background: transparent; }
 
-        /* ===== PRESENTER MODAL ===== */
+        /* ===== PRESENTER MODAL (Pop-up) ===== */
         #presenter-modal {
-            position: fixed; inset: 0; z-index: 700;
+            position: fixed; inset: 0; z-index: 2000;
             display: none; flex-direction: column;
             align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
         }
         #presenter-modal.active { display: flex; }
         .presenter-modal-content {
-            background: #2c1b4d; border-radius: 24px; padding: 30px;
+            background: #512b70; border-radius: 35px; padding: 35px;
             display: flex; flex-direction: column; align-items: center; gap: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            max-width: 90vw; width: 360px;
+            max-width: 92vw; width: 440px; position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
         }
+        .presenter-modal-close-btn {
+            position: absolute; top: 20px; right: 20px;
+            width: 36px; height: 36px; border-radius: 10px;
+            background: rgba(255,255,255,0.1); border: none;
+            color: white; font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .presenter-modal-close-btn:hover { background: rgba(255,255,255,0.2); }
+        
         .presenter-modal-title {
-            font-size: clamp(22px, 4vw, 28px); font-weight: 900; color: white;
-            text-align: center;
+            font-size: clamp(24px, 5vw, 32px); font-weight: 900; color: white;
+            text-align: center; margin-top: 10px;
         }
         .presenter-modal-subtitle {
-            font-size: clamp(14px, 2.5vw, 18px); color: rgba(255,255,255,0.7);
-            text-align: center;
+            font-size: clamp(15px, 3vw, 19px); color: white;
+            text-align: center; font-weight: 700; margin-bottom: 5px;
         }
-        .presenter-link-box {
-            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px 20px;
-            width: 100%; text-align: center;
+        
+        .qr-action-btn {
+            width: 100%; background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 18px; display: flex; flex-direction: column;
+            align-items: center; gap: 8px; cursor: pointer;
+            transition: all 0.2s; color: #ffcc00;
         }
-        .presenter-link-label {
-            font-size: clamp(12px, 2vw, 14px); color: rgba(255,255,255,0.6);
-            margin-bottom: 8px;
+        .qr-action-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); }
+        .qr-action-btn svg { width: 28px; height: 28px; fill: currentColor; }
+        .qr-action-btn span { font-size: 18px; font-weight: 900; }
+
+        .modal-bottom-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;
         }
-        .presenter-link-url {
-            font-size: clamp(14px, 2.5vw, 16px); color: #26c6da; word-break: break-all;
-            font-weight: 700;
+        .bottom-action-btn {
+            background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 15px; display: flex; flex-direction: column;
+            align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;
+            color: white;
         }
-        .qr-container {
-            background: white; border-radius: 12px; padding: 15px;
-            display: flex; justify-content: center; align-items: center;
-        }
-        #presenter-qr-code { display: block; }
-        .presenter-modal-close {
-            padding: clamp(12px, 2vw, 16px) clamp(30px, 5vw, 50px);
-            border: none; border-radius: 14px; font-size: clamp(16px, 3vw, 20px);
-            font-weight: 900; cursor: pointer; background: #6a3093; color: white;
-            transition: transform 0.15s;
-        }
-        .presenter-modal-close:hover { transform: translateY(-2px); }
+        .bottom-action-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-3px); }
+        .bottom-action-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .bottom-action-btn span { font-size: 16px; font-weight: 900; }
+        
+        .qr-hidden-container { display: none; }
+        #presenter-qr-code { display: none; }
 
         /* ===== TABLET (portrait or small landscape) ===== */
         @media (max-width: 900px) and (orientation: landscape) {
@@ -1031,19 +1045,37 @@
     <button class="opt-btn" onclick="closeOptions(); confirmNewGame()">🔄 بداية لعبة جديدة</button>
 </div>
 
-<!-- ===== PRESENTER MODAL ===== -->
+<!-- ===== PRESENTER MODAL (Pop-up) ===== -->
 <div id="presenter-modal">
     <div class="presenter-modal-content">
-        <div class="presenter-modal-title" id="presenter-modal-title">📺 شاشة المقدم</div>
-        <div class="presenter-modal-subtitle" id="presenter-modal-subtitle">امسح الباركود أو افتح الرابط على جهاز المقدم</div>
-        <div class="presenter-link-box">
-            <div class="presenter-link-label" id="presenter-link-label">رابط شاشة المقدم</div>
-            <div class="presenter-link-url" id="presenter-url"></div>
+        <button class="presenter-modal-close-btn" onclick="closePresenterModal()">×</button>
+        <div class="presenter-modal-title" id="presenter-modal-title">شاشة المقدم</div>
+        <div class="presenter-modal-subtitle">اختر طريقة مشاركة الشاشة أو افتحها مباشرة.</div>
+        
+        <!-- Barcode Action -->
+        <div class="qr-action-btn" onclick="downloadQRCode()">
+            <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v2h-3v-2zm-3 0h2v2h-2v-2zm3 3h3v2h-3v-2zm-3 3h2v2h-2v-2zm3 0h3v2h-3v-2zM13 13h2v2h-2v-2zm3 3h2v2h-2v-2zm-3 3h2v2h-2v-2z"/></svg>
+            <span>باركود</span>
         </div>
-        <div class="qr-container">
-            <canvas id="presenter-qr-code" width="180" height="180"></canvas>
+
+        <div class="modal-bottom-actions">
+            <!-- Copy Link Action -->
+            <div class="bottom-action-btn" onclick="copyPresenterLink()">
+                <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>نسخ الرابط</span>
+            </div>
+            <!-- Open Link Action -->
+            <div class="bottom-action-btn" onclick="openPresenterLink()">
+                <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                <span>فتح الرابط</span>
+            </div>
         </div>
-        <button class="presenter-modal-close" onclick="closePresenterModal()">إغلاق</button>
+
+        <!-- Hidden elements for processing -->
+        <div class="qr-hidden-container">
+            <canvas id="presenter-qr-code" width="1024" height="1024"></canvas>
+            <div id="presenter-url" style="display:none;"></div>
+        </div>
     </div>
 </div>
 
@@ -1387,40 +1419,55 @@
     function closeNewGameModal() { document.getElementById('new-game-modal').classList.remove('active'); }
     function newGameConfirmed() { closeNewGameModal(); startGame(); }
 
-    /* ===== PRESENTER / PLAYER SCREEN ===== */
+    /* ===== PRESENTER / PLAYER SCREEN (Pop-up Logic) ===== */
     function showPresenterModal() {
         closeOptions();
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
-        const presenterWindow = window.open(presenterUrl, '_blank', 'width=800,height=900');
-        if (!presenterWindow) {
-            const modal = document.getElementById('presenter-modal');
-            modal.classList.add('active');
-            document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
-            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
-            document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
-            document.getElementById('presenter-url').textContent = presenterUrl;
-            generateQRCode(presenterUrl);
-        }
+        
+        const modal = document.getElementById('presenter-modal');
+        modal.classList.add('active');
+        document.getElementById('presenter-modal-title').textContent = 'شاشة المقدم';
+        document.getElementById('presenter-url').textContent = presenterUrl;
+        generateQRCode(presenterUrl);
     }
 
     function showPlayerScreen() {
         closeOptions();
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
-        const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
-        if (!playerWindow) {
-            const modal = document.getElementById('presenter-modal');
-            modal.classList.add('active');
-            document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
-            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
-            document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
-            document.getElementById('presenter-url').textContent = playerUrl;
-            generateQRCode(playerUrl);
-        }
+        
+        const modal = document.getElementById('presenter-modal');
+        modal.classList.add('active');
+        document.getElementById('presenter-modal-title').textContent = 'شاشة اللاعب';
+        document.getElementById('presenter-url').textContent = playerUrl;
+        generateQRCode(playerUrl);
     }
 
     function closePresenterModal() { document.getElementById('presenter-modal').classList.remove('active'); }
+
+    function copyPresenterLink() {
+        const url = document.getElementById('presenter-url').textContent;
+        navigator.clipboard.writeText(url).then(() => {
+            const btn = event.currentTarget;
+            const originalText = btn.querySelector('span').textContent;
+            btn.querySelector('span').textContent = 'تم النسخ!';
+            setTimeout(() => { btn.querySelector('span').textContent = originalText; }, 2000);
+        });
+    }
+
+    function openPresenterLink() {
+        const url = document.getElementById('presenter-url').textContent;
+        window.open(url, '_blank');
+    }
+
+    function downloadQRCode() {
+        const canvas = document.getElementById('presenter-qr-code');
+        const link = document.createElement('a');
+        link.download = 'qrcode.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
 
     function generateQRCode(text) {
         const canvas = document.getElementById('presenter-qr-code');
@@ -1429,31 +1476,31 @@
         const qrContainer = document.createElement('div');
         qrContainer.style.display = 'none';
         document.body.appendChild(qrContainer);
+        
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
         script.onload = function() {
-            const qr = new QRCode(qrContainer, { text, width:180, height:180, colorDark:'#6a3093', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M });
+            const qrSize = 1024; // High resolution for download
+            const qr = new QRCode(qrContainer, { text, width: qrSize, height: qrSize, colorDark: '#512b70', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
             setTimeout(() => {
                 const qrImg = qrContainer.querySelector('img');
-                if (qrImg) ctx.drawImage(qrImg, 0, 0, 180, 180);
+                if (qrImg) {
+                    canvas.width = qrSize; canvas.height = qrSize;
+                    ctx.drawImage(qrImg, 0, 0, qrSize, qrSize);
+                }
                 qrContainer.remove();
-            }, 100);
-        };
-        script.onerror = function() {
-            ctx.fillStyle = '#6a3093'; ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle='white'; ctx.font='12px Arial'; ctx.textAlign='center';
-            ctx.fillText('تعذر إنشاء الباركود', canvas.width/2, canvas.height/2);
+            }, 150);
         };
         document.head.appendChild(script);
     }
-
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('presenter-modal');
         const content = modal.querySelector('.presenter-modal-content');
-        if (modal.classList.contains('active') && !content.contains(e.target)) closePresenterModal();
+        // Ensure we don't close when clicking inside the content or the modal close button
+        if (modal.classList.contains('active') && e.target === modal) {
+            closePresenterModal();
+        }
     });
-
-    /* ===== FIREBASE SYNC ===== */
 
     // Sync game state to Firebase
     function syncGameState() {
@@ -1616,6 +1663,9 @@
     window.newGameConfirmed = newGameConfirmed;
     window.playAgain        = playAgain;
     window.hideGameBuzzerAlert = hideGameBuzzerAlert;
+    window.copyPresenterLink = copyPresenterLink;
+    window.openPresenterLink = openPresenterLink;
+    window.downloadQRCode   = downloadQRCode;
 
     // Fullscreen Logic
     const fullscreenBtn = document.getElementById('fullscreen-btn');
@@ -1642,3 +1692,4 @@
 </script>
 </body>
 </html>
+
