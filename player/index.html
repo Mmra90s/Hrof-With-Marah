@@ -551,368 +551,268 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <script>
-        // Hex Pattern
-        function drawHexPattern(svgEl) {
-            const R = 50;
-            const w = Math.sqrt(3) * R;
-            const h = 2 * R;
-            const cols = Math.ceil(window.innerWidth / w) + 2;
-            const rows = Math.ceil(window.innerHeight / (h * 0.75)) + 2;
-            let d = '';
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cx = c * w + (r % 2 === 1 ? w / 2 : 0);
-                    const cy = r * h * 0.75;
-                    let pts = '';
-                    for (let i = 0; i < 6; i++) {
-                        const a = Math.PI / 180 * (60 * i - 30);
-                        pts += (i === 0 ? 'M' : 'L') + (cx + R * Math.cos(a)).toFixed(1) + ',' + (cy + R * Math.sin(a)).toFixed(1);
-                    }
-                    d += pts + 'Z ';
-                }
-            }
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', d);
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', 'white');
-            path.setAttribute('stroke-width', '2');
-            svgEl.appendChild(path);
+    <script type="module">
+    /* ===== FIREBASE CONFIG ===== */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAEkMA_InJKZc52yrjv9Ql59hmPMGgTI90",
+        authDomain: "hrof-with-marah-bb9bc.firebaseapp.com",
+        databaseURL: "https://hrof-with-marah-bb9bc-default-rtdb.firebaseio.com",
+        projectId: "hrof-with-marah-bb9bc",
+        storageBucket: "hrof-with-marah-bb9bc.firebasestorage.app",
+        messagingSenderId: "840796662556",
+        appId: "1:840796662556:web:35298933d2c9af738168d9"
+    };
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getDatabase(fbApp);
+
+    /* ===== HEX PATTERN ===== */
+    function drawHexPattern(svgEl) {
+        const R = 50, w = Math.sqrt(3)*R, h = 2*R;
+        const cols = Math.ceil(window.innerWidth/w)+2;
+        const rows = Math.ceil(window.innerHeight/(h*0.75))+2;
+        let d = '';
+        for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) {
+            const cx = c*w+(r%2===1?w/2:0), cy = r*h*0.75;
+            let pts='';
+            for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);pts+=(i===0?'M':'L')+(cx+R*Math.cos(a)).toFixed(1)+','+(cy+R*Math.sin(a)).toFixed(1);}
+            d+=pts+'Z ';
         }
-        drawHexPattern(document.getElementById('hex-pattern-svg'));
+        const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('d',d); path.setAttribute('fill','none');
+        path.setAttribute('stroke','white'); path.setAttribute('stroke-width','2');
+        svgEl.appendChild(path);
+    }
+    drawHexPattern(document.getElementById('hex-pattern-svg'));
 
-        // Player State
-        let playerName = '';
-        let playerTeam = null;
-        let hasBuzzed = false;
+    /* ===== SESSION MANAGEMENT ===== */
+    const urlParams = new URLSearchParams(window.location.search);
+    let sessionId = urlParams.get('session') || 'default';
 
-        /* ===== SESSION MANAGEMENT ===== */
-        const urlParams = new URLSearchParams(window.location.search);
-        let sessionId = urlParams.get('session');
-        if (!sessionId) {
-            sessionId = 'default'; // Fallback
-        }
+    /* ===== FIREBASE REFS ===== */
+    const settingsRef  = () => ref(db, 'sessions/' + sessionId + '/settings');
+    const buzzRef      = () => ref(db, 'sessions/' + sessionId + '/buzz');
+    const buzzResetRef = () => ref(db, 'sessions/' + sessionId + '/buzzReset');
+    const buzzLockRef  = () => ref(db, 'sessions/' + sessionId + '/buzzLock');
 
-        // Settings
-        let settings = {
-            name: 'مراح',
-            team1: 'الفريق الأول',
-            team2: 'الفريق الثاني',
-            rounds: 2
-        };
-        function loadSettings() {
-            try {
-                const stored = localStorage.getItem('huroofSettings_' + sessionId);
-                if (stored) {
-                    settings = { ...settings, ...JSON.parse(stored) };
-                }
-            } catch(e) {}
+    /* ===== PLAYER STATE ===== */
+    let playerName = '';
+    let playerTeam = null;
+    let hasBuzzed = false;
+    let isBuzzLocked = false;
+
+    let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
+
+    /* ===== SETTINGS SYNC ===== */
+    function updateLogoFromSettings() {
+        document.getElementById('logoName').textContent = settings.name;
+        const logo2 = document.getElementById('logoName2');
+        if (logo2) logo2.textContent = settings.name;
+        document.getElementById('btn-green').querySelector('.team-name').textContent = settings.team1;
+        document.getElementById('btn-orange').querySelector('.team-name').textContent = settings.team2;
+    }
+
+    // Listen for settings from Firebase (real-time)
+    onValue(settingsRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const newSettings = snapshot.val();
+        if (!newSettings) return;
+        if (JSON.stringify(newSettings) !== JSON.stringify(settings)) {
+            settings = { ...settings, ...newSettings };
             updateLogoFromSettings();
         }
+    });
 
-        function updateLogoFromSettings() {
-            document.getElementById('logoName').textContent = settings.name;
-            const logo2 = document.getElementById('logoName2');
-            if (logo2) logo2.textContent = settings.name;
+    /* ===== TEAM SELECTION ===== */
+    function selectTeam(team) {
+        playerTeam = team;
+        document.getElementById('btn-green').classList.toggle('selected', team === 'green');
+        document.getElementById('btn-orange').classList.toggle('selected', team === 'orange');
+        checkCanConfirm();
+    }
 
-            // Update team button names
-            document.getElementById('btn-green').querySelector('.team-name').textContent = settings.team1;
-            document.getElementById('btn-orange').querySelector('.team-name').textContent = settings.team2;
+    function checkCanConfirm() {
+        const name = document.getElementById('playerName').value.trim();
+        const canConfirm = name.length > 0 && playerTeam !== null;
+        document.getElementById('confirmBtn').disabled = !canConfirm;
+    }
+
+    document.getElementById('playerName').addEventListener('input', checkCanConfirm);
+    document.getElementById('playerName').addEventListener('change', checkCanConfirm);
+
+    document.getElementById('btn-green').addEventListener('click', function() { selectTeam('green'); });
+    document.getElementById('btn-orange').addEventListener('click', function() { selectTeam('orange'); });
+
+    /* ===== REGISTRATION ===== */
+    function confirmRegistration() {
+        playerName = document.getElementById('playerName').value.trim();
+        if (!playerName || !playerTeam) return;
+        const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+        document.getElementById('screen-reg').classList.remove('active');
+        document.getElementById('screen-buzzer').classList.add('active');
+        document.getElementById('display-name').textContent = playerName;
+        const teamDisplay = document.getElementById('display-team');
+        teamDisplay.textContent = teamName;
+        teamDisplay.className = 'player-team-display ' + playerTeam;
+    }
+
+    /* ===== BUZZER ===== */
+    function pressBuzzer() {
+        if (hasBuzzed || isBuzzLocked) return;
+        hasBuzzed = true;
+
+        const btn = document.getElementById('buzzerBtn');
+        btn.classList.add('pressed');
+
+        playBell();
+        showBuzzStatus();
+
+        const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+        const ts = Date.now();
+
+        const buzzData = { name:playerName, team:playerTeam, teamName, timestamp:ts, active:true };
+        const lockData = { locked:true, playerName, teamName, team:playerTeam, timestamp:ts };
+
+        // Write to Firebase
+        set(buzzRef(), buzzData);
+        set(buzzLockRef(), lockData);
+    }
+
+    // Listen for buzz lock from Firebase (another player buzzed)
+    onValue(buzzLockRef(), (snapshot) => {
+        if (!snapshot.exists()) {
+            // Lock removed = reset
+            if (isBuzzLocked || hasBuzzed) {
+                isBuzzLocked = false;
+                const btn = document.getElementById('buzzerBtn');
+                btn.style.opacity = '';
+                btn.style.pointerEvents = '';
+            }
+            return;
         }
-
-        // Poll for settings changes
-        setInterval(() => {
-            try {
-                const stored = localStorage.getItem('huroofSettings_' + sessionId);
-                if (stored) {
-                    const newSettings = JSON.parse(stored);
-                    if (JSON.stringify(newSettings) !== JSON.stringify(settings)) {
-                        settings = { ...settings, ...newSettings };
-                        updateLogoFromSettings();
-                    }
-                }
-            } catch(e) {}
-        }, 500);
-
-        // Load settings on start
-        loadSettings();
-
-        // Team Selection
-        function selectTeam(team) {
-            playerTeam = team;
-            document.getElementById('btn-green').classList.toggle('selected', team === 'green');
-            document.getElementById('btn-orange').classList.toggle('selected', team === 'orange');
-            checkCanConfirm();
-        }
-
-        // Check if can confirm
-        function checkCanConfirm() {
-            const name = document.getElementById('playerName').value.trim();
-            const canConfirm = name.length > 0 && playerTeam !== null;
-            document.getElementById('confirmBtn').disabled = !canConfirm;
-        }
-
-        // Name input handler
-        document.getElementById('playerName').addEventListener('input', checkCanConfirm);
-        document.getElementById('playerName').addEventListener('change', checkCanConfirm);
-
-        // Team buttons click handler
-        document.getElementById('btn-green').addEventListener('click', function() {
-            selectTeam('green');
-        });
-        document.getElementById('btn-orange').addEventListener('click', function() {
-            selectTeam('orange');
-        });
-
-        // Confirm Registration
-        function confirmRegistration() {
-            playerName = document.getElementById('playerName').value.trim();
-            if (!playerName || !playerTeam) return;
-
-            // Save player info using settings variable
-            const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-
-            localStorage.setItem('playerInfo_' + sessionId, JSON.stringify({
-                name: playerName,
-                team: playerTeam,
-                teamName: teamName,
-                timestamp: Date.now()
-            }));
-
-            // Show buzzer screen
-            document.getElementById('screen-reg').classList.remove('active');
-            document.getElementById('screen-buzzer').classList.add('active');
-
-            // Update display
-            document.getElementById('display-name').textContent = playerName;
-            const teamDisplay = document.getElementById('display-team');
-            teamDisplay.textContent = teamName;
-            teamDisplay.className = 'player-team-display ' + playerTeam;
-        }
-
-        // Press Buzzer
-        let isBuzzLocked = false;
-
-        function pressBuzzer() {
-            if (hasBuzzed || isBuzzLocked) return;
-            hasBuzzed = true;
-
-            // Visual feedback
+        const lock = snapshot.val();
+        if (!lock || !lock.locked) return;
+        // Lock if another player buzzed
+        if (lock.playerName !== playerName && !isBuzzLocked) {
+            isBuzzLocked = true;
             const btn = document.getElementById('buzzerBtn');
-            btn.classList.add('pressed');
-
-            // Play bell sound
-            playBell();
-
-            // Show buzz status
-            showBuzzStatus();
-
-            // Send buzz to other screens and lock all buzzers
-            const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-
-            const buzzData = {
-                name: playerName,
-                team: playerTeam,
-                teamName: teamName,
-                timestamp: Date.now(),
-                active: true
-            };
-
-            localStorage.setItem('playerBuzz_' + sessionId, JSON.stringify(buzzData));
-            localStorage.setItem('buzzerLocked_' + sessionId, JSON.stringify({
-                locked: true,
-                playerName: playerName,
-                teamName: teamName,
-                timestamp: Date.now()
-            }));
-
-            // Broadcast lock event
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'buzzerLocked_' + sessionId,
-                newValue: JSON.stringify({ locked: true, playerName: playerName, teamName: teamName, timestamp: Date.now() })
-            }));
+            btn.style.opacity = '0.5';
+            btn.style.pointerEvents = 'none';
         }
+    });
 
-        // Listen for buzz lock from presenter (via Supabase Bridge)
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'buzzerLocked_' + sessionId && e.newValue) {
-                try {
-                    const lock = JSON.parse(e.newValue);
-                    // Lock if there's an active lock from another player
-                    if (lock.locked && !isBuzzLocked && lock.playerName !== playerName) {
-                        isBuzzLocked = true;
-                        document.getElementById('buzzerBtn').style.opacity = '0.5';
-                        document.getElementById('buzzerBtn').style.pointerEvents = 'none';
-                    }
-                } catch(e) {}
-            }
-        });
+    // Listen for buzz reset from host
+    onValue(buzzResetRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const reset = snapshot.val();
+        if (reset && reset.reset) resetBuzzer();
+    });
 
-        // Reset buzzer (called by presenter)
-        function resetBuzzer() {
-            hasBuzzed = false;
-            isBuzzLocked = false;
-            const btn = document.getElementById('buzzerBtn');
-            btn.classList.remove('pressed');
-            btn.style.opacity = '';
-            btn.style.pointerEvents = '';
-            hideBuzzStatus();
-            localStorage.removeItem('playerBuzz_' + sessionId);
-            localStorage.removeItem('buzzerLocked_' + sessionId);
+    function resetBuzzer() {
+        hasBuzzed = false;
+        isBuzzLocked = false;
+        const btn = document.getElementById('buzzerBtn');
+        btn.classList.remove('pressed');
+        btn.style.opacity = '';
+        btn.style.pointerEvents = '';
+        hideBuzzStatus();
+    }
+
+    function showBuzzStatus() {
+        const status = document.getElementById('buzzStatus');
+        const text = document.getElementById('buzzStatusText');
+        const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+        text.textContent = playerName + ' - ' + teamName;
+        status.classList.add('active');
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    }
+
+    function hideBuzzStatus() {
+        document.getElementById('buzzStatus').classList.remove('active');
+    }
+
+    function playBell() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.8, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.0);
+        } catch(e) {}
+    }
+
+    /* ===== CONNECTION STATUS ===== */
+    function updateConnectionStatus(connected) {
+        const status = document.getElementById('connectionStatus');
+        const text = document.getElementById('connectionText');
+        if (connected) {
+            status.classList.remove('disconnected'); status.classList.add('connected');
+            text.textContent = 'متصل';
+        } else {
+            status.classList.remove('connected'); status.classList.add('disconnected');
+            text.textContent = 'غير متصل';
         }
+    }
 
-        // Auto-reset buzzer when presenter resets
-        window.addEventListener('storage', function(e) {
-            if (e.key === ('resetBuzz_' + sessionId) && e.newValue) {
-                try {
-                    const reset = JSON.parse(e.newValue);
-                    if (reset.reset) {
-                        resetBuzzer();
-                    }
-                } catch(e) {}
-            }
-        });
+    // Use Firebase connection state for real connection status
+    const connectedRef = ref(db, '.info/connected');
+    onValue(connectedRef, (snapshot) => {
+        updateConnectionStatus(snapshot.val() === true);
+    });
 
-        // Show buzz status overlay
-        function showBuzzStatus() {
-            const status = document.getElementById('buzzStatus');
-            const text = document.getElementById('buzzStatusText');
-            const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
+    /* ===== EDIT / RESET PLAYER ===== */
+    function editPlayer() {
+        remove(buzzRef());
+        hasBuzzed = false;
+        document.getElementById('buzzerBtn').classList.remove('pressed');
+        document.getElementById('playerName').value = playerName;
+        if (playerTeam) selectTeam(playerTeam);
+        document.getElementById('screen-buzzer').classList.remove('active');
+        document.getElementById('screen-reg').classList.add('active');
+        setTimeout(() => {
+            document.getElementById('playerName').focus();
+            document.getElementById('playerName').select();
+        }, 100);
+    }
 
-            text.textContent = playerName + ' - ' + teamName;
-            status.classList.add('active');
+    function resetPlayer() {
+        if (!confirm('هل تريد تغيير اللاعب؟')) return;
+        remove(buzzRef());
+        playerName = ''; playerTeam = null; hasBuzzed = false;
+        document.getElementById('playerName').value = '';
+        document.getElementById('btn-green').classList.remove('selected');
+        document.getElementById('btn-orange').classList.remove('selected');
+        document.getElementById('confirmBtn').disabled = true;
+        document.getElementById('buzzerBtn').classList.remove('pressed');
+        document.getElementById('screen-buzzer').classList.remove('active');
+        document.getElementById('screen-reg').classList.add('active');
+    }
 
-            // Vibrate if supported
-            if (navigator.vibrate) {
-                navigator.vibrate([100, 50, 100]);
-            }
-        }
+    /* ===== WAKE LOCK ===== */
+    let wakeLock = null;
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+        } catch(e) {}
+    }
+    if (document.visibilityState === 'visible') requestWakeLock();
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') requestWakeLock();
+    });
 
-        // Hide buzz status
-        function hideBuzzStatus() {
-            document.getElementById('buzzStatus').classList.remove('active');
-        }
+    /* ===== EXPOSE FUNCTIONS TO GLOBAL SCOPE (for onclick attributes) ===== */
+    window.selectTeam           = selectTeam;
+    window.confirmRegistration  = confirmRegistration;
+    window.pressBuzzer          = pressBuzzer;
+    window.editPlayer           = editPlayer;
+    window.resetPlayer          = resetPlayer;
 
-        // Play bell sound
-        function playBell() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-
-                gain.gain.setValueAtTime(0.8, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 1.0);
-            } catch (e) {}
-        }
-
-        // Reset player
-        function resetPlayer() {
-            if (!confirm('هل تريد تغيير اللاعب؟')) return;
-
-            // Clear buzz
-            localStorage.removeItem('playerBuzz_' + sessionId);
-
-            // Reset state
-            playerName = '';
-            playerTeam = null;
-            hasBuzzed = false;
-
-            // Clear form
-            document.getElementById('playerName').value = '';
-            document.getElementById('btn-green').classList.remove('selected');
-            document.getElementById('btn-orange').classList.remove('selected');
-            document.getElementById('confirmBtn').disabled = true;
-            document.getElementById('buzzerBtn').classList.remove('pressed');
-
-            // Show registration screen
-            document.getElementById('screen-buzzer').classList.remove('active');
-            document.getElementById('screen-reg').classList.add('active');
-        }
-
-        // Edit player (name and team)
-        function editPlayer() {
-            // Clear buzz
-            localStorage.removeItem('playerBuzz_' + sessionId);
-
-            // Reset state but keep the buzzer screen showing
-            hasBuzzed = false;
-            document.getElementById('buzzerBtn').classList.remove('pressed');
-
-            // Show registration screen with current values
-            document.getElementById('playerName').value = playerName;
-            if (playerTeam) {
-                selectTeam(playerTeam);
-            }
-
-            // Show registration screen
-            document.getElementById('screen-buzzer').classList.remove('active');
-            document.getElementById('screen-reg').classList.add('active');
-
-            // Focus name input for editing
-            setTimeout(() => {
-                document.getElementById('playerName').focus();
-                document.getElementById('playerName').select();
-            }, 100);
-        }
-
-        // Connection monitoring (handled by Supabase Bridge)
-        function checkConnection() {
-            // Connection is now managed by Supabase Bridge
-            updateConnectionStatus(true);
-        }
-
-        function updateConnectionStatus(connected) {
-            const status = document.getElementById('connectionStatus');
-            const text = document.getElementById('connectionText');
-
-            if (connected) {
-                status.classList.remove('disconnected');
-                status.classList.add('connected');
-                text.textContent = 'متصل';
-            } else {
-                status.classList.remove('connected');
-                status.classList.add('disconnected');
-                text.textContent = 'غير متصل';
-            }
-        }
-
-        // Initial connection check
-        checkConnection();
-
-        // Storage changes are now handled by Supabase Bridge
-
-        // Prevent sleep on mobile
-        let wakeLock = null;
-        async function requestWakeLock() {
-            try {
-                if ('wakeLock' in navigator) {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                }
-            } catch (e) {}
-        }
-
-        if (document.visibilityState === 'visible') {
-            requestWakeLock();
-        }
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                requestWakeLock();
-            }
-        });
-
-        // Supabase Bridge will handle all synchronization
-        // No additional polling or event listeners needed
-    </script>
-<script src="../supabase-sync.js"></script>
+</script>
 </body>
 </html>
