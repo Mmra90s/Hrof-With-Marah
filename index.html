@@ -1379,32 +1379,28 @@
         closeOptions();
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
-        const presenterWindow = window.open(presenterUrl, '_blank', 'width=800,height=900');
-        if (!presenterWindow) {
-            const modal = document.getElementById('presenter-modal');
-            modal.classList.add('active');
-            document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
-            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
-            document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
-            document.getElementById('presenter-url').textContent = presenterUrl;
-            generateQRCode(presenterUrl);
-        }
+        
+        const modal = document.getElementById('presenter-modal');
+        modal.classList.add('active');
+        document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
+        document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
+        document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
+        document.getElementById('presenter-url').textContent = presenterUrl;
+        generateQRCode(presenterUrl);
     }
 
     function showPlayerScreen() {
         closeOptions();
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
-        const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
-        if (!playerWindow) {
-            const modal = document.getElementById('presenter-modal');
-            modal.classList.add('active');
-            document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
-            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
-            document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
-            document.getElementById('presenter-url').textContent = playerUrl;
-            generateQRCode(playerUrl);
-        }
+        
+        const modal = document.getElementById('presenter-modal');
+        modal.classList.add('active');
+        document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
+        document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
+        document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
+        document.getElementById('presenter-url').textContent = playerUrl;
+        generateQRCode(playerUrl);
     }
 
     function closePresenterModal() { document.getElementById('presenter-modal').classList.remove('active'); }
