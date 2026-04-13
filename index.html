@@ -848,11 +848,13 @@
         </svg>
     </button>
 
+<!-- ===== PORTRAIT WARNING ===== -->
 <div id="portrait-warning">
     <span class="portrait-phone">📱</span>
     <div class="portrait-text">خلي الشاشة بالعرض<br>عشان تزيد الفلة 😎</div>
 </div>
 
+<!-- ===== TEAM CHOICE MODAL ===== -->
 <div id="team-choice-modal">
     <div class="team-choice-content">
         <div class="team-choice-title">👆 اختار الفريق</div>
@@ -867,6 +869,7 @@
     </div>
 </div>
 
+<!-- ===== NEW GAME CONFIRM MODAL ===== -->
 <div id="new-game-modal">
     <div class="new-game-content">
         <div class="new-game-icon">❓</div>
@@ -879,10 +882,12 @@
     </div>
 </div>
 
+<!-- Hex Background -->
 <div class="hex-bg">
     <svg xmlns="http://www.w3.org/2000/svg" id="hex-pattern-svg"></svg>
 </div>
 
+<!-- ===== GAME OVER OVERLAY ===== -->
 <div id="game-over-overlay">
     <div class="game-over-content">
         <div class="trophy-icon">🏆</div>
@@ -902,6 +907,7 @@
     </div>
 </div>
 
+<!-- ===== ROUND WIN OVERLAY ===== -->
 <div id="round-win-overlay">
     <div class="confetti confetti-1"></div>
     <div class="confetti confetti-2"></div>
@@ -921,6 +927,7 @@
     </div>
 </div>
 
+<!-- ===== TRANSITION OVERLAY ===== -->
 <div id="transition-overlay">
     <svg xmlns="http://www.w3.org/2000/svg" id="trans-hex-bg"></svg>
     <div class="logo-stack" id="trans-logo">
@@ -934,6 +941,7 @@
     </div>
 </div>
 
+<!-- ===== START SCREEN ===== -->
 <div class="screen active" id="screen-start">
     <div class="logo-stack">
         <span class="logo-word logo-huroof">حروف</span>
@@ -944,6 +952,7 @@
     <button class="menu-btn" onclick="showSettings()">إعدادات</button>
 </div>
 
+<!-- ===== SETTINGS SCREEN ===== -->
 <div class="screen" id="screen-settings">
     <div class="logo-stack" style="z-index:1;">
         <span class="logo-word logo-huroof logo-huroof-sm">حروف</span>
@@ -975,6 +984,7 @@
     <button class="save-btn" onclick="saveSettings()">← حفظ ورجوع</button>
 </div>
 
+<!-- ===== GAME SCREEN ===== -->
 <div class="screen" id="screen-game">
     <div class="left">
         <svg viewBox="0 0 500 500" id="board"></svg>
@@ -1002,6 +1012,7 @@
     </div>
 </div>
 
+<!-- Buzzer Alert Overlay & Display -->
 <div class="buzzer-alert-overlay" id="buzzerOverlay"></div>
 <div class="buzzer-alert-container" id="buzzerAlert">
     <div class="buzzer-alert">
@@ -1012,13 +1023,15 @@
     </div>
 </div>
 
+<!-- ===== OPTIONS BUTTON & DROPDOWN ===== -->
 <button id="options-btn" onclick="toggleOptions()">⚙️ الخيارات</button>
 <div id="options-dropdown">
-    <button class="opt-btn" onclick="event.stopPropagation(); closeOptions(); showPresenterModal()">📺 شاشة المقدم</button>
-    <button class="opt-btn" onclick="event.stopPropagation(); closeOptions(); showPlayerScreen()">🏃 شاشة اللاعب</button>
+    <button class="opt-btn" onclick="closeOptions(); showPresenterModal()">📺 شاشة المقدم</button>
+    <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()">🏃 شاشة اللاعب</button>
     <button class="opt-btn" onclick="closeOptions(); confirmNewGame()">🔄 بداية لعبة جديدة</button>
 </div>
 
+<!-- ===== PRESENTER MODAL ===== -->
 <div id="presenter-modal">
     <div class="presenter-modal-content">
         <div class="presenter-modal-title" id="presenter-modal-title">📺 شاشة المقدم</div>
@@ -1379,28 +1392,32 @@
         closeOptions();
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
-        
-        const modal = document.getElementById('presenter-modal');
-        modal.classList.add('active');
-        document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
-        document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
-        document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
-        document.getElementById('presenter-url').textContent = presenterUrl;
-        generateQRCode(presenterUrl);
+        const presenterWindow = window.open(presenterUrl, '_blank', 'width=800,height=900');
+        if (!presenterWindow) {
+            const modal = document.getElementById('presenter-modal');
+            modal.classList.add('active');
+            document.getElementById('presenter-modal-title').textContent = '📺 شاشة المقدم';
+            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز المقدم';
+            document.getElementById('presenter-link-label').textContent = 'رابط شاشة المقدم';
+            document.getElementById('presenter-url').textContent = presenterUrl;
+            generateQRCode(presenterUrl);
+        }
     }
 
     function showPlayerScreen() {
         closeOptions();
         const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
-        
-        const modal = document.getElementById('presenter-modal');
-        modal.classList.add('active');
-        document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
-        document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
-        document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
-        document.getElementById('presenter-url').textContent = playerUrl;
-        generateQRCode(playerUrl);
+        const playerWindow = window.open(playerUrl, '_blank', 'width=400,height=700');
+        if (!playerWindow) {
+            const modal = document.getElementById('presenter-modal');
+            modal.classList.add('active');
+            document.getElementById('presenter-modal-title').textContent = '🏃 شاشة اللاعب';
+            document.getElementById('presenter-modal-subtitle').textContent = 'امسح الباركود أو افتح الرابط على جهاز اللاعب';
+            document.getElementById('presenter-link-label').textContent = 'رابط شاشة اللاعب';
+            document.getElementById('presenter-url').textContent = playerUrl;
+            generateQRCode(playerUrl);
+        }
     }
 
     function closePresenterModal() { document.getElementById('presenter-modal').classList.remove('active'); }
