@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>حروف مع مراح - صفحة التحقق</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=AA-GALAXY:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        @font-face {
+            font-family: 'AA-GALAXY';
+            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXY.otf' );
+        }
+
+        @font-face {
+            font-family: 'AA-GALAXY-BOLD';
+            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXYBold.otf' );
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
+        }
+
+        body {
+            background: linear-gradient(135deg, #512b70 0%, #2c1b4d 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Hexagonal Pattern Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255, 255, 255, 0.03) 35px, rgba(255, 255, 255, 0.03) 70px),
+                repeating-linear-gradient(60deg, transparent, transparent 35px, rgba(255, 255, 255, 0.03) 35px, rgba(255, 255, 255, 0.03) 70px),
+                repeating-linear-gradient(120deg, transparent, transparent 35px, rgba(255, 255, 255, 0.03) 35px, rgba(255, 255, 255, 0.03) 70px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(81, 43, 112, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* Title Section */
+        .title-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title-section h1 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .title-section p {
+            font-size: 1.125rem;
+            color: #b39ddb;
+        }
+
+        /* Verification Card */
+        .verification-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 1rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #512b70;
+            margin-bottom: 1rem;
+        }
+
+        /* Game Display */
+        .game-display {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid #fdd835;
+            background: linear-gradient(135deg, rgba(253, 216, 53, 0.1) 0%, rgba(38, 198, 218, 0.1) 100%);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .game-display-image {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin: 0 auto 1rem;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .game-display-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #fdd835 0%, #26c6da 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-display-desc {
+            font-size: 0.875rem;
+            color: #512b70;
+        }
+
+        /* Phone Input */
+        .phone-input-group {
+            display: flex;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .phone-input {
+            flex: 1;
+            min-width: 0;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-family: 'AA-GALAXY', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            color: #512b70;
+            text-align: center;
+        }
+
+        .phone-input:focus {
+            outline: none;
+            border-color: #512b70;
+            box-shadow: 0 0 0 3px rgba(81, 43, 112, 0.1);
+        }
+
+        /* Buttons */
+        .verify-button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #512b70 0%, #6a3093 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            font-family: 'AA-GALAXY-BOLD', sans-serif;
+            box-shadow: 0 4px 12px rgba(81, 43, 112, 0.3);
+        }
+
+        .verify-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #6a3093 0%, #7FFF00 100%);
+            box-shadow: 0 6px 20px rgba(81, 43, 112, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .secondary-button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #fdd835;
+            background-color: white;
+            color: #fdd835;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'AA-GALAXY-BOLD', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: rgba(44, 27, 77, 0.9);
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            font-size: 0.875rem;
+            color: #b39ddb;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663540404554/GaYQtyxSU455uEQCFgoF2K/games_logo_da971829.png" alt="حروف مع مراح" class="logo-image" />
+                <span class="logo-text">حروف مع مراح</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="content-wrapper">
+            <div class="title-section">
+                <h1>مرحباً بك في حروف مع مراح</h1>
+                <p>أدخل رقم جوالك المسجل للتحقق من ملكيتك للعبة والبدء باللعب</p>
+            </div>
+
+            <div class="verification-card">
+                <div class="game-display">
+                    <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663540404554/GaYQtyxSU455uEQCFgoF2K/games_logo_da971829.png" alt="حروف مع مراح" class="game-display-image" />
+                    <div class="game-display-name">لعبة حروف</div>
+                    <div class="game-display-desc">استمتع مع لعبة خلية الحروف</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">رقم الجوال (بدون مفتاح الدولة )</label>
+                    <div class="phone-input-group">
+                        <input type="tel" class="phone-input" id="phoneInput" placeholder="مثال: 0540364191" />
+                    </div>
+                </div>
+
+                <button class="verify-button" id="verifyBtn" onclick="handleVerify()">تحقق ودخول</button>
+                <a href="https://salla.sa/marah_games" class="secondary-button">🛒 اشترِ اللعبة</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script>
+        const SALES_FILE = '../sales.csv'; // ملف الأرقام في الجذر
+        const COOKIE_NAME = 'game_verified';
+        const COOKIE_DAYS = 7; // مدة بقاء التحقق
+
+        async function handleVerify( ) {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.trim();
+            const btn = document.getElementById('verifyBtn');
+
+            if (!phone) {
+                alert('الرجاء إدخال رقم الجوال');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'جاري التحقق...';
+
+            try {
+                const response = await fetch(SALES_FILE + '?t=' + new Date().getTime());
+                const data = await response.text();
+                const numbers = data.split(/\r?\n/).map(line => line.trim()).filter(line => line !== "");
+
+                if (numbers.includes(phone)) {
+                    setCookie(COOKIE_NAME, 'true', COOKIE_DAYS);
+                    alert('✅ تم التحقق بنجاح! استمتع باللعب.');
+                    window.location.href = '../index.html'; // العودة للجذر
+                } else {
+                    alert('❌ الرقم غير موجود. الرجاء التحقق من شراء اللعبة.');
+                    btn.disabled = false;
+                    btn.textContent = 'تحقق ودخول';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء التحقق. تأكد من وجود ملف sales.csv في الجذر');
+                btn.disabled = false;
+                btn.textContent = 'تحقق ودخول';
+            }
+        }
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        }
+
+        document.getElementById('phoneInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleVerify();
+        });
+    </script>
+</body>
+</html>
