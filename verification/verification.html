@@ -505,21 +505,55 @@
             btn.disabled = true;
             btn.textContent = 'جاري التحقق...';
 
-            // تنظيف الرقم
+            // تنظيف الرقم وأخذ آخر 6 أرقام
             const cleanPhone = inputVal.replace(/\D/g, '');
+            if (cleanPhone.length < 6) {
+                errorText.textContent = "يرجى إدخال رقم هاتف صحيح (6 أرقام على الأقل)";
+                showModal('errorModal');
+                btn.disabled = false;
+                btn.textContent = 'تحقق ودخول';
+                return;
+            }
+            const suffix = cleanPhone.slice(-6);
             
             console.log("DEBUG: Cleaning phone number:", cleanPhone);
+            console.log("DEBUG: Looking for suffix:", suffix);
 
             try {
-                // الطريقة الأولى: جلب الوثيقة بالرقم كما أدخله المستخدم (بعد التنظيف)
+                // البحث عن وثيقة تنتهي بآخر 6 أرقام
+                // ملاحظة: بما أن Firestore لا يدعم البحث بـ endsWith مباشرة، 
+                // سنقوم بجلب الوثيقة التي يكون الـ ID الخاص بها هو الرقم كاملاً أولاً،
+                // أو البحث في مجموعة 'buyers' عن وثيقة تطابق هذا اللاحقة (suffix)
+                
+                // الطريقة الأولى: جلب الوثيقة بالرقم الكامل
                 const docRef = db.collection('buyers').doc(cleanPhone);
                 const doc = await docRef.get();
 
                 if (doc.exists) {
-                    console.log("DEBUG: Document found!");
+                    console.log("DEBUG: Document found by full number!");
+                    proceedSuccess();
+                    return;
+                }
+
+                // الطريقة الثانية: البحث عن أي وثيقة تنتهي بآخر 6 أرقام
+                // ملاحظة: هذا يتطلب أن تكون أسماء الوثائق (Document IDs) هي أرقام الهواتف
+                // سنقوم بجلب الوثائق التي تبدأ بـ suffix إذا كانت مخزنة بهذا الشكل، 
+                // أو الأفضل البحث في كل الوثائق ومقارنة الـ ID برمجياً (يتطلب صلاحيات list)
+                
+                const snapshot = await db.collection('buyers').get();
+                let found = false;
+                
+                snapshot.forEach((doc) => {
+                    if (doc.id.endsWith(suffix)) {
+                        console.log("DEBUG: Document found by suffix match:", doc.id);
+                        found = true;
+                    }
+                });
+
+                if (found) {
                     proceedSuccess();
                 } else {
-                    console.log("DEBUG: Document not found.");
+                    console.log("DEBUG: No document found with this suffix.");
                     errorText.textContent = "يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.";
                     showModal('errorModal');
                     btn.disabled = false;
@@ -562,3 +596,4 @@
     </script>
 </body>
 </html>
+
