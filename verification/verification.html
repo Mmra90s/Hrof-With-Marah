@@ -7,11 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=AA-GALAXY:wght@400;700&display=swap" rel="stylesheet" />
-    
-    <!-- Firebase SDK (v9 compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -336,62 +331,57 @@
             border-radius: 0.75rem;
             text-decoration: none;
             font-weight: bold;
-            transition: all 0.3s ease;
-            font-family: 'AA-GALAXY-BOLD', sans-serif;
+            border: none;
+            margin-bottom: 0.5rem;
         }
 
-        .btn-play { background: #7FFF00; color: #512b70; margin-bottom: 1rem; }
-        .btn-play:hover { background: #66CC00; transform: scale(1.05); }
-        .btn-buy { background: #fdd835; color: #512b70; margin-bottom: 1rem; }
-        .btn-buy:hover { background: #fbc02d; transform: scale(1.05); }
-        .btn-close { background: #f3f4f6; color: #666; border: none; cursor: pointer; }
-        .btn-close:hover { background: #e5e7eb; }
+        .btn-play { background: #4caf50; color: white; }
+        .btn-buy { background: #fdd835; color: #512b70; }
+        .btn-close { background: #eee; color: #666; }
 
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-
-        /* Features Grid */
+        /* Features Section */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
-            margin-top: 1rem;
+            margin-bottom: 3rem;
+            animation: slideUp 0.6s ease-out 0.1s both;
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 0.75rem;
             padding: 1.5rem;
-            border-radius: 1rem;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .feature-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.15); }
         .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
-        .feature-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: #fdd835; }
-        .feature-card p { font-size: 0.9rem; color: #e0e0e0; }
+        .feature-card h3 { color: #512b70; margin-bottom: 0.5rem; }
+        .feature-card p { color: #666; font-size: 0.9rem; }
 
-        /* Footer */
-        footer { margin-top: 4rem; padding-bottom: 2rem; text-align: center; position: relative; z-index: 2; }
-        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 2rem; }
-        .footer-bottom p { color: #b39ddb; font-size: 0.875rem; }
-
-        @media (max-width: 640px) {
-            .title-section h1 { font-size: 1.75rem; }
-            .verification-card { padding: 1.5rem; }
-            .game-display-image { width: 100px; height: 100px; }
+        footer {
+            background-color: rgba(44, 27, 77, 0.9);
+            padding: 2rem 1rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        .footer-bottom p { font-size: 0.875rem; color: #b39ddb; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
+    <!-- Firebase SDKs (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <header>
         <div class="header-container">
             <div class="logo-section">
-                <img src="https://f.top4top.io/p_331393h6k1.png" alt="Logo" class="logo-image" />
+                <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663540404554/GaYQtyxSU455uEQCFgoF2K/games_logo_da971829.png" alt="حروف مع مراح" class="logo-image" />
                 <span class="logo-text">حروف مع مراح</span>
             </div>
         </div>
@@ -400,15 +390,15 @@
     <main>
         <div class="content-wrapper">
             <div class="title-section">
-                <h1>تحقق من ملكية اللعبة</h1>
-                <p>الرجاء إدخال رقم الجوال المسجل عند الشراء للبدء</p>
+                <h1>مرحباً بك في حروف مع مراح</h1>
+                <p>أدخل رقم جوالك المسجل للتحقق من ملكيتك للعبة والبدء باللعب</p>
             </div>
 
             <div class="verification-card">
                 <div class="game-display">
-                    <img src="https://f.top4top.io/p_331393h6k1.png" alt="Game" class="game-display-image" />
-                    <h2 class="game-display-name">حروف مع مراح</h2>
-                    <p class="game-display-desc">نسخة الويب الكاملة</p>
+                    <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663540404554/GaYQtyxSU455uEQCFgoF2K/games_logo_da971829.png" alt="حروف مع مراح" class="game-display-image" />
+                    <div class="game-display-name">لعبة حروف</div>
+                    <div class="game-display-desc">استمتع مع لعبة خلية الحروف</div>
                 </div>
 
                 <div class="form-group">
@@ -480,7 +470,7 @@
     <footer><div class="footer-bottom"><p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p></div></footer>
 
     <script>
-        // --- Firebase Configuration ---
+        // إعدادات Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
             authDomain: "verification-da042.firebaseapp.com",
@@ -490,12 +480,9 @@
             appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
         };
 
-        // Initialize Firebase
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
-        const COOKIE_NAME = 'game_verified';
-        const COOKIE_DAYS = 7;
 
         function updatePlaceholder() {
             const country = document.getElementById('countrySelect').value;
@@ -503,54 +490,51 @@
             input.placeholder = (country === '+966') ? '05xxxxxxxx' : 'ادخل رقم الهاتف';
         }
 
+        // دالة التحقق الجديدة
         async function handleVerify() {
-            const phoneInput = document.getElementById('phoneInput');
-            const rawPhone = phoneInput.value.trim();
             const btn = document.getElementById('verifyBtn');
+            const countryCode = document.getElementById('countrySelect').value;
+            const phoneNumber = document.getElementById('phoneInput').value.trim();
 
-            if (!rawPhone) { alert('الرجاء إدخال رقم الجوال'); return; }
-
-            // تنظيف الرقم من أي رموز أو مسافات
-            const cleanPhone = rawPhone.replace(/\D/g, '');
-            if (cleanPhone.length < 6) { alert('الرجاء إدخال رقم هاتف صحيح'); return; }
-
-            // استخلاص آخر 6 أرقام للبحث الذكي
-            const lastSixDigits = cleanPhone.slice(-6);
+            if (!phoneNumber) {
+                alert('يرجى إدخال رقم الهاتف');
+                return;
+            }
 
             btn.disabled = true;
-            btn.textContent = 'جاري التحقق...';
+            btn.innerHTML = 'جاري التحقق... <span class="spinner"></span>';
+
+            // تنظيف الرقم ودمجه مع كود الدولة
+            const cleanPhone = phoneNumber.replace(/\D/g, '');
+            const fullPhone = countryCode + cleanPhone;
 
             try {
-                // البحث في Firestore عن وثيقة ينتهي الـ ID الخاص بها بآخر 6 أرقام
-                // ملاحظة: بما أننا نريد البحث في الـ ID، سنقوم بجلب كافة الوثائق في مجموعة buyers
-                // ونقوم بالتحقق منها برمجياً (هذا آمن طالما أن عدد المشترين ليس بعشرات الآلاف)
-                // وإذا كان العدد كبيراً جداً، يفضل وضع حقل 'suffix' في الداتا بيس والبحث من خلاله.
-                
-                const snapshot = await db.collection("buyers").get();
-                let isVerified = false;
+                // البحث عن الوثيقة في مجموعة buyers
+                const docRef = db.collection('buyers').doc(fullPhone);
+                const doc = await docRef.get();
 
-                snapshot.forEach((doc) => {
-                    const docId = doc.id.replace(/\D/g, ''); // تنظيف الـ ID المخزن في الداتا بيس
-                    if (docId.endsWith(lastSixDigits)) {
-                        isVerified = true;
-                    }
-                });
-
-                if (isVerified) {
-                    setCookie(COOKIE_NAME, 'true', COOKIE_DAYS);
+                if (doc.exists) {
+                    // نجاح التحقق: تعيين الكوكي والتحويل للعبة
+                    setCookie('game_verified', 'true', 7);
                     showModal('successModal');
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 2000);
                 } else {
+                    // فشل التحقق: إظهار رسالة الخطأ
                     showModal('errorModal');
+                    btn.disabled = false;
+                    btn.textContent = 'تحقق ودخول';
                 }
             } catch (error) {
                 console.error('Firebase Error:', error);
-                alert('حدث خطأ أثناء التحقق. تأكد من إعدادات Firebase وقواعد الأمان.');
-            } finally {
+                alert('حدث خطأ أثناء الاتصال بـ Firebase: ' + error.message);
                 btn.disabled = false;
                 btn.textContent = 'تحقق ودخول';
             }
         }
 
+        // دالة تعيين الكوكي لفتح صفحة اللعبة
         function setCookie(name, value, days) {
             const date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
