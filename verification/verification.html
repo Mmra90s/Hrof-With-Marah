@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>حروف مع مراح - صفحة التحقق</title>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=AA-GALAXY:wght@400;700&display=swap" rel="stylesheet" />
+    
+    <!-- Firebase SDKs (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -335,6 +338,8 @@
             font-weight: bold;
             border: none;
             margin-bottom: 0.5rem;
+            cursor: pointer;
+            font-family: 'AA-GALAXY-BOLD', sans-serif;
         }
 
         .btn-play { background: #4caf50; color: white; }
@@ -375,9 +380,6 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
     </style>
-    <!-- Firebase SDKs (v9 compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <header>
@@ -463,7 +465,7 @@
         <div class="modal-content">
             <div class="modal-icon">❌</div>
             <h2 class="modal-title">لم تقم بشراء اللعبة</h2>
-            <p class="modal-text">يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.</p>
+            <p class="modal-text" id="errorText">يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.</p>
             <a href="https://www.marahgames.com/product/hrof" class="modal-btn btn-buy">شراء اللعبة الآن</a>
             <button class="modal-btn btn-close" onclick="closeModal('errorModal')">إغلاق</button>
         </div>
@@ -471,89 +473,92 @@
 
     <footer><div class="footer-bottom"><p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p></div></footer>
 
- <script>
-    // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
-        authDomain: "verification-da042.firebaseapp.com",
-        projectId: "verification-da042",
-        storageBucket: "verification-da042.firebasestorage.app",
-        messagingSenderId: "401133990090",
-        appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
-    };
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
+            authDomain: "verification-da042.firebaseapp.com",
+            projectId: "verification-da042",
+            storageBucket: "verification-da042.firebasestorage.app",
+            messagingSenderId: "401133990090",
+            appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
+        };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    async function handleVerify() {
-        const input = document.getElementById('phoneInput').value;
-        const errorEl = document.getElementById('errorMsg');
-        const successEl = document.getElementById('successMsg');
-        
-        errorEl.style.display = 'none';
-        successEl.style.display = 'none';
-
-        // تنظيف الرقم وأخذ آخر 6 أرقام
-        const cleanPhone = input.replace(/\D/g, '');
-        if (cleanPhone.length < 6) {
-            errorEl.textContent = "يرجى إدخال رقم هاتف صحيح";
-            errorEl.style.display = 'block';
-            return;
+        function updatePlaceholder() {
+            const country = document.getElementById('countrySelect').value;
+            const input = document.getElementById('phoneInput');
+            input.placeholder = (country === '+966') ? '05xxxxxxxx' : 'ادخل رقم الهاتف';
         }
-        const suffix = cleanPhone.slice(-6);
 
-        console.log("DEBUG: Cleaning phone number:", cleanPhone);
-        console.log("DEBUG: Looking for suffix:", suffix);
+        async function handleVerify() {
+            const phoneInput = document.getElementById('phoneInput');
+            const inputVal = phoneInput.value.trim();
+            const btn = document.getElementById('verifyBtn');
+            const errorText = document.getElementById('errorText');
 
-        try {
-            // البحث عن الوثيقة التي يكون الـ ID الخاص بها هو الرقم كاملاً
-            // سنقوم بتجربة جلب الوثيقة مباشرة إذا كان المستخدم أدخل الرقم كاملاً
-            // أو البحث عن وثيقة تنتهي بآخر 6 أرقام
+            if (!inputVal) { alert('الرجاء إدخال رقم الجوال'); return; }
+
+            btn.disabled = true;
+            btn.textContent = 'جاري التحقق...';
+
+            // تنظيف الرقم
+            const cleanPhone = inputVal.replace(/\D/g, '');
             
-            console.log("DEBUG: Attempting to fetch document from 'buyers' collection...");
-            
-            // الطريقة الأولى: جلب الوثيقة بالرقم كما أدخله المستخدم (بعد التنظيف)
-            const docRef = db.collection('buyers').doc(cleanPhone);
-            const doc = await docRef.get();
+            console.log("DEBUG: Cleaning phone number:", cleanPhone);
 
-            if (doc.exists) {
-                console.log("DEBUG: Document found by full number!");
-                proceedSuccess();
-            } else {
-                console.log("DEBUG: Document not found by full number. Checking other possibilities...");
-                // إذا لم يجد الرقم كاملاً، سنبحث في كل الوثائق (يتطلب قواعد أمان تسمح بالـ list)
-                // ولكن بما أننا نريد أماناً عالياً، سنطلب من المستخدم إدخال الرقم كما هو في الداتا بيس
-                errorEl.textContent = "رقم الهاتف غير مسجل في النظام";
-                errorEl.style.display = 'block';
+            try {
+                // الطريقة الأولى: جلب الوثيقة بالرقم كما أدخله المستخدم (بعد التنظيف)
+                const docRef = db.collection('buyers').doc(cleanPhone);
+                const doc = await docRef.get();
+
+                if (doc.exists) {
+                    console.log("DEBUG: Document found!");
+                    proceedSuccess();
+                } else {
+                    console.log("DEBUG: Document not found.");
+                    errorText.textContent = "يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.";
+                    showModal('errorModal');
+                    btn.disabled = false;
+                    btn.textContent = 'تحقق ودخول';
+                }
+            } catch (error) {
+                console.error("DEBUG ERROR:", error);
+                let msg = "حدث خطأ أثناء الاتصال بـ Firebase: " + error.message;
+                if (error.code === 'permission-denied') {
+                    msg = "خطأ في صلاحيات Firebase. تأكد من قواعد الأمان (Rules).";
+                }
+                errorText.textContent = msg;
+                showModal('errorModal');
+                btn.disabled = false;
+                btn.textContent = 'تحقق ودخول';
             }
-        } catch (error) {
-            console.error("DEBUG ERROR:", error);
-            console.error("DEBUG ERROR CODE:", error.code);
-            console.error("DEBUG ERROR MESSAGE:", error.message);
-            
-            if (error.code === 'permission-denied') {
-                errorEl.textContent = "خطأ في صلاحيات Firebase. تأكد من قواعد الأمان (Rules).";
-            } else {
-                errorEl.textContent = "حدث خطأ أثناء الاتصال بـ Firebase: " + error.message;
-            }
-            errorEl.style.display = 'block';
         }
-    }
 
-    function proceedSuccess() {
-        const successEl = document.getElementById('successMsg');
-        successEl.style.display = 'block';
-        
-        // تعيين الكوكي لمدة 7 أيام
-        const d = new Date();
-        d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
-        document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
-        
-        setTimeout(() => {
-            window.location.href = '../index.html';
-        }, 2000);
-    }
- </script>
+        function proceedSuccess() {
+            // تعيين الكوكي لمدة 7 أيام
+            const d = new Date();
+            d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+            document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
+            
+            showModal('successModal');
+            
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 2000);
+        }
+
+        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        document.getElementById('phoneInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleVerify();
+        });
+
+        updatePlaceholder();
+    </script>
 </body>
 </html>
