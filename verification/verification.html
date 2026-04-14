@@ -7,11 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=AA-GALAXY:wght@400;700&display=swap" rel="stylesheet" />
-    
-    <!-- Firebase SDKs (v9 compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
@@ -329,20 +324,26 @@
             margin-bottom: 2rem;
         }
 
-        .modal-button {
-            padding: 0.75rem 2rem;
-            background: #512b70;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
+        .modal-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-align: center;
         }
 
-        .modal-button:hover {
+        .modal-btn-primary {
+            background: #512b70;
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
             background: #6a3093;
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
         /* Footer */
@@ -401,6 +402,10 @@
             .header-container { padding: 0.75rem; }
         }
     </style>
+    
+    <!-- Firebase SDKs (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <header>
@@ -475,7 +480,7 @@
             <div class="modal-icon">❌</div>
             <h2 class="modal-title">عذراً!</h2>
             <p id="errorText" class="modal-text">يبدو أن هذا الرقم غير مسجل لدينا.</p>
-            <button class="modal-button" onclick="closeModal('errorModal')">حاول مرة أخرى</button>
+            <button class="modal-btn modal-btn-primary" onclick="closeModal('errorModal')">حاول مرة أخرى</button>
         </div>
     </div>
 
@@ -490,15 +495,23 @@
             appId: "..."
         };
 
-        firebase.initializeApp(firebaseConfig);
+        // تهيئة Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
 
         // --- دالة التشفير (SHA-256) ---
         async function sha256(message) {
-            const msgUint8 = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            try {
+                const msgUint8 = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch (e) {
+                console.error("Hashing Error:", e);
+                return null;
+            }
         }
 
         function updatePlaceholder() {
@@ -550,11 +563,14 @@
                 }
 
                 let foundDoc = null;
-                for (const attempt of attempts) {
-                    // تشفير الاحتمال قبل البحث عنه في Firestore
+                const attemptArray = Array.from(attempts);
+
+                // البحث في Firestore عن كل احتمال مشفر
+                for (const attempt of attemptArray) {
                     const hashedAttempt = await sha256(attempt);
+                    if (!hashedAttempt) continue;
+
                     const doc = await db.collection('buyers').doc(hashedAttempt).get();
-                    
                     if (doc.exists) {
                         foundDoc = doc;
                         break;
@@ -570,8 +586,8 @@
                     btn.textContent = 'تحقق ودخول';
                 }
             } catch (error) {
-                console.error("Error:", error);
-                errorText.textContent = "حدث خطأ أثناء الاتصال. يرجى المحاولة لاحقاً.";
+                console.error("Firestore Error:", error);
+                errorText.textContent = "حدث خطأ أثناء الاتصال بـ Firebase. يرجى المحاولة لاحقاً.";
                 showModal('errorModal');
                 btn.disabled = false;
                 btn.textContent = 'تحقق ودخول';
