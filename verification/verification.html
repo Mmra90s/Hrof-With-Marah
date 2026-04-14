@@ -520,40 +520,49 @@
             console.log("DEBUG: Looking for suffix:", suffix);
 
             try {
-                // البحث عن وثيقة تنتهي بآخر 6 أرقام
-                // ملاحظة: بما أن Firestore لا يدعم البحث بـ endsWith مباشرة، 
-                // سنقوم بجلب الوثيقة التي يكون الـ ID الخاص بها هو الرقم كاملاً أولاً،
-                // أو البحث في مجموعة 'buyers' عن وثيقة تطابق هذا اللاحقة (suffix)
+                // مصفوفة لتجربة احتمالات مختلفة للرقم المدخل
+                // هذا يحل مشكلة اختلاف التنسيق (مع 0 أو بدونه، مع 966 أو بدونه)
+                // دون الحاجة لصلاحية 'list' في Firebase (أكثر أماناً)
+                const attempts = new Set();
                 
-                // الطريقة الأولى: جلب الوثيقة بالرقم الكامل
-                const docRef = db.collection('buyers').doc(cleanPhone);
-                const doc = await docRef.get();
-
-                if (doc.exists) {
-                    console.log("DEBUG: Document found by full number!");
-                    proceedSuccess();
-                    return;
+                attempts.add(cleanPhone); // الرقم كما هو (مثلاً 0540364191)
+                
+                // إذا بدأ بـ 966، نجرب بدونه
+                if (cleanPhone.startsWith('966')) {
+                    const without966 = cleanPhone.substring(3);
+                    attempts.add(without966);
+                    attempts.add('0' + without966);
+                }
+                
+                // إذا بدأ بـ 05، نجرب بدونه وبإضافة 966
+                if (cleanPhone.startsWith('05')) {
+                    const without0 = cleanPhone.substring(1);
+                    attempts.add(without0);
+                    attempts.add('966' + without0);
+                }
+                
+                // إذا بدأ بـ 5 (بدون 0)، نجرب بإضافة 0 وبإضافة 966
+                if (cleanPhone.startsWith('5') && cleanPhone.length === 9) {
+                    attempts.add('0' + cleanPhone);
+                    attempts.add('966' + cleanPhone);
                 }
 
-                // الطريقة الثانية: البحث عن أي وثيقة تنتهي بآخر 6 أرقام
-                // ملاحظة: هذا يتطلب أن تكون أسماء الوثائق (Document IDs) هي أرقام الهواتف
-                // سنقوم بجلب الوثائق التي تبدأ بـ suffix إذا كانت مخزنة بهذا الشكل، 
-                // أو الأفضل البحث في كل الوثائق ومقارنة الـ ID برمجياً (يتطلب صلاحيات list)
-                
-                const snapshot = await db.collection('buyers').get();
-                let found = false;
-                
-                snapshot.forEach((doc) => {
-                    if (doc.id.endsWith(suffix)) {
-                        console.log("DEBUG: Document found by suffix match:", doc.id);
-                        found = true;
-                    }
-                });
+                console.log("DEBUG: Attempting to find document with these variations:", Array.from(attempts));
 
-                if (found) {
+                let foundDoc = null;
+                for (const attempt of attempts) {
+                    const doc = await db.collection('buyers').doc(attempt).get();
+                    if (doc.exists) {
+                        foundDoc = doc;
+                        console.log("DEBUG: Document found with variation:", attempt);
+                        break;
+                    }
+                }
+
+                if (foundDoc) {
                     proceedSuccess();
                 } else {
-                    console.log("DEBUG: No document found with this suffix.");
+                    console.log("DEBUG: No document found with any variation.");
                     errorText.textContent = "يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.";
                     showModal('errorModal');
                     btn.disabled = false;
@@ -596,4 +605,3 @@
     </script>
 </body>
 </html>
-
