@@ -493,7 +493,6 @@
         // دالة التحقق الجديدة
         async function handleVerify() {
             const btn = document.getElementById('verifyBtn');
-            const countryCode = document.getElementById('countrySelect').value;
             const phoneNumber = document.getElementById('phoneInput').value.trim();
 
             if (!phoneNumber) {
@@ -504,16 +503,42 @@
             btn.disabled = true;
             btn.innerHTML = 'جاري التحقق... <span class="spinner"></span>';
 
-            // تنظيف الرقم ودمجه مع كود الدولة
-            const cleanPhone = phoneNumber.replace(/\D/g, '');
-            const fullPhone = countryCode + cleanPhone;
+            // تنظيف الرقم من أي رموز غير رقمية
+            let cleanPhone = phoneNumber.replace(/\D/g, '');
+            
+            // الحصول على آخر 6 أرقام فقط
+            if (cleanPhone.length < 6) {
+                alert('يرجى إدخال رقم هاتف صحيح (على الأقل 6 أرقام)');
+                btn.disabled = false;
+                btn.textContent = 'تحقق ودخول';
+                return;
+            }
+            const lastSixDigits = cleanPhone.slice(-6);
 
             try {
-                // البحث عن الوثيقة في مجموعة buyers
-                const docRef = db.collection('buyers').doc(fullPhone);
-                const doc = await docRef.get();
+                // البحث في مجموعة buyers عن أي وثيقة تنتهي بآخر 6 أرقام
+                // ملاحظة: Firestore لا يدعم البحث بـ "ينتهي بـ" مباشرة
+                // لذا سنقوم بجلب الوثائق والتحقق منها، أو إذا كانت الوثائق مخزنة بأسماء كاملة
+                // سنحتاج للبحث في الحقول. سنفترض هنا أننا نبحث في أسماء الوثائق (IDs)
+                
+                // للحصول على أفضل أداء، يفضل أن يكون هناك حقل في Firestore يحتوي على آخر 6 أرقام
+                // ولكن بما أننا لا نتحكم في قاعدة البيانات، سنحاول البحث عن الوثيقة بالرقم الكامل أولاً
+                // أو جلب الوثائق التي قد تطابق (هذا قد يكون مكلفاً إذا كانت البيانات ضخمة)
+                
+                // الحل الأفضل هو البحث عن الوثيقة بالرقم الكامل كما في السابق، 
+                // ولكن إذا كنت تقصد أنك تريد مطابقة آخر 6 أرقام فقط، فهذا يتطلب استعلاماً:
+                
+                const querySnapshot = await db.collection('buyers').get();
+                let found = false;
 
-                if (doc.exists) {
+                querySnapshot.forEach((doc) => {
+                    const docId = doc.id; // نفترض أن الرقم هو الـ ID
+                    if (docId.endsWith(lastSixDigits)) {
+                        found = true;
+                    }
+                });
+
+                if (found) {
                     // نجاح التحقق: تعيين الكوكي والتحويل للعبة
                     setCookie('game_verified', 'true', 7);
                     showModal('successModal');
