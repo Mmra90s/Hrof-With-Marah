@@ -473,135 +473,104 @@
 
     <footer><div class="footer-bottom"><p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p></div></footer>
 
-    <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
-            authDomain: "verification-da042.firebaseapp.com",
-            projectId: "verification-da042",
-            storageBucket: "verification-da042.firebasestorage.app",
-            messagingSenderId: "401133990090",
-            appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
-        };
+ <!-- 
+    تعديل أمني لصفحة التحقق:
+    1. تمت إضافة دالة sha256 لتشفير الأرقام.
+    2. تم تعديل handleVerify لتشفير كل احتمال للرقم قبل البحث عنه في Firestore.
+    3. تم الحفاظ على جميع احتمالات التنسيق (05, 5, 966) لضمان عملها كما طلبت.
+-->
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+<script>
+    // --- دالة التشفير الجديدة ---
+    async function sha256(message) {
+        const msgUint8 = new TextEncoder().encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-        function updatePlaceholder() {
-            const country = document.getElementById('countrySelect').value;
-            const input = document.getElementById('phoneInput');
-            input.placeholder = (country === '+966') ? '05xxxxxxxx' : 'ادخل رقم الهاتف';
+    async function handleVerify() {
+        const inputVal = document.getElementById('phoneInput').value.trim();
+        const btn = document.getElementById('verifyBtn');
+        const errorText = document.getElementById('errorText');
+
+        if (!inputVal) return;
+
+        btn.disabled = true;
+        btn.textContent = 'جاري التحقق...';
+
+        // تنظيف الرقم
+        const cleanPhone = inputVal.replace(/\D/g, '');
+        if (cleanPhone.length < 6) {
+            errorText.textContent = "يرجى إدخال رقم هاتف صحيح (6 أرقام على الأقل)";
+            showModal('errorModal');
+            btn.disabled = false;
+            btn.textContent = 'تحقق ودخول';
+            return;
         }
 
-        async function handleVerify() {
-            const phoneInput = document.getElementById('phoneInput');
-            const inputVal = phoneInput.value.trim();
-            const btn = document.getElementById('verifyBtn');
-            const errorText = document.getElementById('errorText');
-
-            if (!inputVal) { alert('الرجاء إدخال رقم الجوال'); return; }
-
-            btn.disabled = true;
-            btn.textContent = 'جاري التحقق...';
-
-            // تنظيف الرقم وأخذ آخر 6 أرقام
-            const cleanPhone = inputVal.replace(/\D/g, '');
-            if (cleanPhone.length < 6) {
-                errorText.textContent = "يرجى إدخال رقم هاتف صحيح (6 أرقام على الأقل)";
-                showModal('errorModal');
-                btn.disabled = false;
-                btn.textContent = 'تحقق ودخول';
-                return;
-            }
-            const suffix = cleanPhone.slice(-6);
+        try {
+            // مصفوفة لتجربة احتمالات مختلفة للرقم المدخل (كما في كودك الأصلي)
+            const attempts = new Set();
+            attempts.add(cleanPhone); // الرقم كما هو (مثلاً 0540364191)
             
-            console.log("DEBUG: Cleaning phone number:", cleanPhone);
-            console.log("DEBUG: Looking for suffix:", suffix);
+            // إذا بدأ بـ 966، نجرب بدونه ومع 0
+            if (cleanPhone.startsWith('966')) {
+                const without966 = cleanPhone.substring(3);
+                attempts.add(without966);
+                attempts.add('0' + without966);
+            }
+            
+            // إذا بدأ بـ 05، نجرب بدونه وبإضافة 966
+            if (cleanPhone.startsWith('05')) {
+                const without0 = cleanPhone.substring(1);
+                attempts.add(without0);
+                attempts.add('966' + without0);
+            }
+            
+            // إذا بدأ بـ 5 (بدون 0)، نجرب بإضافة 0 وبإضافة 966
+            if (cleanPhone.startsWith('5') && cleanPhone.length === 9) {
+                attempts.add('0' + cleanPhone);
+                attempts.add('966' + cleanPhone);
+            }
 
-            try {
-                // مصفوفة لتجربة احتمالات مختلفة للرقم المدخل
-                // هذا يحل مشكلة اختلاف التنسيق (مع 0 أو بدونه، مع 966 أو بدونه)
-                // دون الحاجة لصلاحية 'list' في Firebase (أكثر أماناً)
-                const attempts = new Set();
-                
-                attempts.add(cleanPhone); // الرقم كما هو (مثلاً 0540364191)
-                
-                // إذا بدأ بـ 966، نجرب بدونه
-                if (cleanPhone.startsWith('966')) {
-                    const without966 = cleanPhone.substring(3);
-                    attempts.add(without966);
-                    attempts.add('0' + without966);
-                }
-                
-                // إذا بدأ بـ 05، نجرب بدونه وبإضافة 966
-                if (cleanPhone.startsWith('05')) {
-                    const without0 = cleanPhone.substring(1);
-                    attempts.add(without0);
-                    attempts.add('966' + without0);
-                }
-                
-                // إذا بدأ بـ 5 (بدون 0)، نجرب بإضافة 0 وبإضافة 966
-                if (cleanPhone.startsWith('5') && cleanPhone.length === 9) {
-                    attempts.add('0' + cleanPhone);
-                    attempts.add('966' + cleanPhone);
-                }
+            console.log("DEBUG: Attempting to find document with these variations (Hashed):", Array.from(attempts));
 
-                console.log("DEBUG: Attempting to find document with these variations:", Array.from(attempts));
+            let foundDoc = null;
+            for (const attempt of attempts) {
+                // --- التعديل الجوهري: تشفير الاحتمال قبل البحث عنه ---
+                const hashedAttempt = await sha256(attempt);
+                const doc = await db.collection('buyers').doc(hashedAttempt).get();
+                
+                if (doc.exists) {
+                    foundDoc = doc;
+                    console.log("DEBUG: Document found with variation:", attempt);
+                    break;
+                }
+            }
 
-                let foundDoc = null;
-                for (const attempt of attempts) {
-                    const doc = await db.collection('buyers').doc(attempt).get();
-                    if (doc.exists) {
-                        foundDoc = doc;
-                        console.log("DEBUG: Document found with variation:", attempt);
-                        break;
-                    }
-                }
-
-                if (foundDoc) {
-                    proceedSuccess();
-                } else {
-                    console.log("DEBUG: No document found with any variation.");
-                    errorText.textContent = "يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.";
-                    showModal('errorModal');
-                    btn.disabled = false;
-                    btn.textContent = 'تحقق ودخول';
-                }
-            } catch (error) {
-                console.error("DEBUG ERROR:", error);
-                let msg = "حدث خطأ أثناء الاتصال بـ Firebase: " + error.message;
-                if (error.code === 'permission-denied') {
-                    msg = "خطأ في صلاحيات Firebase. تأكد من قواعد الأمان (Rules).";
-                }
-                errorText.textContent = msg;
+            if (foundDoc) {
+                proceedSuccess();
+            } else {
+                console.log("DEBUG: No document found with any variation.");
+                errorText.textContent = "يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.";
                 showModal('errorModal');
                 btn.disabled = false;
                 btn.textContent = 'تحقق ودخول';
             }
+        } catch (error) {
+            console.error("DEBUG ERROR:", error);
+            let msg = "حدث خطأ أثناء الاتصال بـ Firebase: " + error.message;
+            if (error.code === 'permission-denied') {
+                msg = "خطأ في صلاحيات Firebase. تأكد من قواعد الأمان (Rules).";
+            }
+            errorText.textContent = msg;
+            showModal('errorModal');
+            btn.disabled = false;
+            btn.textContent = 'تحقق ودخول';
         }
+    }
+</script>
 
-        function proceedSuccess() {
-            // تعيين الكوكي لمدة 7 أيام
-            const d = new Date();
-            d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
-            document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
-            
-            showModal('successModal');
-            
-            setTimeout(() => {
-                window.location.href = '../index.html';
-            }, 2000);
-        }
-
-        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        document.getElementById('phoneInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleVerify();
-        });
-
-        updatePlaceholder();
-    </script>
 </body>
 </html>
