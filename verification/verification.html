@@ -1,571 +1,173 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>حروف مع مراح - صفحة التحقق</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=AA-GALAXY:wght@400;700&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التحقق من الاشتراك - حروف مع مراح</title>
     
-    <!-- Firebase SDK (v9 compat) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDKs (v9 compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
     <style>
         @font-face {
             font-family: 'AA-GALAXY';
-            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXY.otf');
+            src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//AA-GALAXY.otf');
         }
-
         @font-face {
             font-family: 'AA-GALAXY-BOLD';
-            src: url('https://arbfonts.com/wp-content/fonts/new-arabic-fonts/AA-GALAXYBold.otf');
+            src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//AA-GALAXYBold.otf');
         }
-
         * {
+            font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
         }
-
         body {
-            background: linear-gradient(135deg, #512b70 0%, #2c1b4d 100%);
-            color: #ffffff;
-            line-height: 1.6;
+            background-color: #6a3093;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Hexagonal Pattern Background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(255, 255, 255, 0.03) 35px, rgba(255, 255, 255, 0.03) 70px),
-                repeating-linear-gradient(60deg, transparent, transparent 35px, rgba(255, 255, 255, 0.03) 35px, rgba(255, 255, 255, 0.03) 70px),
-                repeating-linear-gradient(120deg, transparent, transparent 35px, rgba(255, 255, 255, 0.03) 35px, rgba(255, 255, 255, 0.03) 70px);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        /* Header */
-        header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background-color: rgba(81, 43, 112, 0.8);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .header-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo-image {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Main Content */
-        main {
-            flex: 1;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 3rem 1rem;
-            position: relative;
-            z-index: 2;
-        }
-
-        .content-wrapper {
-            max-width: 640px;
-            margin: 0 auto;
-        }
-
-        /* Title Section */
-        .title-section {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        .title-section h1 {
-            font-size: 2.25rem;
-            font-weight: bold;
-            color: #ffffff;
-            margin-bottom: 1rem;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .title-section p {
-            font-size: 1.125rem;
-            color: #b39ddb;
-        }
-
-        /* Verification Card */
-        .verification-card {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 1rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            padding: 2rem;
-            margin-bottom: 3rem;
-            animation: slideUp 0.6s ease-out;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .form-group {
-            margin-bottom: 2rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #512b70;
-            margin-bottom: 1rem;
-            text-align: right;
-        }
-
-        /* Game Display */
-        .game-display {
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            border: 2px solid #fdd835;
-            background: linear-gradient(135deg, rgba(253, 216, 53, 0.1) 0%, rgba(38, 198, 218, 0.1) 100%);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .game-display-image {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            margin: 0 auto 1rem;
-            display: block;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
-
-        .game-display-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #fdd835 0%, #26c6da 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-
-        .game-display-desc {
-            font-size: 0.875rem;
-            color: #512b70;
-        }
-
-        /* Phone Input */
-        .phone-input-group {
-            display: flex;
-            gap: 0.5rem;
-            width: 100%;
-        }
-
-        .country-select-wrapper {
-            flex: 0 0 auto;
-            width: 90px;
-        }
-
-        .country-select {
-            width: 100%;
-            padding: 0.75rem 0.25rem;
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            border: 2px solid #e2e8f0;
-            color: #512b70;
-            font-weight: 500;
-            font-family: 'AA-GALAXY', sans-serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23512b70' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: left 0.4rem center;
-            padding-left: 1.2rem;
-            text-align: center;
-        }
-
-        .phone-input {
-            flex: 1;
-            min-width: 0;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            font-family: 'AA-GALAXY', sans-serif;
-            font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            color: #512b70;
-            text-align: right;
-        }
-
-        .phone-input:focus {
-            outline: none;
-            border-color: #512b70;
-            box-shadow: 0 0 0 3px rgba(81, 43, 112, 0.1);
-        }
-
-        /* Buttons */
-        .verify-button {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: linear-gradient(135deg, #512b70 0%, #6a3093 100%);
             color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1rem;
-            font-family: 'AA-GALAXY-BOLD', sans-serif;
-            box-shadow: 0 4px 12px rgba(81, 43, 112, 0.3);
-        }
-
-        .verify-button:hover:not(:disabled) {
-            background: linear-gradient(135deg, #6a3093 0%, #7FFF00 100%);
-            box-shadow: 0 6px 20px rgba(81, 43, 112, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .buy-game-button {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: #fdd835;
-            color: #512b70;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'AA-GALAXY-BOLD', sans-serif;
-            text-decoration: none;
-            display: inline-block;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(253, 216, 53, 0.3);
+            padding: 20px;
         }
-
-        .buy-game-button:hover {
-            background: #fbc02d;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(253, 216, 53, 0.4);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            position: relative;
-            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .modal-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            color: #512b70;
-            margin-bottom: 1rem;
-        }
-
-        .modal-text {
-            color: #666;
-            margin-bottom: 2rem;
-        }
-
-        .modal-btn {
-            display: inline-block;
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: 0.75rem;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            font-family: 'AA-GALAXY-BOLD', sans-serif;
-        }
-
-        .btn-play { background: #7FFF00; color: #512b70; margin-bottom: 1rem; }
-        .btn-play:hover { background: #66CC00; transform: scale(1.05); }
-        .btn-buy { background: #fdd835; color: #512b70; margin-bottom: 1rem; }
-        .btn-buy:hover { background: #fbc02d; transform: scale(1.05); }
-        .btn-close { background: #f3f4f6; color: #666; border: none; cursor: pointer; }
-        .btn-close:hover { background: #e5e7eb; }
-
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .feature-card {
+        .container {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            padding: 1.5rem;
-            border-radius: 1rem;
+            padding: 40px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+        h1 { font-size: 32px; margin-bottom: 20px; color: #f1c40f; }
+        p { margin-bottom: 30px; opacity: 0.8; }
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            border: none;
+            margin-bottom: 20px;
+            font-size: 18px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease;
+            outline: none;
         }
-
-        .feature-card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.15); }
-        .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
-        .feature-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; color: #fdd835; }
-        .feature-card p { font-size: 0.9rem; color: #e0e0e0; }
-
-        /* Footer */
-        footer { margin-top: 4rem; padding-bottom: 2rem; text-align: center; position: relative; z-index: 2; }
-        .footer-bottom { border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 2rem; }
-        .footer-bottom p { color: #b39ddb; font-size: 0.875rem; }
-
-        @media (max-width: 640px) {
-            .title-section h1 { font-size: 1.75rem; }
-            .verification-card { padding: 1.5rem; }
-            .game-display-image { width: 100px; height: 100px; }
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            border: none;
+            background: #f1c40f;
+            color: #6a3093;
+            font-size: 20px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+        button:hover { transform: scale(1.05); }
+        .error { color: #ef5350; margin-top: 15px; display: none; }
+        .success { color: #2ecc00; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-container">
-            <div class="logo-section">
-                <img src="https://f.top4top.io/p_331393h6k1.png" alt="Logo" class="logo-image" />
-                <span class="logo-text">حروف مع مراح</span>
-            </div>
-        </div>
-    </header>
 
-    <main>
-        <div class="content-wrapper">
-            <div class="title-section">
-                <h1>تحقق من ملكية اللعبة</h1>
-                <p>الرجاء إدخال رقم الجوال المسجل عند الشراء للبدء</p>
-            </div>
+<div class="container">
+    <h1>تحقق من الاشتراك</h1>
+    <p>يرجى إدخال رقم الهاتف المسجل لتفعيل اللعبة</p>
+    <input type="tel" id="phoneInput" placeholder="أدخل رقم الهاتف">
+    <button onclick="handleVerify()">تحقق الآن</button>
+    <div id="errorMsg" class="error">رقم الهاتف غير مسجل أو حدث خطأ</div>
+    <div id="successMsg" class="success">تم التحقق بنجاح! جاري التحويل...</div>
+</div>
 
-            <div class="verification-card">
-                <div class="game-display">
-                    <img src="https://f.top4top.io/p_331393h6k1.png" alt="Game" class="game-display-image" />
-                    <h2 class="game-display-name">حروف مع مراح</h2>
-                    <p class="game-display-desc">نسخة الويب الكاملة</p>
-                </div>
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
+        authDomain: "verification-da042.firebaseapp.com",
+        projectId: "verification-da042",
+        storageBucket: "verification-da042.firebasestorage.app",
+        messagingSenderId: "401133990090",
+        appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
+    };
 
-                <div class="form-group">
-                    <label class="form-label">رقم الجوال</label>
-                    <div class="phone-input-group">
-                        <div class="country-select-wrapper">
-                            <select class="country-select" id="countrySelect" onchange="updatePlaceholder()">
-                                <option value="+966">🇸🇦 +966</option>
-                                <option value="+971">🇦🇪 +971</option>
-                                <option value="+965">🇰🇼 +965</option>
-                                <option value="+974">🇶🇦 +974</option>
-                                <option value="+973">🇧🇭 +973</option>
-                                <option value="+968">🇴🇲 +968</option>
-                                <option value="+20">🇪🇬 +20</option>
-                                <option value="+962">🇯🇴 +962</option>
-                                <option value="+961">🇱🇧 +961</option>
-                                <option value="+964">🇮🇶 +964</option>
-                                <option value="+970">🇵🇸 +970</option>
-                                <option value="+212">🇲🇦 +212</option>
-                                <option value="+213">🇩🇿 +213</option>
-                                <option value="+216">🇹🇳 +216</option>
-                                <option value="+218">🇱🇾 +218</option>
-                                <option value="+249">🇸🇩 +249</option>
-                                <option value="+967">🇾🇪 +967</option>
-                                <option value="+963">🇸🇾 +963</option>
-                                <option value="+1">🇺🇸 +1</option>
-                                <option value="+44">🇬🇧 +44</option>
-                                <option value="+90">🇹🇷 +90</option>
-                            </select>
-                        </div>
-                        <input type="tel" class="phone-input" id="phoneInput" placeholder="05xxxxxxxx" />
-                    </div>
-                </div>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-                <button class="verify-button" id="verifyBtn" onclick="handleVerify()">تحقق ودخول</button>
-                <a href="https://www.marahgames.com/product/hrof" class="buy-game-button">🛒 شراء اللعبة الآن</a>
-            </div>
+    async function handleVerify() {
+        const input = document.getElementById('phoneInput').value;
+        const errorEl = document.getElementById('errorMsg');
+        const successEl = document.getElementById('successMsg');
+        
+        errorEl.style.display = 'none';
+        successEl.style.display = 'none';
 
-            <div class="features-grid">
-                <div class="feature-card"><div class="feature-icon">🎮</div><h3>لعبة تفاعلية</h3><p>تجربة لعب ممتعة وتفاعلية تجمع بين الحروف والكلمات</p></div>
-                <div class="feature-card"><div class="feature-icon">🔄</div><h3>تحديثات مستمرة</h3><p>نحصل على تحديثات منتظمة وميزات جديدة باستمرار</p></div>
-                <div class="feature-card"><div class="feature-icon">👨‍👩‍👧‍👦</div><h3>للعائلة والأصدقاء</h3><p>لعبة مناسبة للجميع تجمع العائلة والأصدقاء معاً</p></div>
-                <div class="feature-card"><div class="feature-icon">⚡</div><h3>تفعيل فوري</h3><p>تفعيل فوري وسهل بدون تأخير أو تعقيدات</p></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Success Modal -->
-    <div class="modal-overlay" id="successModal">
-        <div class="modal-content">
-            <div class="modal-icon">✅</div>
-            <h2 class="modal-title">تم التحقق بنجاح!</h2>
-            <p class="modal-text">أهلاً بك مجدداً، يمكنك الآن الاستمتاع باللعب.</p>
-            <a href="../index.html" class="modal-btn btn-play">العب الآن</a>
-        </div>
-    </div>
-
-    <!-- Error Modal -->
-    <div class="modal-overlay" id="errorModal">
-        <div class="modal-content">
-            <div class="modal-icon">❌</div>
-            <h2 class="modal-title">لم تقم بشراء اللعبة</h2>
-            <p class="modal-text">يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.</p>
-            <a href="https://www.marahgames.com/product/hrof" class="modal-btn btn-buy">شراء اللعبة الآن</a>
-            <button class="modal-btn btn-close" onclick="closeModal('errorModal')">إغلاق</button>
-        </div>
-    </div>
-
-    <footer><div class="footer-bottom"><p>© 2026 حروف مع مراح - جميع الحقوق محفوظة</p></div></footer>
-
-    <script>
-        // --- Firebase Configuration ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
-            authDomain: "verification-da042.firebaseapp.com",
-            projectId: "verification-da042",
-            storageBucket: "verification-da042.firebasestorage.app",
-            messagingSenderId: "401133990090",
-            appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        const COOKIE_NAME = 'game_verified';
-        const COOKIE_DAYS = 7;
-
-        function updatePlaceholder() {
-            const country = document.getElementById('countrySelect').value;
-            const input = document.getElementById('phoneInput');
-            input.placeholder = (country === '+966') ? '05xxxxxxxx' : 'ادخل رقم الهاتف';
+        // تنظيف الرقم وأخذ آخر 6 أرقام
+        const cleanPhone = input.replace(/\D/g, '');
+        if (cleanPhone.length < 6) {
+            errorEl.textContent = "يرجى إدخال رقم هاتف صحيح";
+            errorEl.style.display = 'block';
+            return;
         }
+        const suffix = cleanPhone.slice(-6);
 
-        async function handleVerify() {
-            const phoneInput = document.getElementById('phoneInput');
-            const rawPhone = phoneInput.value.trim();
-            const btn = document.getElementById('verifyBtn');
+        console.log("DEBUG: Cleaning phone number:", cleanPhone);
+        console.log("DEBUG: Looking for suffix:", suffix);
 
-            if (!rawPhone) { alert('الرجاء إدخال رقم الجوال'); return; }
+        try {
+            // البحث عن الوثيقة التي يكون الـ ID الخاص بها هو الرقم كاملاً
+            // سنقوم بتجربة جلب الوثيقة مباشرة إذا كان المستخدم أدخل الرقم كاملاً
+            // أو البحث عن وثيقة تنتهي بآخر 6 أرقام
+            
+            console.log("DEBUG: Attempting to fetch document from 'buyers' collection...");
+            
+            // الطريقة الأولى: جلب الوثيقة بالرقم كما أدخله المستخدم (بعد التنظيف)
+            const docRef = db.collection('buyers').doc(cleanPhone);
+            const doc = await docRef.get();
 
-            // تنظيف الرقم من أي رموز أو مسافات
-            const cleanPhone = rawPhone.replace(/\D/g, '');
-            if (cleanPhone.length < 6) { alert('الرجاء إدخال رقم هاتف صحيح'); return; }
-
-            // استخلاص آخر 6 أرقام للبحث الذكي
-            const lastSixDigits = cleanPhone.slice(-6);
-
-            btn.disabled = true;
-            btn.textContent = 'جاري التحقق...';
-
-            try {
-                // البحث في Firestore عن وثيقة ينتهي الـ ID الخاص بها بآخر 6 أرقام
-                // ملاحظة: بما أننا نريد البحث في الـ ID، سنقوم بجلب كافة الوثائق في مجموعة buyers
-                // ونقوم بالتحقق منها برمجياً (هذا آمن طالما أن عدد المشترين ليس بعشرات الآلاف)
-                // وإذا كان العدد كبيراً جداً، يفضل وضع حقل 'suffix' في الداتا بيس والبحث من خلاله.
-                
-                const snapshot = await db.collection("buyers").get();
-                let isVerified = false;
-
-                snapshot.forEach((doc) => {
-                    const docId = doc.id.replace(/\D/g, ''); // تنظيف الـ ID المخزن في الداتا بيس
-                    if (docId.endsWith(lastSixDigits)) {
-                        isVerified = true;
-                    }
-                });
-
-                if (isVerified) {
-                    setCookie(COOKIE_NAME, 'true', COOKIE_DAYS);
-                    showModal('successModal');
-                } else {
-                    showModal('errorModal');
-                }
-            } catch (error) {
-                console.error('Firebase Error:', error);
-                alert('حدث خطأ أثناء التحقق. تأكد من إعدادات Firebase وقواعد الأمان.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'تحقق ودخول';
+            if (doc.exists) {
+                console.log("DEBUG: Document found by full number!");
+                proceedSuccess();
+            } else {
+                console.log("DEBUG: Document not found by full number. Checking other possibilities...");
+                // إذا لم يجد الرقم كاملاً، سنبحث في كل الوثائق (يتطلب قواعد أمان تسمح بالـ list)
+                // ولكن بما أننا نريد أماناً عالياً، سنطلب من المستخدم إدخال الرقم كما هو في الداتا بيس
+                errorEl.textContent = "رقم الهاتف غير مسجل في النظام";
+                errorEl.style.display = 'block';
             }
+        } catch (error) {
+            console.error("DEBUG ERROR:", error);
+            console.error("DEBUG ERROR CODE:", error.code);
+            console.error("DEBUG ERROR MESSAGE:", error.message);
+            
+            if (error.code === 'permission-denied') {
+                errorEl.textContent = "خطأ في صلاحيات Firebase. تأكد من قواعد الأمان (Rules).";
+            } else {
+                errorEl.textContent = "حدث خطأ أثناء الاتصال بـ Firebase: " + error.message;
+            }
+            errorEl.style.display = 'block';
         }
+    }
 
-        function setCookie(name, value, days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            const expires = "expires=" + date.toUTCString();
-            document.cookie = name + "=" + value + ";" + expires + ";path=/";
-        }
+    function proceedSuccess() {
+        const successEl = document.getElementById('successMsg');
+        successEl.style.display = 'block';
+        
+        // تعيين الكوكي لمدة 7 أيام
+        const d = new Date();
+        d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+        document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
+        
+        setTimeout(() => {
+            window.location.href = '../index.html';
+        }, 2000);
+    }
+</script>
 
-        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        document.getElementById('phoneInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleVerify();
-        });
-
-        updatePlaceholder();
-    </script>
 </body>
 </html>
+
