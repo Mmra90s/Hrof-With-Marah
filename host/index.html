@@ -327,29 +327,179 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: all 0.2s;
         }
 
-        /* Question Box */
-        .question-box {
-            background: rgba(44, 27, 77, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: clamp(15px, 3vw, 25px);
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            animation: fadeIn 0.5s ease-out;
+        .bell-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Animations */
+        @keyframes floatUp {
+            0%,100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes floatUpMa {
+            0%,100% { transform: translateY(0px) scaleX(1); }
+            50% { transform: translateY(-8px) scaleX(1.04); }
+        }
+        @keyframes glow-yellow {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(253,216,53,0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(253,216,53,1)) drop-shadow(0 0 36px rgba(253,216,53,0.6)); }
+        }
+        @keyframes glow-cyan {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(38,198,218,0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(38,198,218,1)) drop-shadow(0 0 36px rgba(38,198,218,0.6)); }
+        }
+        @keyframes glow-red {
+            0%,100% { filter: drop-shadow(0 0 4px rgba(239,83,80,0.3)); }
+            50% { filter: drop-shadow(0 0 16px rgba(239,83,80,1)) drop-shadow(0 0 36px rgba(239,83,80,0.6)); }
+        }
+
+        .cell-pop {
+            animation: none !important;
+        }
+
+        @keyframes bellRing {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            75% { transform: scale(0.95); }
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .bell-active {
+            animation: bellRing 0.4s ease-in-out;
+        }
+
+        /* Buzzer Alert Display - Shows only when someone buzzes */
+        .buzzer-alert-container {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 15px;
+            padding: 15px 25px;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            animation: buzzSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease;
+        }
+        .buzzer-alert-container.active {
+            display: flex;
+        }
+        .buzzer-alert-container.green {
+            background: linear-gradient(135deg, #2ecc00, #27ae60);
+            box-shadow: 0 4px 25px rgba(46, 204, 113, 0.5);
+        }
+        .buzzer-alert-container.orange {
+            background: linear-gradient(135deg, #ff6d00, #e67e22);
+            box-shadow: 0 4px 25px rgba(255, 109, 0, 0.5);
+        }
+        .buzzer-alert-container.green .buzzer-alert-text,
+        .buzzer-alert-container.green .buzzer-alert-player {
+            color: white;
+        }
+        .buzzer-alert-container.orange .buzzer-alert-text,
+        .buzzer-alert-container.orange .buzzer-alert-player {
+            color: white;
+        }
+
+        @keyframes buzzSlideIn {
+            0% { transform: translateY(-20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes buzzPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .buzzer-alert {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            flex-wrap: wrap;
+            animation: buzzPulse 1s ease-in-out infinite;
+        }
+
+        .buzzer-alert-icon {
+            font-size: 40px;
+            animation: bounce 0.5s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .buzzer-alert-text {
+            color: #2c1b4d;
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .buzzer-alert-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .buzzer-alert-team {
+            font-size: clamp(14px, 3vw, 18px);
+            padding: 5px 18px;
+            border-radius: 18px;
+            color: white;
+            font-weight: 700;
+        }
+        .buzzer-alert-team.green { background: #2ecc00; }
+        .buzzer-alert-team.orange { background: #ff6d00; }
+
+        .buzzer-alert-player {
+            color: #2c1b4d;
+            font-size: clamp(14px, 2.5vw, 18px);
+            opacity: 0.9;
+        }
+
+        .reset-buzz-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 12px;
+            background: #2c1b4d;
+            color: white;
+            font-size: clamp(14px, 2.5vw, 18px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .reset-buzz-btn:hover {
+            transform: scale(1.05);
+            background: #3d2a5f;
+        }
+
+        /* Instruction text - Hidden */
+        .instruction {
+            display: none;
+        }
+
+        /* Question Display */
+        .question-box {
+            background: #2c1b4d;
+            border-radius: 15px;
+            padding: 15px 20px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .question-letter {
@@ -623,7 +773,7 @@
     let lastSelectedTeam = null;
     let currentBuzz = null;
 
-    const SHEET_URL = 'https://mmra90s.github.io/Hrof-With-Marah/host/questions.csv';
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Hcb18FCPMzLibTjyN_9Qqgklsla4AaZS_k8cngBYZG8/export?format=csv&gid=1257728758';
 
     let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
 
@@ -646,17 +796,14 @@
             const line = lines[i].trim();
             if (!line) continue;
             const cols = parseCSVLine(line);
-            if (cols.length >= 3) {
-                const letterKey = cols[0].trim(); // استخدام العمود الأول كمفتاح للحرف
+            if (cols.length >= 2) {
                 const question = cols[1].trim();
-                const answer = cols[2].trim();
-                if (letterKey && question && answer) {
-                    if (!questionsData[letterKey]) { 
-                        questionsData[letterKey] = []; 
-                        usedQuestions[letterKey] = []; 
-                    }
-                    if (!questionsData[letterKey].some(q => q.answer === answer)) {
-                        questionsData[letterKey].push({ question, answer });
+                const answer = cols[2] ? cols[2].trim() : '';
+                if (answer && question) {
+                    const firstLetter = answer.charAt(0);
+                    if (!questionsData[firstLetter]) { questionsData[firstLetter] = []; usedQuestions[firstLetter] = []; }
+                    if (!questionsData[firstLetter].some(q => q.answer === answer)) {
+                        questionsData[firstLetter].push({ question, answer });
                     }
                 }
             }
@@ -721,10 +868,8 @@
 
     function updateInstruction() {
         const inst = document.getElementById('instruction');
-        if (inst) {
-            if (!selectedCell) inst.textContent = 'اختر حرفاً من اللوحة';
-            else inst.textContent = 'اختر الفريق للإجابة';
-        }
+        if (!selectedCell) inst.textContent = 'اختر حرفاً من اللوحة';
+        else inst.textContent = 'اختر الفريق للإجابة';
     }
 
     function setTeamButtonsEnabled(enabled) {
@@ -848,6 +993,7 @@
         document.getElementById('btnUndo').disabled = true;
         document.getElementById('btnChangeQuestion').disabled = true;
         updateInstruction();
+        // Push new letters to Firebase so index syncs
         set(lettersRef(), letters);
     }
 
@@ -856,63 +1002,150 @@
             const cellId = selectedCell.id;
             selectedCell.isPending = false;
             selectedCell.el.classList.remove('pending-fill');
-            broadcastAction({ type:'cell_unselected', cellId });
             selectedCell = null;
-            document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
-            setTeamButtonsEnabled(false);
-            document.getElementById('btnUndo').disabled = true;
-            document.getElementById('btnChangeQuestion').disabled = true;
-            updateInstruction();
+            broadcastAction({ type:'cell_unselected', cellId });
         }
-    }
-
-    function resetGame() {
-        greenScore=0; orangeScore=0; currentRound=1;
-        document.getElementById('score1').textContent='0';
-        document.getElementById('score2').textContent='0';
-        buildBoard(); lastGreenPath=false; lastOrangePath=false; selectedCell=null;
         setTeamButtonsEnabled(false);
         document.getElementById('btnUndo').disabled = true;
         document.getElementById('btnChangeQuestion').disabled = true;
+        document.getElementById('btnTeam1').classList.remove('selected');
+        document.getElementById('btnTeam2').classList.remove('selected');
+        document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
+        currentQuestionLetter = null;
+    }
+
+    function resetGame() {
+        greenScore=0; orangeScore=0; currentRound=1; lastGreenPath=false; lastOrangePath=false; selectedCell=null;
+        document.getElementById('score1').textContent = '0';
+        document.getElementById('score2').textContent = '0';
+        setTeamButtonsEnabled(false);
+        document.getElementById('btnUndo').disabled = true;
+        document.getElementById('btnChangeQuestion').disabled = true;
+        document.getElementById('btnTeam1').classList.remove('selected');
+        document.getElementById('btnTeam2').classList.remove('selected');
+        buildBoard();
         updateInstruction();
-        remove(gameStateRef());
-        remove(lettersRef());
-        remove(presenterActionRef());
-        resetBuzzFromPresenter();
+        broadcastAction({ type:'game_reset' });
+        // Push new letters to Firebase
+        set(lettersRef(), letters);
+    }
+
+    function playBell() {
+        const btn = document.querySelector('.bell-btn');
+        btn.classList.add('bell-active');
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.8, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.0);
+        } catch(e) {}
+        setTimeout(() => btn.classList.remove('bell-active'), 400);
     }
 
     /* ===== FIREBASE SYNC ===== */
+
+    // Broadcast action to index screen via Firebase
     function broadcastAction(action) {
-        set(presenterActionRef(), { ...action, timestamp:Date.now() });
+        set(presenterActionRef(), { ...action, timestamp: Date.now() });
     }
 
-    onValue(settingsRef(), (s) => {
-        if (s.exists()) { settings = s.val(); updateAllLogos(); }
+    // Listen for game state changes from index
+    let _lastCellsHash = '';
+    onValue(gameStateRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const state = snapshot.val();
+        if (!state) return;
+        applyGameState(state);
     });
 
-    onValue(buzzRef(), (s) => {
-        if (s.exists()) {
-            const buzz = s.val();
-            currentBuzz = buzz;
-            document.getElementById('buzzerAlertTeam').textContent = buzz.teamName;
-            document.getElementById('buzzerAlertPlayer').textContent = buzz.playerName;
-            document.getElementById('buzzerAlert').classList.add('active');
-            playBell();
-            if (buzz.team === 'green') {
-                document.getElementById('btnTeam1').classList.add('selected');
-                document.getElementById('btnTeam2').classList.remove('selected');
-            } else {
-                document.getElementById('btnTeam2').classList.add('selected');
-                document.getElementById('btnTeam1').classList.remove('selected');
+    function applyGameState(state) {
+        if (state.settings) {
+            const changed = JSON.stringify(state.settings) !== JSON.stringify(settings);
+            if (changed) { settings = { ...settings, ...state.settings }; updateAllLogos(); }
+        }
+        if (state.greenScore !== undefined) { greenScore = state.greenScore; document.getElementById('score1').textContent = greenScore; }
+        if (state.orangeScore !== undefined) { orangeScore = state.orangeScore; document.getElementById('score2').textContent = orangeScore; }
+        if (state.cells && state.cells.length > 0) {
+            const cellsHash = state.cells.map(c => c.id+':'+c.owner+':'+(c.isPending?'1':'0')).join(',');
+            if (cellsHash !== _lastCellsHash) {
+                _lastCellsHash = cellsHash;
+                state.cells.forEach(cellData => {
+                    const cell = cells[cellData.id];
+                    if (cell) {
+                        cell.owner = cellData.owner;
+                        cell.isPending = cellData.isPending || false;
+                        cell.el.classList.remove('green-fill','orange-fill','pending-fill');
+                        if (cell.owner) { cell.el.classList.add(cell.owner+'-fill'); cell.text.style.display='none'; }
+                        else if (cell.isPending) { cell.el.classList.add('pending-fill'); cell.text.style.display='block'; }
+                        else { cell.text.style.display='block'; }
+                    }
+                });
             }
-        } else {
-            document.getElementById('buzzerAlert').classList.remove('active');
-            document.getElementById('btnTeam1').classList.remove('selected');
-            document.getElementById('btnTeam2').classList.remove('selected');
+        }
+    }
+
+    // Listen for settings changes from index
+    onValue(settingsRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const newSettings = snapshot.val();
+        if (!newSettings) return;
+        if (JSON.stringify(newSettings) !== JSON.stringify(settings)) {
+            settings = { ...settings, ...newSettings };
+            updateAllLogos();
         }
     });
 
-    function playBell() {
+    // Listen for letters changes from index (rebuild board)
+    let _lastLettersHash = '';
+    onValue(lettersRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const newLetters = snapshot.val();
+        if (!newLetters) return;
+        const hash = newLetters.join(',');
+        if (hash !== _lastLettersHash) {
+            _lastLettersHash = hash;
+            letters = newLetters;
+            buildBoard();
+        }
+    });
+
+    /* ===== BUZZER ===== */
+    onValue(buzzRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const buzz = snapshot.val();
+        if (!buzz || !buzz.active) return;
+        if (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp) {
+            currentBuzz = buzz;
+            showBuzzerAlert(buzz);
+        }
+    });
+
+    onValue(buzzLockRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const lock = snapshot.val();
+        if (!lock || !lock.locked) return;
+        if (!currentBuzz || currentBuzz.playerName !== lock.playerName) {
+            currentBuzz = { name:lock.playerName, teamName:lock.teamName, team:lock.team, timestamp:lock.timestamp, active:true };
+            showBuzzerAlert(currentBuzz);
+        }
+    });
+
+    function showBuzzerAlert(buzz) {
+        const container = document.getElementById('buzzerAlert');
+        const teamEl = document.getElementById('buzzerAlertTeam');
+        const playerEl = document.getElementById('buzzerAlertPlayer');
+        container.classList.remove('green','orange');
+        teamEl.textContent = buzz.teamName;
+        teamEl.className = 'buzzer-alert-team ' + (buzz.team || '');
+        playerEl.textContent = buzz.name;
+        const containerTeam = lastSelectedTeam || buzz.team;
+        if (containerTeam) container.classList.add(containerTeam);
+        container.classList.add('active');
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator(); const gain = ctx.createGain();
