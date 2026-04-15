@@ -49,7 +49,7 @@
 
         .hex-bg {
             position: fixed; inset: 0;
-            background-color: #6a3093;
+            background-color: #510813;
             overflow: hidden; z-index: 0;
         }
         .hex-bg svg { width: 100%; height: 100%; opacity: 0.18; }
@@ -62,7 +62,7 @@
             z-index: 1000;
             width: 40px;
             height: 40px;
-            background: rgba(44, 27, 77, 0.6);
+            background: rgba(81, 8, 19, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             cursor: pointer;
@@ -74,7 +74,7 @@
             backdrop-filter: blur(5px);
         }
         .fullscreen-btn:hover {
-            background: rgba(44, 27, 77, 0.9);
+            background: rgba(81, 8, 19, 0.9);
             transform: scale(1.05);
         }
         .fullscreen-btn svg {
@@ -211,12 +211,12 @@
         }
         .wipe-left {
             position: fixed; top: 0; left: 0; width: 50%; height: 100%;
-            background: #6a3093; z-index: 850;
+            background: #510813; z-index: 850;
             animation: wipeSlideLeft 0.6s ease-in-out forwards;
         }
         .wipe-right {
             position: fixed; top: 0; right: 0; width: 50%; height: 100%;
-            background: #6a3093; z-index: 850;
+            background: #510813; z-index: 850;
             animation: wipeSlideRight 0.6s ease-in-out forwards;
         }
         @keyframes wipeSlideLeft {
@@ -469,7 +469,7 @@
         #screen-start .logo-stack { margin-bottom: 10px; }
         .menu-btn {
             width: clamp(220px, 60vw, 340px); padding: clamp(12px,2vw,18px) 0; border-radius: 50px;
-            border: none; background: white; color: #6a3093;
+            border: none; background: white; color: #510813;
             font-size: clamp(18px,3vw,28px); font-weight: 900; cursor: pointer;
             box-shadow: 0 6px 20px rgba(0,0,0,0.25);
             transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s;
@@ -483,7 +483,7 @@
             position: fixed; inset: 0; z-index: 1000;
             display: none; flex-direction: column;
             align-items: center; justify-content: center;
-            background: #6a3093; overflow: hidden;
+            background: #510813; overflow: hidden;
         }
         #transition-overlay.active { display: flex; }
         #trans-hex-bg { position: absolute; inset: 0; width:100%; height:100%; opacity: 0.18; pointer-events: none; }
@@ -529,7 +529,7 @@
         }
         .setting-input {
             flex: 1; min-width: 120px; padding: clamp(10px,1.5vw,14px) 16px; border-radius: 50px;
-            border: none; background: white; color: #6a3093;
+            border: none; background: white; color: #510813;
             font-size: clamp(16px,2vw,22px); font-weight: 900; text-align: center; outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
@@ -542,10 +542,10 @@
             flex: 1; padding: clamp(8px,1.2vw,13px) 6px; border: none; background: transparent;
             color: rgba(255,255,255,0.7); font-size: clamp(13px,1.6vw,20px); font-weight: 900; cursor: pointer; transition: all 0.2s;
         }
-        .toggle-btn.active { background: white; color: #6a3093; border-radius: 50px; margin: 3px; }
+        .toggle-btn.active { background: white; color: #510813; border-radius: 50px; margin: 3px; }
         .save-btn {
             width: 100%; max-width: 680px; padding: clamp(12px,1.8vw,18px) 0; border-radius: 50px;
-            border: none; background: white; color: #6a3093;
+            border: none; background: white; color: #510813;
             font-size: clamp(18px,2.5vw,26px); font-weight: 900; cursor: pointer;
             box-shadow: 0 6px 20px rgba(0,0,0,0.25);
             transition: transform 0.1s; margin-top: 10px; position: relative; z-index: 1;
@@ -561,7 +561,7 @@
         }
         .sidebar {
             width: clamp(220px, 28vw, 400px);
-            background: #6a3093; color: white;
+            background: #510813; color: white;
             display: flex; flex-direction: column; align-items: center;
             padding: clamp(12px, 2vw, 30px) clamp(10px, 1.5vw, 20px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
@@ -610,12 +610,12 @@
         svg#board { width: 100%; height: 100%; display: block; }
         .hexagon { cursor: pointer; }
         .hex-poly {
-            stroke: #6a3093; stroke-width: 8;
+            stroke: #510813; stroke-width: 8;
             stroke-linejoin: round; stroke-linecap: round;
             fill: white; transition: fill 0.3s;
         }
         .hex-text {
-            font-size: 35px; font-weight: 900; fill: #6a3093;
+            font-size: 35px; font-weight: 900; fill: #510813;
             pointer-events: none; dominant-baseline: middle; text-anchor: middle;
         }
         .green-fill  .hex-poly { fill: #2ecc00 !important; }
@@ -708,7 +708,7 @@
         /* ===== OPTIONS BUTTON & DROPDOWN ===== */
         #options-btn {
             position: fixed; top: 14px; right: 14px; z-index: 500;
-            background: white; color: #6a3093;
+            background: white; color: #510813;
             border: none; border-radius: 50px;
             padding: clamp(8px,1vw,12px) clamp(14px,1.8vw,24px);
             font-size: clamp(14px,1.6vw,20px); font-weight: 900;
@@ -731,12 +731,12 @@
         .opt-btn {
             padding: clamp(10px,1.2vw,16px) clamp(14px,1.8vw,22px);
             border: none; background: transparent;
-            color: #6a3093; font-size: clamp(14px,1.5vw,19px); font-weight: 900;
+            color: #510813; font-size: clamp(14px,1.5vw,19px); font-weight: 900;
             cursor: pointer; text-align: right; transition: background 0.15s;
-            border-bottom: 1px solid rgba(106,48,147,0.1);
+            border-bottom: 1px solid rgba(81,8,19,0.1);
         }
         .opt-btn:last-child { border-bottom: none; }
-        .opt-btn:hover { background: rgba(106,48,147,0.08); }
+        .opt-btn:hover { background: rgba(81,8,19,0.08); }
         .opt-btn.disabled { opacity: 0.45; cursor: default; }
         .opt-btn.disabled:hover { background: transparent; }
 
