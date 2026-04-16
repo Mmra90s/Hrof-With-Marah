@@ -913,6 +913,25 @@
     <div class="portrait-text">خلي الشاشة بالعرض<br>عشان تزيد الفلة 😎</div>
 </div>
 
+<!-- ===== QUESTION MODAL ===== -->
+<div id="question-modal" style="position:fixed; inset:0; z-index:1200; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);">
+    <div style="background:#2c1b4d; border-radius:35px; width:90%; max-width:800px; padding:40px; position:relative; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.6); border:2px solid rgba(255,255,255,0.1);">
+        <div id="q-letter" style="width:80px; height:80px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:900; color:white; margin:0 auto 30px;">أ</div>
+        <div id="q-text" style="font-size:32px; font-weight:900; color:white; margin-bottom:40px; line-height:1.4;">ما هو السؤال؟</div>
+        <div onclick="revealAnswer()" style="background:rgba(255,255,255,0.08); border:2px dashed rgba(255,255,255,0.2); border-radius:25px; padding:25px; margin-bottom:30px; cursor:pointer;">
+            <div id="q-answer-hint" style="color:#f1c40f; font-size:20px; font-weight:700;">💡 اظهر الاجابة</div>
+            <div id="q-answer" style="font-size:28px; font-weight:900; color:white; display:none;">الإجابة تظهر هنا</div>
+        </div>
+        <div id="q-team-selection" style="display:none; grid-template-columns:1fr 1fr; gap:20px; margin-top:10px;">
+            <button id="q-btn-team1" onclick="chooseTeamFromQuestion('green')" style="padding:18px; border-radius:20px; border:none; font-size:22px; font-weight:900; cursor:pointer; background:#2ecc00; color:white;">الفريق الأول</button>
+            <button id="q-btn-team2" onclick="chooseTeamFromQuestion('orange')" style="padding:18px; border-radius:20px; border:none; font-size:22px; font-weight:900; cursor:pointer; background:#ff6d00; color:white;">الفريق الثاني</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
+            <button onclick="changeQuestion()" style="padding:15px; border-radius:20px; border:none; font-size:20px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">🔄 تغيير السؤال</button>
+            <button onclick="closeQuestionModal()" style="padding:15px; border-radius:20px; border:none; font-size:20px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">✕ إغلاق</button>
+        </div>
+    </div>
+</div>
 <!-- ===== TEAM CHOICE MODAL ===== -->
 <div id="team-choice-modal">
     <div class="team-choice-content">
@@ -1162,6 +1181,45 @@
     const fbApp = initializeApp(firebaseConfig);
     const db = getDatabase(fbApp);
 
+    let questionsData = {};
+    async function loadQuestions() {
+        try {
+            const response = await fetch('/host/questions.csv');
+            const data = await response.text();
+            const lines = data.split('\n');
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    const letter = parts[0].replace(/"/g, '').trim();
+                    if (!questionsData[letter]) questionsData[letter] = [];
+                    questionsData[letter].push({ q: parts[1].replace(/"/g, '').trim(), a: parts[2].replace(/"/g, '').trim() });
+                }
+            }
+        } catch (e) { console.error("CSV Load Error", e); }
+    }
+    loadQuestions();
+
+    let currentLetterQs = [], qIndex = 0;
+    window.revealAnswer = () => {
+        document.getElementById('q-answer').style.display = 'block';
+        document.getElementById('q-answer-hint').style.display = 'none';
+        document.getElementById('q-team-selection').style.display = 'grid';
+    };
+    window.closeQuestionModal = () => { document.getElementById('question-modal').style.display = 'none'; };
+    window.changeQuestion = () => {
+        if (currentLetterQs.length > 1) {
+            qIndex = (qIndex + 1) % currentLetterQs.length;
+            document.getElementById('q-text').textContent = currentLetterQs[qIndex].q;
+            document.getElementById('q-answer').textContent = currentLetterQs[qIndex].a;
+            document.getElementById('q-answer').style.display = 'none';
+            document.getElementById('q-answer-hint').style.display = 'block';
+            document.getElementById('q-team-selection').style.display = 'none';
+        }
+    };
+    window.chooseTeamFromQuestion = (team) => { chooseTeam(team); closeQuestionModal(); };
+
     /* ===== HEX PATTERN ===== */
     function drawHexPattern(svgEl) {
         if (!svgEl) return;
@@ -1274,7 +1332,22 @@
 
     function showTeamChoice(cell) {
         pendingCell = cell;
-        document.getElementById('team-choice-modal').classList.add('active');
+        const letter = cell.el.querySelector('.hex-text').textContent;
+        currentLetterQs = questionsData[letter] || [];
+        if (currentLetterQs.length > 0) {
+            qIndex = Math.floor(Math.random() * currentLetterQs.length);
+            document.getElementById('q-letter').textContent = letter;
+            document.getElementById('q-text').textContent = currentLetterQs[qIndex].q;
+            document.getElementById('q-answer').textContent = currentLetterQs[qIndex].a;
+            document.getElementById('q-btn-team1').textContent = settings.team1;
+            document.getElementById('q-btn-team2').textContent = settings.team2;
+            document.getElementById('q-answer').style.display = 'none';
+            document.getElementById('q-answer-hint').style.display = 'block';
+            document.getElementById('q-team-selection').style.display = 'none';
+            document.getElementById('question-modal').style.display = 'flex';
+        } else {
+            document.getElementById('team-choice-modal').classList.add('active');
+        }
     }
 
     function hideTeamChoice() {
