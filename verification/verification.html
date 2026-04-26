@@ -372,7 +372,7 @@
         <div class="content-wrapper">
             <div class="title-section">
                 <h1>مرحباً بك في حروف مع مراح</h1>
-                <p>أدخل رمز السيريال الذي وصلك بعد الطلب للتحقق من ملكيتك للعبة</p>
+                <p>أدخل رمز التحقق الذي وصلك بعد الطلب للتحقق من ملكيتك للعبة</p>
             </div>
 
             <div class="verification-card">
@@ -383,9 +383,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">رمز السيريال (مثال: XXXX-XXXX-XXXX)</label>
+                    <label class="form-label">رمز التحقق</label>
                     <div class="phone-input-group">
-                        <input type="text" class="phone-input" id="phoneInput" placeholder="XXXX-XXXX-XXXX" maxlength="14" autocomplete="off" spellcheck="false" />
+                        <input type="text" class="phone-input" id="phoneInput" placeholder="XXXX-XXXX-XXXX" maxlength="14" />
                     </div>
                 </div>
 
@@ -448,10 +448,7 @@
                 const msgUint8 = new TextEncoder().encode(message);
                 const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
                 const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                console.log("Debug - Input:", message);
-                console.log("Debug - Hash:", hashHex);
-                return hashHex;
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             } catch (e) {
                 console.error("Hashing Error:", e);
                 return null;
@@ -460,8 +457,8 @@
 
         // دالة تنسيق الرمز (إضافة شرطة كل 4 خانات)
         function formatSerialCode(value) {
-            // إزالة جميع المسافات والشرطات وتحويل للكبير
-            const cleaned = value.replace(/[\s-]/g, '').toUpperCase();
+            // إزالة جميع الشرطات أولاً
+            const cleaned = value.replace(/-/g, '').toUpperCase();
             
             // إضافة شرطة كل 4 خانات
             let formatted = '';
@@ -471,16 +468,13 @@
                 }
                 formatted += cleaned[i];
             }
+            
             return formatted;
         }
 
         // إضافة مستمع للإدخال لتنسيق الرمز تلقائياً
         document.getElementById('phoneInput').addEventListener('input', function(e) {
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
             this.value = formatSerialCode(this.value);
-            // الحفاظ على موقع المؤشر
-            this.setSelectionRange(start, end);
         });
 
         // دالة التحقق الرئيسية
@@ -490,7 +484,7 @@
             const errorText = document.getElementById('errorText');
 
             if (!inputVal) {
-                alert('الرجاء إدخال رمز السيريال');
+                alert('الرجاء إدخال رمز الالتحقق');
                 return;
             }
 
@@ -498,13 +492,11 @@
             btn.textContent = 'جاري التحقق...';
 
             try {
-                // التأكد من أن الرمز بالحروف الكبيرة كما هو مخزن
-                const finalCode = inputVal.toUpperCase();
-                
-                // تشفير الرمز مع الشرطات
-                const hashedCode = await sha256(finalCode);
-                
-                // البحث في Firestore
+                // تشفير الرمز مع الشرطات كما هو
+                const hashedCode = await sha256(inputVal);
+                if (!hashedCode) throw new Error("Encryption failed");
+
+                // البحث في مجموعة 'buyers' عن الوثيقة التي تحمل الـ ID المشفر
                 const doc = await db.collection('buyers').doc(hashedCode).get();
                 
                 if (doc.exists) {
@@ -528,8 +520,12 @@
             const d = new Date();
             d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
             document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
+            
             showModal('successModal');
-            setTimeout(() => { window.location.href = '../index.html'; }, 2000);
+            
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 2000);
         }
 
         function showModal(id) { document.getElementById(id).style.display = 'flex'; }
