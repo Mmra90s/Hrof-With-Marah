@@ -189,7 +189,7 @@
             color: #512b70;
         }
 
-        /* Phone Input (Modified to Serial Input) */
+        /* Serial Input */
         .phone-input-group {
             display: flex;
             gap: 0.5rem;
@@ -202,12 +202,13 @@
             padding: 0.75rem 1rem;
             border: 2px solid #e2e8f0;
             border-radius: 0.5rem;
-            font-family: 'AA-GALAXY', sans-serif;
-            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             color: #512b70;
-            text-align: center; /* Centered for code */
+            text-align: center;
             letter-spacing: 2px;
+            font-weight: bold;
         }
 
         .phone-input:focus {
@@ -371,7 +372,7 @@
         <div class="content-wrapper">
             <div class="title-section">
                 <h1>مرحباً بك في حروف مع مراح</h1>
-                <p>أدخل رمز التحقق الذي وصلك بعد الطلب للتحقق من ملكيتك للعبة</p>
+                <p>أدخل رمز الالتحقق الذي وصلك بعد الطلب للتحقق من ملكيتك للعبة</p>
             </div>
 
             <div class="verification-card">
@@ -382,9 +383,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">رمز التحقق</label>
+                    <label class="form-label">رمز الالتحقق</label>
                     <div class="phone-input-group">
-                        <input type="text" class="phone-input" id="phoneInput" placeholder="أدخل الرمز هنا" />
+                        <input type="text" class="phone-input" id="phoneInput" placeholder="XXXX-XXXX-XXXX" maxlength="14" />
                     </div>
                 </div>
 
@@ -454,14 +455,36 @@
             }
         }
 
+        // دالة تنسيق الرمز (إضافة شرطة كل 4 خانات)
+        function formatSerialCode(value) {
+            // إزالة جميع الشرطات أولاً
+            const cleaned = value.replace(/-/g, '').toUpperCase();
+            
+            // إضافة شرطة كل 4 خانات
+            let formatted = '';
+            for (let i = 0; i < cleaned.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formatted += '-';
+                }
+                formatted += cleaned[i];
+            }
+            
+            return formatted;
+        }
+
+        // إضافة مستمع للإدخال لتنسيق الرمز تلقائياً
+        document.getElementById('phoneInput').addEventListener('input', function(e) {
+            this.value = formatSerialCode(this.value);
+        });
+
         // دالة التحقق الرئيسية
         async function handleVerify() {
-            const inputVal = document.getElementById('phoneInput').value.trim();
+            let inputVal = document.getElementById('phoneInput').value.trim();
             const btn = document.getElementById('verifyBtn');
             const errorText = document.getElementById('errorText');
 
             if (!inputVal) {
-                alert('الرجاء إدخال رمز التحقق');
+                alert('الرجاء إدخال رمز الالتحقق');
                 return;
             }
 
@@ -469,7 +492,7 @@
             btn.textContent = 'جاري التحقق...';
 
             try {
-                // تشفير الرمز المدخل للبحث عنه في قاعدة البيانات
+                // تشفير الرمز مع الشرطات كما هو
                 const hashedCode = await sha256(inputVal);
                 if (!hashedCode) throw new Error("Encryption failed");
 
