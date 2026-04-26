@@ -189,36 +189,11 @@
             color: #512b70;
         }
 
-        /* Phone Input */
+        /* Phone Input (Modified to Serial Input) */
         .phone-input-group {
             display: flex;
             gap: 0.5rem;
             width: 100%;
-        }
-
-        .country-select-wrapper {
-            flex: 0 0 auto;
-            width: 90px;
-        }
-
-        .country-select {
-            width: 100%;
-            padding: 0.75rem 0.25rem;
-            background-color: #f3f4f6;
-            border-radius: 0.5rem;
-            border: 2px solid #e2e8f0;
-            color: #512b70;
-            font-weight: 500;
-            font-family: 'AA-GALAXY', sans-serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23512b70' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: left 0.4rem center;
-            padding-left: 1.2rem;
-            text-align: center;
         }
 
         .phone-input {
@@ -231,7 +206,8 @@
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             color: #512b70;
-            text-align: right;
+            text-align: center; /* Centered for code */
+            letter-spacing: 2px;
         }
 
         .phone-input:focus {
@@ -395,7 +371,7 @@
         <div class="content-wrapper">
             <div class="title-section">
                 <h1>مرحباً بك في حروف مع مراح</h1>
-                <p>أدخل رقم جوالك المسجل للتحقق من ملكيتك للعبة والبدء باللعب</p>
+                <p>أدخل رمز التحقق الذي وصلك بعد الطلب للتحقق من ملكيتك للعبة</p>
             </div>
 
             <div class="verification-card">
@@ -406,34 +382,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">رقم الجوال</label>
+                    <label class="form-label">رمز التحقق</label>
                     <div class="phone-input-group">
-                        <div class="country-select-wrapper">
-                            <select class="country-select" id="countrySelect" onchange="updatePlaceholder()">
-                                <option value="+966">🇸🇦 +966</option>
-                                <option value="+971">🇦🇪 +971</option>
-                                <option value="+965">🇰🇼 +965</option>
-                                <option value="+974">🇶🇦 +974</option>
-                                <option value="+973">🇧🇭 +973</option>
-                                <option value="+968">🇴🇲 +968</option>
-                                <option value="+20">🇪🇬 +20</option>
-                                <option value="+962">🇯🇴 +962</option>
-                                <option value="+961">🇱🇧 +961</option>
-                                <option value="+964">🇮🇶 +964</option>
-                                <option value="+970">🇵🇸 +970</option>
-                                <option value="+212">🇲🇦 +212</option>
-                                <option value="+213">🇩🇿 +213</option>
-                                <option value="+216">🇹🇳 +216</option>
-                                <option value="+218">🇱🇾 +218</option>
-                                <option value="+249">🇸🇩 +249</option>
-                                <option value="+967">🇾🇪 +967</option>
-                                <option value="+963">🇸🇾 +963</option>
-                                <option value="+1">🇺🇸 +1</option>
-                                <option value="+44">🇬🇧 +44</option>
-                                <option value="+90">🇹🇷 +90</option>
-                            </select>
-                        </div>
-                        <input type="tel" class="phone-input" id="phoneInput" placeholder="05xxxxxxxx" />
+                        <input type="text" class="phone-input" id="phoneInput" placeholder="أدخل الرمز هنا" />
                     </div>
                 </div>
 
@@ -464,8 +415,8 @@
     <div class="modal-overlay" id="errorModal">
         <div class="modal-content">
             <div class="modal-icon">❌</div>
-            <h2 class="modal-title">لم تقم بشراء اللعبة</h2>
-            <p class="modal-text" id="errorText">يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.</p>
+            <h2 class="modal-title">رمز غير صحيح</h2>
+            <p class="modal-text" id="errorText">يبدو أن هذا الرمز غير صحيح أو غير مسجل لدينا. تأكد من الرمز وحاول مرة أخرى.</p>
             <a href="https://www.marahgames.com/product/hrof" class="modal-btn btn-buy">شراء اللعبة الآن</a>
             <button class="modal-btn btn-close" onclick="closeModal('errorModal')">إغلاق</button>
         </div>
@@ -475,141 +426,91 @@
 
     <script>
         // Firebase Configuration
-        // --- 1. إعدادات Firebase (استبدلها ببيانات مشروعك الحقيقية) ---
-const firebaseConfig = {
-    apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
-    authDomain: "verification-da042.firebaseapp.com",
-    projectId: "verification-da042",
-    storageBucket: "verification-da042.firebasestorage.app",
-    messagingSenderId: "401133990090",
-    appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyAj--jlVnbBRJgW2jPKN_eyXPaxdD_E08I",
+            authDomain: "verification-da042.firebaseapp.com",
+            projectId: "verification-da042",
+            storageBucket: "verification-da042.firebasestorage.app",
+            messagingSenderId: "401133990090",
+            appId: "1:401133990090:web:5856ce77e2c21fbc6e8433"
+        };
 
-// تهيئة Firebase (Compat) لضمان التوافق
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.firestore();
-
-// --- 2. دالة التشفير (SHA-256) ---
-// تقوم هذه الدالة بتحويل رقم الهاتف إلى كود مشفر طويل لحماية الخصوصية ومنع التخمين
-async function sha256(message) {
-    try {
-        const msgUint8 = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    } catch (e) {
-        console.error("Hashing Error:", e);
-        return null;
-    }
-}
-
-// --- 3. دالة التحقق الرئيسية ---
-async function handleVerify() {
-    const inputVal = document.getElementById('phoneInput').value.trim();
-    const btn = document.getElementById('verifyBtn');
-    const errorText = document.getElementById('errorText');
-
-    if (!inputVal) {
-        alert('الرجاء إدخال رقم الجوال');
-        return;
-    }
-
-    // تغيير حالة الزر أثناء التحقق
-    btn.disabled = true;
-    btn.textContent = 'جاري التحقق...';
-
-    // تنظيف الرقم من أي رموز غير رقمية
-    const cleanPhone = inputVal.replace(/\D/g, '');
-    if (cleanPhone.length < 6) {
-        errorText.textContent = "يرجى إدخال رقم هاتف صحيح";
-        showModal('errorModal');
-        btn.disabled = false;
-        btn.textContent = 'تحقق ودخول';
-        return;
-    }
-
-    try {
-        // إنشاء قائمة بالاحتمالات المختلفة للرقم (05، 5، 966)
-        const attempts = new Set();
-        attempts.add(cleanPhone);
-        
-        if (cleanPhone.startsWith('966')) {
-            const without966 = cleanPhone.substring(3);
-            attempts.add(without966);
-            attempts.add('0' + without966);
+        // تهيئة Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
-        
-        if (cleanPhone.startsWith('05')) {
-            const without0 = cleanPhone.substring(1);
-            attempts.add(without0);
-            attempts.add('966' + without0);
-        }
-        
-        if (cleanPhone.startsWith('5') && cleanPhone.length === 9) {
-            attempts.add('0' + cleanPhone);
-            attempts.add('966' + cleanPhone);
-        }
+        const db = firebase.firestore();
 
-        let foundDoc = null;
-        const attemptArray = Array.from(attempts);
-
-        // البحث في Firestore عن كل احتمال بعد تشفيره
-        for (const attempt of attemptArray) {
-            const hashedAttempt = await sha256(attempt);
-            if (!hashedAttempt) continue;
-
-            // البحث في مجموعة 'buyers' عن الوثيقة التي تحمل الـ ID المشفر
-            const doc = await db.collection('buyers').doc(hashedAttempt).get();
-            if (doc.exists) {
-                foundDoc = doc;
-                break;
+        // دالة التشفير (SHA-256)
+        async function sha256(message) {
+            try {
+                const msgUint8 = new TextEncoder().encode(message);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch (e) {
+                console.error("Hashing Error:", e);
+                return null;
             }
         }
 
-        if (foundDoc) {
-            proceedSuccess();
-        } else {
-            errorText.textContent = "يبدو أن هذا الرقم غير مسجل لدينا. يمكنك شراء اللعبة الآن للبدء باللعب.";
-            showModal('errorModal');
-            btn.disabled = false;
-            btn.textContent = 'تحقق ودخول';
+        // دالة التحقق الرئيسية
+        async function handleVerify() {
+            const inputVal = document.getElementById('phoneInput').value.trim();
+            const btn = document.getElementById('verifyBtn');
+            const errorText = document.getElementById('errorText');
+
+            if (!inputVal) {
+                alert('الرجاء إدخال رمز التحقق');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'جاري التحقق...';
+
+            try {
+                // تشفير الرمز المدخل للبحث عنه في قاعدة البيانات
+                const hashedCode = await sha256(inputVal);
+                if (!hashedCode) throw new Error("Encryption failed");
+
+                // البحث في مجموعة 'buyers' عن الوثيقة التي تحمل الـ ID المشفر
+                const doc = await db.collection('buyers').doc(hashedCode).get();
+                
+                if (doc.exists) {
+                    proceedSuccess();
+                } else {
+                    errorText.textContent = "يبدو أن هذا الرمز غير صحيح أو غير مسجل لدينا. تأكد من الرمز وحاول مرة أخرى.";
+                    showModal('errorModal');
+                    btn.disabled = false;
+                    btn.textContent = 'تحقق ودخول';
+                }
+            } catch (error) {
+                console.error("Firestore Error:", error);
+                errorText.textContent = "حدث خطأ أثناء الاتصال بـ Firebase. يرجى المحاولة لاحقاً.";
+                showModal('errorModal');
+                btn.disabled = false;
+                btn.textContent = 'تحقق ودخول';
+            }
         }
-    } catch (error) {
-        console.error("Firestore Error:", error);
-        errorText.textContent = "حدث خطأ أثناء الاتصال بـ Firebase. يرجى المحاولة لاحقاً.";
-        showModal('errorModal');
-        btn.disabled = false;
-        btn.textContent = 'تحقق ودخول';
-    }
-}
 
-// --- 4. دوال مساعدة ---
-function proceedSuccess() {
-    // تعيين الكوكي لمدة 7 أيام
-    const d = new Date();
-    d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
-    document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
-    
-    showModal('successModal');
-    
-    // التوجيه لصفحة اللعبة بعد ثانيتين
-    setTimeout(() => {
-        window.location.href = '../index.html';
-    }, 2000);
-}
+        function proceedSuccess() {
+            const d = new Date();
+            d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+            document.cookie = "game_verified=true; expires=" + d.toUTCString() + "; path=/";
+            
+            showModal('successModal');
+            
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 2000);
+        }
 
-function showModal(id) { document.getElementById(id).style.display = 'flex'; }
-function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-// تفعيل زر الإدخال (Enter) للتحقق
-document.getElementById('phoneInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleVerify();
-});
-
-
-        updatePlaceholder();
+        document.getElementById('phoneInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleVerify();
+        });
     </script>
 </body>
 </html>
