@@ -317,11 +317,14 @@
         }
         #team-choice-modal.active { display: flex; }
         .team-choice-content {
-            background: #2c1b4d; border-radius: 24px; padding: 30px;
+            background: #2c1b4d; border-radius: 24px; padding: clamp(15px, 4vw, 30px);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+            max-width: 92vw; max-height: 90vh; overflow-y: auto;
+            scrollbar-width: none;
         }
+        .team-choice-content::-webkit-scrollbar { display: none; }
         @keyframes modalPop {
             0% { transform: scale(0.5); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
@@ -364,12 +367,14 @@
         }
         #new-game-modal.active { display: flex; }
         .new-game-content {
-            background: #2c1b4d; border-radius: 24px; padding: 30px;
+            background: #2c1b4d; border-radius: 24px; padding: clamp(15px, 4vw, 30px);
             display: flex; flex-direction: column; align-items: center; gap: 16px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            max-width: 90vw;
+            max-width: 92vw; max-height: 90vh; overflow-y: auto;
+            scrollbar-width: none;
         }
+        .new-game-content::-webkit-scrollbar { display: none; }
         .new-game-icon {
             font-size: clamp(60px, 12vw, 90px);
         }
@@ -755,8 +760,10 @@
             animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
             max-width: 92vw; width: min(380px, 92vw); position: relative;
             border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
+            max-height: 90vh; overflow-y: auto;
+            scrollbar-width: none;
         }
+        .presenter-modal-content::-webkit-scrollbar { display: none; }
         .presenter-modal-close-btn {
             position: absolute; top: 20px; right: 20px;
             width: 36px; height: 36px; border-radius: 10px;
@@ -915,7 +922,7 @@
 
 <!-- ===== QUESTION MODAL ===== -->
 <div id="question-modal" style="position:fixed; inset:0; z-index:1200; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);">
-    <div style="background:#2c1b4d; border-radius:35px; width:90%; max-width:800px; padding:40px; position:relative; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.6); border:2px solid rgba(255,255,255,0.1);">
+    <div style="background:#2c1b4d; border-radius:35px; width:90%; max-width:800px; padding:clamp(20px, 5vw, 40px); position:relative; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.6); border:2px solid rgba(255,255,255,0.1); max-height:92vh; overflow-y:auto; scrollbar-width:none;">
         <div id="q-letter" style="width:80px; height:80px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:900; color:white; margin:0 auto 30px;">أ</div>
         <div id="q-text" style="font-size:32px; font-weight:900; color:white; margin-bottom:40px; line-height:1.4;">ما هو السؤال؟</div>
         <div onclick="revealAnswer()" style="background:rgba(255,255,255,0.08); border:2px dashed rgba(255,255,255,0.2); border-radius:25px; padding:25px; margin-bottom:30px; cursor:pointer;">
@@ -1826,26 +1833,52 @@
     window.switchToQRView   = switchToQRView;
     window.switchToMainView = switchToMainView;
 
-    // Fullscreen Logic
+    // Fullscreen Logic (Enhanced for iOS/Safari Compatibility)
     const fullscreenBtn = document.getElementById('fullscreen-btn');
     const fullscreenIcon = document.getElementById('fullscreen-icon');
 
-    fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-            });
-        } else {
-            document.exitFullscreen();
-        }
-    });
+    function getFullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    }
 
-    document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-            fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+    function toggleFullscreen() {
+        const docEl = document.documentElement;
+        const fsElement = getFullscreenElement();
+
+        if (!fsElement) {
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen();
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            } else if (docEl.mozRequestFullScreen) {
+                docEl.mozRequestFullScreen();
+            } else if (docEl.msRequestFullscreen) {
+                docEl.msRequestFullscreen();
+            }
         } else {
-            fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
+    }
+
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+    const fsEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+    fsEvents.forEach(eventType => {
+        document.addEventListener(eventType, () => {
+            if (getFullscreenElement()) {
+                fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+            } else {
+                fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+            }
+        });
     });
 
 </script>
