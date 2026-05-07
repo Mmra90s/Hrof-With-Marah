@@ -819,9 +819,13 @@
             min-height: 160px;
         }
         .qr-display-box img, .qr-display-box canvas {
-            background: white; padding: 8px; border-radius: 12px;
-            max-width: min(160px, 55vw); height: auto !important;
+            background: white; padding: 10px; border-radius: 12px;
+            width: auto !important;
+            max-width: 85vw;
+            height: auto !important;
             display: block;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .back-btn { color: white !important; }
         .copy-btn-yellow { color: #ffcc00 !important; }
@@ -1630,33 +1634,41 @@
 
     function generateQRCode(text) {
         const container = document.getElementById('qr-display-container');
-        container.innerHTML = ''; // Clear previous
+        container.innerHTML = ''; 
         
-        // Calculate optimized size for QR to fit small screens without scrolling
-        const qrSize = Math.min(320, window.innerWidth * 0.5);
+        // Improved size calculation for mobile
+        const qrSize = Math.min(260, Math.min(window.innerWidth, window.innerHeight) * 0.7);
         
-        // Use the library to generate directly into the container
-        new QRCode(container, { 
-            text: text, 
-            width: qrSize, 
-            height: qrSize, 
-            colorDark: '#512b70', 
-            colorLight: '#ffffff', 
-            correctLevel: QRCode.CorrectLevel.H 
-        });
+        try {
+            new QRCode(container, { 
+                text: text, 
+                width: qrSize, 
+                height: qrSize, 
+                colorDark: '#512b70', 
+                colorLight: '#ffffff', 
+                correctLevel: QRCode.CorrectLevel.H 
+            });
 
-        // Some versions of the library generate a canvas first then an img
-        // We ensure only the image is visible for maximum mobile compatibility
-        const checkAndFix = setInterval(() => {
-            const img = container.querySelector('img');
-            const canvas = container.querySelector('canvas');
-            if (img) {
-                img.style.display = 'block';
-                if (canvas) canvas.style.display = 'none';
-                clearInterval(checkAndFix);
-            }
-        }, 100);
-        setTimeout(() => clearInterval(checkAndFix), 3000);
+            // Ensure visibility on all devices
+            const checkAndFix = setInterval(() => {
+                const img = container.querySelector('img');
+                const canvas = container.querySelector('canvas');
+                if (img && img.src && img.src.length > 10) {
+                    img.style.display = 'block';
+                    img.style.margin = '0 auto';
+                    if (canvas) canvas.style.display = 'none';
+                    clearInterval(checkAndFix);
+                } else if (canvas && !img) {
+                    // Fallback to canvas if img is not generated
+                    canvas.style.display = 'block';
+                    canvas.style.margin = '0 auto';
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkAndFix), 3000);
+        } catch (e) {
+            console.error("QR Generation Error:", e);
+            container.innerHTML = '<div style="color:white; font-size:12px;">خطأ في إنشاء الكود</div>';
+        }
     }
     document.addEventListener('click', function(e) {
         const modal = document.getElementById('presenter-modal');
