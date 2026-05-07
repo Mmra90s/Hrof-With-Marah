@@ -529,7 +529,7 @@
         .setting-row { display: flex; align-items: center; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
         .setting-label {
             color: white; font-size: clamp(15px,2vw,22px); font-weight: 900;
-            white-space: nowrap; min-width: 130px; text-align: left;
+            white-space: nowrap; min-width: 130px; text-align: right;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
         .setting-input {
@@ -558,7 +558,7 @@
         .save-btn:hover { transform: translateY(-2px); }
 
         /* ===== GAME SCREEN ===== */
-        #screen-game { flex-direction: row; overflow: hidden; position: relative; }
+        #screen-game { flex-direction: row-reverse; overflow: hidden; position: relative; }
         .left {
             flex: 1; display: flex; justify-content: center; align-items: center;
             position: relative; overflow: hidden;
@@ -737,7 +737,7 @@
             padding: clamp(10px,1.2vw,16px) clamp(14px,1.8vw,22px);
             border: none; background: transparent;
             color: #6a3093; font-size: clamp(14px,1.5vw,19px); font-weight: 900;
-            cursor: pointer; text-align: left; transition: background 0.15s;
+            cursor: pointer; text-align: right; transition: background 0.15s;
             border-bottom: 1px solid rgba(106,48,147,0.1);
         }
         .opt-btn:last-child { border-bottom: none; }
@@ -1025,8 +1025,8 @@
         <span class="logo-word logo-marah" id="trans-logo-name">Marah</span>
     </div>
     <div id="trans-round">
-        <span class="trans-rw1">Round</span>
         <span class="trans-rw2" id="trans-round-word">First</span>
+        <span class="trans-rw1">Round</span>
     </div>
 </div>
 
@@ -1085,8 +1085,8 @@
             <span class="logo-word logo-marah" id="logo-name-game">Marah</span>
         </div>
         <div class="title-container">
-            <span class="title-word title-round">Round</span>
-            <span class="title-word title-first" id="round-label" style="margin-top:10px;">First</span>
+            <span class="title-word title-first" id="round-label">First</span>
+            <span class="title-word title-round" style="margin-top:10px;">Round</span>
         </div>
         <div class="score-container">
             <div style="display:flex;flex-direction:column;align-items:center;">
@@ -1579,7 +1579,7 @@
     function showPresenterModal() {
         closeOptions();
         switchToMainView();
-        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/en\/?$/, '/').substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
         
         const modal = document.getElementById('presenter-modal');
@@ -1592,7 +1592,7 @@
     function showPlayerScreen() {
         closeOptions();
         switchToMainView();
-        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/en\/?$/, '/').substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
         
         const modal = document.getElementById('presenter-modal');
