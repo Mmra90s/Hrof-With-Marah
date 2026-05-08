@@ -23,12 +23,23 @@
         // إذا لم يتم التحقق، يتم إخفاء المحتوى فوراً وتحويل المستخدم
         document.documentElement.style.display = 'none';
         
-        // التأكد من التحويل بدون "en" في الرابط
+        // التأكد من التحويل بدون "en" في الرابط والذهاب للمسار الصحيح
         let currentPath = window.location.pathname;
-        let cleanPath = currentPath.replace(/\/en\/?$/, '/');
+        // حذف /en/ أو en/ من أي مكان في المسار
+        let cleanPath = currentPath.replace(/\/en\//g, '/').replace(/^en\//, '/');
+        
+        // التأكد من أن المسار ينتهي بـ / قبل إضافة مسار صفحة التحقق
         if (!cleanPath.endsWith('/')) {
-            cleanPath = cleanPath.substring(0, cleanPath.lastIndexOf('/') + 1);
+            // إذا كان المسار يشير لملف (مثل index.html)، نأخذ المجلد الأب
+            if (cleanPath.includes('.')) {
+                cleanPath = cleanPath.substring(0, cleanPath.lastIndexOf('/') + 1);
+            } else {
+                cleanPath += '/';
+            }
         }
+        
+        // إذا كان المسار أصبح فارغاً أو مجرد /، نضمن أنه يبدأ بـ /
+        if (cleanPath === '') cleanPath = '/';
         
         window.location.href = window.location.origin + cleanPath + 'verification/verification.html';
     }
