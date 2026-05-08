@@ -22,7 +22,15 @@
     if (getCookie(COOKIE_NAME) !== 'true') {
         // إذا لم يتم التحقق، يتم إخفاء المحتوى فوراً وتحويل المستخدم
         document.documentElement.style.display = 'none';
-        window.location.href = VERIFY_PAGE;
+        
+        // التأكد من التحويل بدون "en" في الرابط
+        let currentPath = window.location.pathname;
+        let cleanPath = currentPath.replace(/\/en\/?$/, '/');
+        if (!cleanPath.endsWith('/')) {
+            cleanPath = cleanPath.substring(0, cleanPath.lastIndexOf('/') + 1);
+        }
+        
+        window.location.href = window.location.origin + cleanPath + 'verification/verification.html';
     }
 })();
     </script>
@@ -1579,7 +1587,7 @@
     function showPresenterModal() {
         closeOptions();
         switchToMainView();
-        const baseUrl = window.location.origin + window.location.pathname.replace(/\/en\/?$/, '/').substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const presenterUrl = baseUrl + 'host/index.html?session=' + sessionId;
         
         const modal = document.getElementById('presenter-modal');
@@ -1592,7 +1600,7 @@
     function showPlayerScreen() {
         closeOptions();
         switchToMainView();
-        const baseUrl = window.location.origin + window.location.pathname.replace(/\/en\/?$/, '/').substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         const playerUrl = baseUrl + 'player/index.html?session=' + sessionId;
         
         const modal = document.getElementById('presenter-modal');
