@@ -1503,6 +1503,7 @@
         });
         const overlay = document.getElementById('round-win-overlay');
         overlay.classList.add('active');
+        playWinSound();
         setTimeout(() => { overlay.classList.remove('active'); }, 3000);
     }
 
@@ -1528,6 +1529,7 @@
         overlay.querySelector('.final-score-container').style.animation = '';
         overlay.querySelector('.play-again-btn').style.animation = '';
         overlay.classList.add('active');
+        playVictorySound();
     }
 
     function playAgain() {
@@ -1585,6 +1587,22 @@
         try {
             const audio = new Audio('assets/sounds/point.mp3');
             audio.volume = 0.5;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
+    }
+
+    function playWinSound() {
+        try {
+            const audio = new Audio('assets/sounds/win.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
+    }
+
+    function playVictorySound() {
+        try {
+            const audio = new Audio('assets/sounds/victory.mp3');
+            audio.volume = 0.3;
             audio.play().catch(err => console.log('Audio play failed:', err));
         } catch(e) {}
     }
@@ -1933,3 +1951,4 @@
 </script>
 </body>
 </html>
+
