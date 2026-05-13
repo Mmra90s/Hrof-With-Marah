@@ -1442,6 +1442,7 @@
 
     /* ===== TRANSITION ===== */
     function runStartTransition(roundNum) {
+        playRoundSound();
         const overlay    = document.getElementById('transition-overlay');
         const transLogo  = document.getElementById('trans-logo');
         const transRound = document.getElementById('trans-round');
@@ -1651,6 +1652,15 @@
         if (isMuted) return;
         try {
             const audio = new Audio('assets/sounds/victory.mp3');
+            audio.volume = globalVolume;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
+    }
+
+    function playRoundSound() {
+        if (isMuted) return;
+        try {
+            const audio = new Audio('assets/sounds/round.mp3');
             audio.volume = globalVolume;
             audio.play().catch(err => console.log('Audio play failed:', err));
         } catch(e) {}
