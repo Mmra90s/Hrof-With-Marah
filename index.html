@@ -920,8 +920,8 @@
 
 <!-- ===== PORTRAIT WARNING ===== -->
 <div id="portrait-warning">
-    <span class="portrait-phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:40px;height:40px;"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg></span>
-    <div class="portrait-text">خلي الشاشة بالعرض<br>عشان تزيد الفلة <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;display:inline-block;vertical-align:middle;"><path d="M6 15a4 4 0 1 0 8 0 4 4 0 1 0 8 0"/><path d="M2 15h2"/><path d="M22 15h2"/><path d="M14 15a2 2 0 0 0-4 0"/></svg></div>
+    <span class="portrait-phone" id="portrait-phone-icon" style="width:40px;height:40px;display:block;"></span>
+    <div class="portrait-text">خلي الشاشة بالعرض<br>عشان تزيد الفلة 😎</div>
 </div>
 
 <!-- ===== QUESTION MODAL ===== -->
@@ -930,7 +930,7 @@
         <div id="q-letter" style="width:80px; height:80px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:900; color:white; margin:0 auto 30px;">أ</div>
         <div id="q-text" style="font-size:32px; font-weight:900; color:white; margin-bottom:40px; line-height:1.4;">ما هو السؤال؟</div>
         <div onclick="revealAnswer()" style="background:rgba(255,255,255,0.08); border:2px dashed rgba(255,255,255,0.2); border-radius:25px; padding:25px; margin-bottom:30px; cursor:pointer;">
-            <div id="q-answer-hint" style="color:#f1c40f; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg> اظهر الاجابة</div>
+            <div id="q-answer-hint" style="color:#f1c40f; font-size:20px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;"><span id="q-answer-hint-icon" style="width:24px;height:24px;display:flex;"></span> اظهر الاجابة</div>
             <div id="q-answer" style="font-size:28px; font-weight:900; color:white; display:none;">الإجابة تظهر هنا</div>
         </div>
         <div id="q-team-selection" style="display:none; grid-template-columns:1fr 1fr; gap:20px; margin-top:10px;">
@@ -938,7 +938,7 @@
             <button id="q-btn-team2" onclick="chooseTeamFromQuestion('orange')" style="padding:18px; border-radius:20px; border:none; font-size:22px; font-weight:900; cursor:pointer; background:#ff6d00; color:white;">الفريق الثاني</button>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px;">
-            <button onclick="changeQuestion()" style="padding:15px; border-radius:20px; border:none; font-size:20px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; display:flex; align-items:center; justify-content:center; gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg> تغيير السؤال</button>
+            <button onclick="changeQuestion()" style="padding:15px; border-radius:20px; border:none; font-size:20px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; display:flex; align-items:center; justify-content:center; gap:8px;"><span id="change-q-icon" style="width:24px;height:24px;display:flex;"></span> تغيير السؤال</button>
             <button onclick="closeQuestionModal()" style="padding:15px; border-radius:20px; border:none; font-size:20px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">✕ إغلاق</button>
         </div>
     </div>
@@ -946,7 +946,7 @@
 <!-- ===== TEAM CHOICE MODAL ===== -->
 <div id="team-choice-modal">
     <div class="team-choice-content">
-        <div class="team-choice-title" style="display:flex; align-items:center; justify-content:center; gap:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;"><path d="M22 14a8 8 0 0 1-8 8"/><path d="M18 11V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v11"/><path d="M14 10V9a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v1"/><path d="M10 9.5V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v10"/><path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg> اختار الفريق</div>
+        <div class="team-choice-title" style="display:flex; align-items:center; justify-content:center; gap:10px;"><span id="team-choice-icon" style="width:32px;height:32px;display:flex;"></span> اختار الفريق</div>
         <div class="team-buttons">
             <button class="team-choice-btn green" onclick="chooseTeam('green')">
                 ✓ <span id="modal-team1">الفريق الأول</span>
@@ -979,7 +979,7 @@
 <!-- ===== GAME OVER OVERLAY ===== -->
 <div id="game-over-overlay">
     <div class="game-over-content">
-        <div class="trophy-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:100px;height:100px;color:#f1c40f;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+        <div class="trophy-icon" id="trophy-icon-svg" style="width:100px;height:100px;color:#f1c40f;display:flex;justify-content:center;"></div>
         <div class="winner-text">الفائز!</div>
         <div class="winner-name" id="game-winner-name">الفريق الأول</div>
         <div class="final-score-container">
@@ -992,7 +992,7 @@
                 <div class="final-score-value orange" id="final-score-orange">0</div>
             </div>
         </div>
-        <button class="play-again-btn" onclick="playAgain()" style="display:flex; align-items:center; justify-content:center; gap:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg> اللعب مرة أخرى</button>
+        <button class="play-again-btn" onclick="playAgain()" style="display:flex; align-items:center; justify-content:center; gap:10px;"><span id="play-again-icon" style="width:24px;height:24px;display:flex;"></span> اللعب مرة أخرى</button>
     </div>
 </div>
 
@@ -1105,7 +1105,7 @@
 <div class="buzzer-alert-overlay" id="buzzerOverlay"></div>
 <div class="buzzer-alert-container" id="buzzerAlert">
     <div class="buzzer-alert">
-        <div class="buzzer-alert-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:60px;height:60px;"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+        <div class="buzzer-alert-icon" id="buzzer-bell-icon" style="width:60px;height:60px;display:flex;justify-content:center;"></div>
         <div class="buzzer-alert-text">ضغط الجرس!</div>
         <div class="buzzer-alert-team" id="buzzerAlertTeam"></div>
         <div class="buzzer-alert-player" id="buzzerAlertPlayer"></div>
@@ -1113,11 +1113,11 @@
 </div>
 
 <!-- ===== OPTIONS BUTTON & DROPDOWN ===== -->
-<button id="options-btn" onclick="toggleOptions()" style="display:flex; align-items:center; gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> الخيارات</button>
+<button id="options-btn" onclick="toggleOptions()" style="display:flex; align-items:center; gap:8px; display:none;"><span id="options-gear-icon" style="width:20px;height:20px;display:flex;"></span> الخيارات</button>
 <div id="options-dropdown">
-    <button class="opt-btn" onclick="closeOptions(); showPresenterModal()" style="display:flex; align-items:center; gap:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><path d="m17 2-5 5-5-5"/></svg> شاشة المقدم</button>
-    <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()" style="display:flex; align-items:center; gap:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M17.5 22h.5c.5 0 1-.2 1.4-.6.4-.4.6-.9.6-1.4V15l-3-3-1 1"/><path d="M12 18l-2 4"/><path d="M14 13l-1-1-4 2-3-2"/><circle cx="16" cy="5" r="2"/><path d="M12 13V9l-2-1-3 3"/></svg> شاشة اللاعب</button>
-    <button class="opt-btn" onclick="closeOptions(); confirmNewGame()" style="display:flex; align-items:center; gap:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg> بداية لعبة جديدة</button>
+    <button class="opt-btn" onclick="closeOptions(); showPresenterModal()" style="display:flex; align-items:center; gap:10px;"><span id="presenter-tv-icon" style="width:20px;height:20px;display:flex;"></span> شاشة المقدم</button>
+    <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()" style="display:flex; align-items:center; gap:10px;"><span id="player-run-icon" style="width:20px;height:20px;display:flex;"></span> شاشة اللاعب</button>
+    <button class="opt-btn" onclick="closeOptions(); confirmNewGame()" style="display:flex; align-items:center; gap:10px;"><span id="new-game-refresh-icon" style="width:20px;height:20px;display:flex;"></span> بداية لعبة جديدة</button>
 </div>
 
 <!-- ===== PRESENTER MODAL (Pop-up) ===== -->
@@ -1176,6 +1176,33 @@
 </div>
 
 <script type="module">
+    import Icons from './assets/icons/icons.js';
+
+    // Function to inject icons
+    function injectIcons() {
+        const iconMap = {
+            'portrait-phone-icon': Icons.smartphone,
+            'q-answer-hint-icon': Icons.lightbulb,
+            'change-q-icon': Icons.refresh,
+            'team-choice-icon': Icons.pointer,
+            'trophy-icon-svg': Icons.trophy,
+            'play-again-icon': Icons.refresh,
+            'buzzer-bell-icon': Icons.bell,
+            'options-gear-icon': Icons.settings,
+            'presenter-tv-icon': Icons.tv,
+            'player-run-icon': Icons.run,
+            'new-game-refresh-icon': Icons.refresh
+        };
+
+        for (const [id, svg] of Object.entries(iconMap)) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = svg;
+        }
+    }
+    
+    // Call injectIcons after DOM is ready
+    document.addEventListener('DOMContentLoaded', injectIcons);
+
     /* ===== FIREBASE CONFIG ===== */
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, update, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -1330,6 +1357,7 @@
     function startGame() {
         orangeScore=0; greenScore=0; currentRound=1;
         updateAllLogos();
+        document.getElementById('options-btn').style.display = 'flex';
         document.getElementById('label-team1').textContent = settings.team1;
         document.getElementById('label-team2').textContent = settings.team2;
         document.getElementById('modal-team1').textContent = settings.team1;
