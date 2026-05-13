@@ -39,6 +39,10 @@
             font-family: 'AA-GALAXY-BOLD';
             src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//AA-GALAXYBold.otf');
         }
+        :root {
+            --team1-color: #2ecc00;
+            --team2-color: #ff6d00;
+        }
         * {
             font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
             box-sizing: border-box; margin: 0; padding: 0;
@@ -200,8 +204,8 @@
             text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
             animation: ribbonShake 0.5s ease-in-out infinite;
         }
-        .win-team.green { color: #2ecc00; }
-        .win-team.orange { color: #ff6d00; }
+        .win-team.green { color: var(--team1-color); }
+        .win-team.orange { color: var(--team2-color); }
 
         /* ===== NEXT ROUND WIPE TRANSITION ===== */
         @keyframes wipeSlide {
@@ -272,8 +276,8 @@
             font-size: clamp(40px, 8vw, 90px); font-weight: 900;
             text-shadow: 0 0 30px currentColor, 0 0 60px currentColor;
         }
-        .winner-name.green { color: #2ecc00; }
-        .winner-name.orange { color: #ff6d00; }
+        .winner-name.green { color: var(--team1-color); }
+        .winner-name.orange { color: var(--team2-color); }
 
         .final-score-container {
             display: flex; gap: 40px; margin-top: 10px;
@@ -290,8 +294,8 @@
             font-size: clamp(36px, 7vw, 70px); font-weight: 900;
             padding: 10px 30px; border-radius: 20px; color: white;
         }
-        .final-score-value.green { background: #2ecc00; }
-        .final-score-value.orange { background: #ff6d00; }
+        .final-score-value.green { background: var(--team1-color); }
+        .final-score-value.orange { background: var(--team2-color); }
 
         .play-again-btn {
             margin-top: 20px; padding: clamp(14px, 2.5vw, 22px) clamp(40px, 8vw, 80px);
@@ -344,12 +348,12 @@
             display: flex; align-items: center; gap: 10px;
         }
         .team-choice-btn.green {
-            background: linear-gradient(135deg, #2ecc00, #27ae60);
-            box-shadow: 0 6px 20px rgba(46,204,113,0.4);
+            background: var(--team1-color);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         .team-choice-btn.orange {
-            background: linear-gradient(135deg, #ff6d00, #e67e22);
-            box-shadow: 0 6px 20px rgba(255,109,0,0.4);
+            background: var(--team2-color);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         .team-choice-btn:hover {
             transform: translateY(-4px) scale(1.05);
@@ -604,8 +608,8 @@
             font-size: clamp(28px, 4vw, 52px); font-weight: 900; color: white;
             border-radius: clamp(12px, 1.8vw, 22px);
         }
-        .green-score  { background: #2ecc00; }
-        .orange-score { background: #ff6d00; }
+        .green-score  { background: var(--team1-color); }
+        .orange-score { background: var(--team2-color); }
         .team-label {
             font-size: clamp(13px, 1.8vw, 24px); font-weight: 900; color: white;
             text-align: center; margin-bottom: 6px;
@@ -623,8 +627,8 @@
             font-size: 35px; font-weight: 900; fill: #6a3093;
             pointer-events: none; dominant-baseline: middle; text-anchor: middle;
         }
-        .green-fill  .hex-poly { fill: #2ecc00 !important; }
-        .orange-fill .hex-poly { fill: #ff6d00 !important; }
+        .green-fill  .hex-poly { fill: var(--team1-color) !important; }
+        .orange-fill .hex-poly { fill: var(--team2-color) !important; }
 
         /* Pending state - yellow glow */
         .pending-fill .hex-poly { fill: #fdd835 !important; }
@@ -691,8 +695,8 @@
             color: white;
             font-weight: 700;
         }
-        .buzzer-alert-team.green { background: #2ecc00; }
-        .buzzer-alert-team.orange { background: #ff6d00; }
+        .buzzer-alert-team.green { background: var(--team1-color); }
+        .buzzer-alert-team.orange { background: var(--team2-color); }
 
         .buzzer-alert-player {
             color: #2c1b4d;
@@ -941,6 +945,35 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.4);
             line-height: 1.5;
         }
+        /* Color Picker Styles */
+        .color-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            direction: ltr;
+            margin-top: 5px;
+        }
+        .color-pair {
+            display: flex;
+            position: relative;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            align-items: center;
+        }
+        .color-pair.active {
+            border: 2px solid white;
+            background: rgba(255,255,255,0.15);
+        }
+        .hex-small {
+            width: 28px;
+            height: 32px;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+        .hex-team1 { margin-right: -8px; z-index: 2; }
+        .hex-team2 { z-index: 1; }
     </style>
     <script src="assets/icons/icons.js"></script>
 
@@ -1109,6 +1142,12 @@
         <div class="setting-row">
             <label class="setting-label">اسم الفريق الثاني:</label>
             <input class="setting-input" id="inp-team2" type="text" placeholder="الفريق الثاني">
+        </div>
+        <div class="setting-row">
+            <label class="setting-label">لون الخلايا:</label>
+            <div class="color-options" id="color-options">
+                <!-- Color pairs will be injected here -->
+            </div>
         </div>
         <div class="setting-row">
             <label class="setting-label">عدد جولات الفوز:</label>
@@ -1336,12 +1375,32 @@
     const buzzResetRef = () => ref(db, 'sessions/' + sessionId + '/buzzReset');
 
     /* ===== STATE ===== */
-    let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
+    let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2, colors: { t1: '#2ecc00', t2: '#ff6d00' } };
+    const colorPairs = [
+        { t1: '#2ecc00', t2: '#ff6d00' }, // Green/Orange (Default)
+        { t1: '#1a1c2c', t2: '#ef5350' }, // Dark/Red
+        { t1: '#ffffff', t2: '#8bc34a' }, // White/Green
+        { t1: '#42a5f5', t2: '#ec407a' }, // Blue/Pink
+        { t1: '#9575cd', t2: '#26c6da' }, // Purple/Cyan
+        { t1: '#7e57c2', t2: '#ff7043' }, // Violet/Orange
+        { t1: '#ffb74d', t2: '#90caf9' }, // Orange/LightBlue
+        { t1: '#7986cb', t2: '#fff176' }  // Indigo/Yellow
+    ];
     const roundWords = ['','الأولى','الثانية','الثالثة','الرابعة','الخامسة'];
 
     function updateAllLogos() {
         ['logo-name-start','logo-name-settings','logo-name-game','trans-logo-name']
             .forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=settings.name; });
+        
+        // Update CSS Variables
+        document.documentElement.style.setProperty('--team1-color', settings.colors?.t1 || '#2ecc00');
+        document.documentElement.style.setProperty('--team2-color', settings.colors?.t2 || '#ff6d00');
+        
+        // Update labels color if needed
+        const l1 = document.getElementById('label-team1');
+        const l2 = document.getElementById('label-team2');
+        if(l1) l1.style.color = settings.colors?.t1 || '#2ecc00';
+        if(l2) l2.style.color = settings.colors?.t2 || '#ff6d00';
     }
 
     /* ===== SCREENS ===== */
@@ -1357,10 +1416,31 @@
         });
     }
 
+    function renderColorOptions() {
+        const container = document.getElementById('color-options');
+        if(!container) return;
+        container.innerHTML = '';
+        colorPairs.forEach((pair, idx) => {
+            const div = document.createElement('div');
+            div.className = 'color-pair' + (settings.colors?.t1 === pair.t1 ? ' active' : '');
+            div.onclick = () => {
+                settings.colors = pair;
+                document.querySelectorAll('.color-pair').forEach(p => p.classList.remove('active'));
+                div.classList.add('active');
+            };
+            div.innerHTML = `
+                <div class="hex-small hex-team1" style="background:${pair.t1}"></div>
+                <div class="hex-small hex-team2" style="background:${pair.t2}"></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
     function showSettings() {
         document.getElementById('inp-name').value = settings.name;
         document.getElementById('inp-team1').value = settings.team1==='الفريق الأول'?'':settings.team1;
         document.getElementById('inp-team2').value = settings.team2==='الفريق الثاني'?'':settings.team2;
+        renderColorOptions();
         selectRounds(settings.rounds, false);
         document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
         document.getElementById('screen-settings').classList.add('active');
@@ -1376,6 +1456,7 @@
         settings.name  = document.getElementById('inp-name').value.trim()  || 'مراح';
         settings.team1 = document.getElementById('inp-team1').value.trim() || 'الفريق الأول';
         settings.team2 = document.getElementById('inp-team2').value.trim() || 'الفريق الثاني';
+        // colors are already updated in settings.colors via onclick
         updateAllLogos();
         showStart();
         // Sync settings to Firebase
@@ -1543,6 +1624,7 @@
         const name = team === "green" ? settings.team1 : settings.team2;
         const winTeam = document.getElementById('win-team-name');
         winTeam.textContent = name;
+        winTeam.style.color = team === "green" ? settings.colors.t1 : settings.colors.t2;
         winTeam.className = 'win-team ' + team;
         document.querySelectorAll('.confetti').forEach(c => {
             c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
@@ -1555,9 +1637,10 @@
 
     function showGameOver(winner) {
         const winnerName = winner === "green" ? settings.team1 : settings.team2;
-        const winnerEl = document.getElementById('game-winner-name');
-        winnerEl.textContent = winnerName;
-        winnerEl.className = 'winner-name ' + winner;
+        const winNameEl = document.getElementById('game-winner-name');
+        winNameEl.textContent = winnerName;
+        winNameEl.style.color = winner === "green" ? settings.colors.t1 : settings.colors.t2;
+        winNameEl.className = 'winner-name ' + winner;
         document.getElementById('final-label-team1').textContent = settings.team1;
         document.getElementById('final-label-team2').textContent = settings.team2;
         document.getElementById('final-score-green').textContent = greenScore;
