@@ -13,6 +13,10 @@
             font-family: 'AA-GALAXY-BOLD';
             src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//AA-GALAXYBold.otf');
         }
+        :root {
+            --team1-color: #2ecc00;
+            --team2-color: #ff6d00;
+        }
         * {
             font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
             box-sizing: border-box; margin: 0; padding: 0;
@@ -166,8 +170,8 @@
             word-break: break-word;
         }
 
-        .team-label.green { color: #2ecc00; }
-        .team-label.orange { color: #ff6d00; }
+        .team-label.green { color: var(--team1-color); }
+        .team-label.orange { color: var(--team2-color); }
 
         .score-box {
             width: clamp(55px, 10vw, 90px);
@@ -182,11 +186,11 @@
         }
 
         .green-score {
-            background: #2ecc00;
+            background: var(--team1-color);
             box-shadow: 0 4px 15px rgba(46, 204, 0, 0.4);
         }
         .orange-score {
-            background: #ff6d00;
+            background: var(--team2-color);
             box-shadow: 0 4px 15px rgba(255, 109, 0, 0.4);
         }
 
@@ -199,7 +203,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            background: conic-gradient(from 45deg, #2ecc00 90deg, #ff6d00 90deg 180deg, #2ecc00 180deg 270deg, #ff6d00 270deg);
+            background: conic-gradient(from 45deg, var(--team1-color) 90deg, var(--team2-color) 90deg 180deg, var(--team1-color) 180deg 270deg, var(--team2-color) 270deg);
             border-radius: 20px;
             padding: 20px;
             overflow: visible;
@@ -240,8 +244,8 @@
         }
 
         /* Team fills */
-        .green-fill .hex-poly { fill: #2ecc00 !important; }
-        .orange-fill .hex-poly { fill: #ff6d00 !important; }
+        .green-fill .hex-poly { fill: var(--team1-color) !important; }
+        .orange-fill .hex-poly { fill: var(--team2-color) !important; }
         .green-fill .hex-text,
         .orange-fill .hex-text { fill: white !important; }
 
@@ -296,8 +300,8 @@
             transform: translateY(1px);
         }
 
-        .btn-team1 { background: #2ecc00; }
-        .btn-team2 { background: #ff6d00; }
+        .btn-team1 { background: var(--team1-color); }
+        .btn-team2 { background: var(--team2-color); }
         .btn-undo { background: #ef5350; }
         .btn-change { background: linear-gradient(90deg, #26c6da, #00acc1); }
 
@@ -864,6 +868,12 @@
         document.getElementById('team2Label').textContent = settings.team2;
         document.getElementById('btnTeam1Text').textContent = settings.team1;
         document.getElementById('btnTeam2Text').textContent = settings.team2;
+
+        // Apply colors to CSS variables
+        if (settings.colors) {
+            document.documentElement.style.setProperty('--team1-color', settings.colors.t1 || '#2ecc00');
+            document.documentElement.style.setProperty('--team2-color', settings.colors.t2 || '#ff6d00');
+        }
     }
 
     function updateInstruction() {
@@ -1222,4 +1232,3 @@
 </script>
 </body>
 </html>
-
