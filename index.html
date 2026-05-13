@@ -42,7 +42,6 @@
         :root {
             --team1-color: #2ecc00;
             --team2-color: #ff6d00;
-            --bg-color: #6a3093;
         }
         * {
             font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
@@ -54,7 +53,7 @@
 
         .hex-bg {
             position: fixed; inset: 0;
-            background-color: var(--bg-color);
+            background-color: #6a3093;
             overflow: hidden; z-index: 0;
         }
         .hex-bg svg { width: 100%; height: 100%; opacity: 0.18; }
@@ -1396,19 +1395,6 @@
         // Update CSS Variables
         document.documentElement.style.setProperty('--team1-color', settings.colors?.t1 || '#2ecc00');
         document.documentElement.style.setProperty('--team2-color', settings.colors?.t2 || '#ff6d00');
-        
-        // Update background color based on team colors
-        // We use team1 color as the base for background if it's not the default green
-        let bgColor = '#6a3093'; // Default
-        if (settings.colors?.t1 === '#1a1c2c') bgColor = '#0d0e16'; // Darker for Dark/Red
-        else if (settings.colors?.t1 === '#ffffff') bgColor = '#2e7d32'; // Greenish for White/Green
-        else if (settings.colors?.t1 === '#42a5f5') bgColor = '#1565c0'; // Dark Blue for Blue/Pink
-        else if (settings.colors?.t1 === '#9575cd') bgColor = '#4527a0'; // Dark Purple for Purple/Cyan
-        else if (settings.colors?.t1 === '#7e57c2') bgColor = '#311b92'; // Deep Violet for Violet/Orange
-        else if (settings.colors?.t1 === '#ffb74d') bgColor = '#e65100'; // Dark Orange for Orange/LightBlue
-        else if (settings.colors?.t1 === '#7986cb') bgColor = '#283593'; // Dark Indigo for Indigo/Yellow
-        
-        document.documentElement.style.setProperty('--bg-color', bgColor);
         
         // Update labels color if needed
         const l1 = document.getElementById('label-team1');
