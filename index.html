@@ -950,7 +950,7 @@
             display: flex;
             gap: 12px;
             flex-wrap: wrap;
-            direction: ltr;
+            direction: rtl;
             margin-top: 5px;
         }
         .color-pair {
@@ -969,7 +969,7 @@
         }
         .hex-small {
             width: 28px;
-            height: 32px;
+            height: 28px;
             clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
         }
         .hex-team1 { margin-right: -8px; z-index: 2; }
@@ -1429,8 +1429,8 @@
                 div.classList.add('active');
             };
             div.innerHTML = `
-                <div class="hex-small hex-team1" style="background:${pair.t1}"></div>
                 <div class="hex-small hex-team2" style="background:${pair.t2}"></div>
+                <div class="hex-small hex-team1" style="background:${pair.t1}"></div>
             `;
             container.appendChild(div);
         });
