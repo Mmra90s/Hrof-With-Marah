@@ -911,6 +911,7 @@
 
     function selectCell(cell) {
         if (cell.owner) return;
+        playClickSound();
         if (selectedCell && selectedCell !== cell) {
             selectedCell.isPending = false;
             selectedCell.el.classList.remove('pending-fill');
@@ -933,6 +934,7 @@
 
     function selectTeam(team) {
         if (!selectedCell) return;
+        playPointSound();
         const cellId = selectedCell.id;
         selectedCell.isPending = false;
         selectedCell.el.classList.remove('pending-fill');
@@ -1028,6 +1030,22 @@
         broadcastAction({ type:'game_reset' });
         // Push new letters to Firebase
         set(lettersRef(), letters);
+    }
+
+    function playClickSound() {
+        try {
+            const audio = new Audio('../assets/sounds/click.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
+    }
+
+    function playPointSound() {
+        try {
+            const audio = new Audio('../assets/sounds/point.mp3');
+            audio.volume = 0.3;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
     }
 
     function playBell() {
@@ -1204,3 +1222,4 @@
 </script>
 </body>
 </html>
+
