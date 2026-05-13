@@ -1464,7 +1464,7 @@
         g.appendChild(poly); g.appendChild(text);
         const cell={el:g,owner:null,text,row,col,id};
         cells.push(cell);
-        g.onclick=()=>{ if(cell.owner) return; showTeamChoice(cell); };
+        g.onclick=()=>{ if(cell.owner) return; playClickSound(); showTeamChoice(cell); };
         svg.appendChild(g);
     }
 
@@ -1570,6 +1570,15 @@
         const dd  = document.getElementById('options-dropdown');
         if (!btn.contains(e.target) && !dd.contains(e.target)) closeOptions();
     });
+
+    /* ===== SOUND EFFECTS ===== */
+    function playClickSound() {
+        try {
+            const audio = new Audio('assets/sounds/click.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
+    }
 
     /* ===== BELL ===== */
     function playBell() {
@@ -1913,3 +1922,4 @@
 </script>
 </body>
 </html>
+
