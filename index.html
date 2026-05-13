@@ -729,7 +729,39 @@
             background: white; border-radius: 18px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.25);
             overflow: hidden; display: none; flex-direction: column;
-            min-width: 200px;
+            min-width: 240px;
+        }
+        .sound-control-container {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(106,48,147,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sound-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .sound-toggle-label {
+            color: #6a3093;
+            font-size: 16px;
+            font-weight: 900;
+        }
+        .volume-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .volume-slider-container.hidden {
+            display: none;
+        }
+        input[type=range].volume-slider {
+            flex: 1;
+            cursor: pointer;
+            accent-color: #6a3093;
         }
         #options-dropdown.open { display: flex; }
 
@@ -1135,6 +1167,17 @@
     <button class="opt-btn" onclick="closeOptions(); showPresenterModal()"><span class="icon-svg"><script>document.write(Icons.television)</script></span> شاشة المقدم</button>
     <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()"><span class="icon-svg"><script>document.write(Icons.running)</script></span> جرس اللاعبين</button>
     <button class="opt-btn" onclick="closeOptions(); confirmNewGame()"><span class="icon-svg"><script>document.write(Icons.refresh)</script></span> بداية لعبة جديدة</button>
+    <div class="sound-control-container">
+        <div class="sound-toggle-row" onclick="toggleMute()">
+            <span class="sound-toggle-label" id="mute-label">إيقاف الصوت</span>
+            <span id="mute-icon-container">🔊</span>
+        </div>
+        <div class="volume-slider-container" id="volume-container">
+            <span>🔈</span>
+            <input type="range" min="0" max="1" step="0.01" value="0.3" class="volume-slider" id="volume-slider" oninput="updateVolume(this.value)">
+            <span>🔊</span>
+        </div>
+    </div>
 </div>
 
 <!-- ===== PRESENTER MODAL (Pop-up) ===== -->
@@ -1341,6 +1384,8 @@
 
     /* ===== GAME ===== */
     let orangeScore=0, greenScore=0, currentRound=1, cells=[], lastOP=false, lastGP=false;
+    let isMuted = false;
+    let globalVolume = 0.3;
     let pendingCell = null;
     let _ignorePresenterAction = false;
 
@@ -1576,36 +1621,61 @@
 
     /* ===== SOUND EFFECTS ===== */
     function playClickSound() {
+        if (isMuted) return;
         try {
             const audio = new Audio('assets/sounds/click.mp3');
-            audio.volume = 0.5;
+            audio.volume = globalVolume;
             audio.play().catch(err => console.log('Audio play failed:', err));
         } catch(e) {}
     }
 
     function playPointSound() {
+        if (isMuted) return;
         try {
             const audio = new Audio('assets/sounds/point.mp3');
-            audio.volume = 0.5;
+            audio.volume = globalVolume;
             audio.play().catch(err => console.log('Audio play failed:', err));
         } catch(e) {}
     }
 
     function playWinSound() {
+        if (isMuted) return;
         try {
             const audio = new Audio('assets/sounds/win.mp3');
-            audio.volume = 0.3;
+            audio.volume = globalVolume;
             audio.play().catch(err => console.log('Audio play failed:', err));
         } catch(e) {}
     }
 
     function playVictorySound() {
+        if (isMuted) return;
         try {
             const audio = new Audio('assets/sounds/victory.mp3');
-            audio.volume = 0.3;
+            audio.volume = globalVolume;
             audio.play().catch(err => console.log('Audio play failed:', err));
         } catch(e) {}
     }
+
+    window.toggleMute = () => {
+        isMuted = !isMuted;
+        const label = document.getElementById('mute-label');
+        const container = document.getElementById('volume-container');
+        const icon = document.getElementById('mute-icon-container');
+        
+        if (isMuted) {
+            label.textContent = 'تشغيل الصوت';
+            icon.textContent = '🔇';
+            container.classList.add('hidden');
+        } else {
+            label.textContent = 'إيقاف الصوت';
+            icon.textContent = '🔊';
+            container.classList.remove('hidden');
+        }
+    };
+
+    window.updateVolume = (val) => {
+        globalVolume = parseFloat(val);
+    };
 
     /* ===== BELL ===== */
     function playBell() {
