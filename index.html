@@ -566,7 +566,7 @@
         .left {
             flex: 1; display: flex; justify-content: center; align-items: center;
             position: relative; overflow: hidden;
-            background: conic-gradient(from 45deg, #2ecc00 90deg, #ff6d00 90deg 180deg, #2ecc00 180deg 270deg, #ff6d00 270deg);
+            background: conic-gradient(from 45deg, var(--team1-color) 90deg, var(--team2-color) 90deg 180deg, var(--team1-color) 180deg 270deg, var(--team2-color) 270deg);
         }
         .sidebar {
             width: clamp(220px, 28vw, 400px);
@@ -1424,7 +1424,7 @@
             const div = document.createElement('div');
             div.className = 'color-pair' + (settings.colors?.t1 === pair.t1 ? ' active' : '');
             div.onclick = () => {
-                settings.colors = pair;
+                settings.colors = pair; updateAllLogos();
                 document.querySelectorAll('.color-pair').forEach(p => p.classList.remove('active'));
                 div.classList.add('active');
             };
@@ -2116,4 +2116,3 @@
 </script>
 </body>
 </html>
-
