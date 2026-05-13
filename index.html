@@ -1390,6 +1390,7 @@
         cell.owner = team;
         cell.el.classList.add(team + '-fill');
         cell.text.style.display = 'none';
+        playPointSound();
         checkPaths();
         syncGameState();
     }
@@ -1580,6 +1581,14 @@
         } catch(e) {}
     }
 
+    function playPointSound() {
+        try {
+            const audio = new Audio('assets/sounds/point.mp3');
+            audio.volume = 0.5;
+            audio.play().catch(err => console.log('Audio play failed:', err));
+        } catch(e) {}
+    }
+
     /* ===== BELL ===== */
     function playBell() {
         try {
@@ -1762,6 +1771,7 @@
                         cell.el.classList.remove('pending-fill');
                         cell.el.classList.add(action.team + '-fill');
                         cell.text.style.display = 'none';
+                        playPointSound();
                         checkPaths();
                         syncGameState();
                     }
@@ -1922,4 +1932,3 @@
 </script>
 </body>
 </html>
-
