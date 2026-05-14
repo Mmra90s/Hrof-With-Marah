@@ -869,7 +869,7 @@
         document.getElementById('btnTeam1Text').textContent = settings.team1;
         document.getElementById('btnTeam2Text').textContent = settings.team2;
 
-        // Apply colors to CSS variables
+        // الاعتماد على المتغيرات للألوان لضمان التوافق
         if (settings.colors) {
             document.documentElement.style.setProperty('--team1-color', settings.colors.t1 || '#2ecc00');
             document.documentElement.style.setProperty('--team2-color', settings.colors.t2 || '#ff6d00');
@@ -1168,10 +1168,16 @@
         const teamEl = document.getElementById('buzzerAlertTeam');
         const playerEl = document.getElementById('buzzerAlertPlayer');
         container.classList.remove('green','orange');
+        
+        // إظهار اسم الفريق فقط بشكل أفضل كما طلب المستخدم
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + (buzz.team || '');
-        playerEl.textContent = buzz.name;
-        const containerTeam = lastSelectedTeam || buzz.team;
+        
+        // إخفاء اسم الشخص لمنع التضارب
+        playerEl.textContent = ''; 
+        playerEl.style.display = 'none';
+
+        const containerTeam = buzz.team; // استخدام فريق الشخص الذي ضغط مباشرة
         if (containerTeam) container.classList.add(containerTeam);
         container.classList.add('active');
         try {
