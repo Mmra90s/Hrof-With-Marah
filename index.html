@@ -1393,11 +1393,11 @@
         ['logo-name-start','logo-name-settings','logo-name-game','trans-logo-name']
             .forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=settings.name; });
         
-        // Update CSS Variables
+        // الاعتماد على المتغيرات للألوان لضمان التوافق
         document.documentElement.style.setProperty('--team1-color', settings.colors?.t1 || '#2ecc00');
         document.documentElement.style.setProperty('--team2-color', settings.colors?.t2 || '#ff6d00');
         
-        // Update labels color if needed
+        // تحديث ألوان العناوين باستخدام المتغيرات
         const l1 = document.getElementById('label-team1');
         const l2 = document.getElementById('label-team2');
         if(l1) l1.style.color = settings.colors?.t1 || '#2ecc00';
@@ -2016,9 +2016,15 @@
         const container = document.getElementById('buzzerAlert');
         const teamEl = document.getElementById('buzzerAlertTeam');
         const playerEl = document.getElementById('buzzerAlertPlayer');
+        
+        // إظهار اسم الفريق فقط بشكل موحد كما طلب المستخدم
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + buzz.team;
-        playerEl.textContent = buzz.name;
+        
+        // إخفاء اسم الشخص لمنع التضارب
+        playerEl.textContent = '';
+        playerEl.style.display = 'none';
+
         overlay.classList.add('active');
         container.classList.add('active');
         playBell();
