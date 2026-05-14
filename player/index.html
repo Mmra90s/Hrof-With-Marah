@@ -14,7 +14,7 @@
             src: url('https://arbfonts.com//wp-content/fonts/new-arabic-fonts//AA-GALAXYBold.otf' );
         }
         :root {
-            /* متغيرات الألوان الديناميكية */
+            /* ألوان ثابتة لمنع التضارب */
             --team1-color: #2ecc00;
             --team2-color: #ff6d00;
         }
@@ -635,7 +635,7 @@
         document.getElementById('btn-green').querySelector('.team-name').textContent = settings.team1;
         document.getElementById('btn-orange').querySelector('.team-name').textContent = settings.team2;
 
-        // تحديث ألوان التصميم ديناميكياً
+        // تحديث ألوان التصميم باستخدام المتغيرات لضمان المرونة
         if (settings.colors) {
             document.documentElement.style.setProperty('--team1-color', settings.colors.t1);
             document.documentElement.style.setProperty('--team2-color', settings.colors.t2);
@@ -686,23 +686,35 @@
     /* ===== BUZZER ===== */
     function pressBuzzer() {
         if (hasBuzzed || isBuzzLocked) return;
+        
+        // منع الضغط المتكرر فوراً محلياً
         hasBuzzed = true;
+        isBuzzLocked = true;
 
         const btn = document.getElementById('buzzerBtn');
         btn.classList.add('pressed');
+        btn.style.opacity = '0.5';
+        btn.style.pointerEvents = 'none';
 
         playBell();
-        showBuzzStatus();
-
+        
         const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
         const ts = Date.now();
 
-        const buzzData = { name:playerName, team:playerTeam, teamName, timestamp:ts, active:true };
-        const lockData = { locked:true, playerName, teamName, team:playerTeam, timestamp:ts };
+        // بيانات موحدة لجميع الشاشات
+        const buzzData = { 
+            name: playerName, 
+            team: playerTeam, 
+            teamName: teamName, 
+            timestamp: ts, 
+            active: true 
+        };
 
-        // Write to Firebase
+        // إرسال البيانات فوراً لضمان التزامن اللحظي
         set(buzzRef(), buzzData);
-        set(buzzLockRef(), lockData);
+        set(buzzLockRef(), { locked: true, ...buzzData });
+        
+        showBuzzStatus();
     }
 
     // Listen for buzz lock from Firebase (another player buzzed)
@@ -746,7 +758,8 @@
         const status = document.getElementById('buzzStatus');
         const text = document.getElementById('buzzStatusText');
         const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-        text.textContent = playerName + ' - ' + teamName;
+        // إظهار اسم الفريق فقط لمنع التضارب كما طلب المستخدم
+        text.textContent = teamName;
         status.classList.add('active');
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     }
