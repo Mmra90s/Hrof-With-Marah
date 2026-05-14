@@ -2017,13 +2017,13 @@
         const teamEl = document.getElementById('buzzerAlertTeam');
         const playerEl = document.getElementById('buzzerAlertPlayer');
         
-        // إظهار اسم الفريق فقط بشكل موحد كما طلب المستخدم
+        // إظهار اسم الفريق مع لونه
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + buzz.team;
         
-        // إخفاء اسم الشخص لمنع التضارب
-        playerEl.textContent = '';
-        playerEl.style.display = 'none';
+        // إظهار اسم اللاعب الذي ضغط الزر
+        playerEl.textContent = buzz.name || '';
+        playerEl.style.display = buzz.name ? 'block' : 'none';
 
         overlay.classList.add('active');
         container.classList.add('active');
@@ -2122,4 +2122,4 @@
 
 </script>
 </body>
-    </html>
+</html>
