@@ -755,11 +755,7 @@
     }
 
     function showBuzzStatus() {
-        const status = document.getElementById('buzzStatus');
-        const text = document.getElementById('buzzStatusText');
-        // إظهار رسالة محايدة فقط على شاشة اللاعب
-        text.textContent = '✅ تم الضغط!';
-        status.classList.add('active');
+        // لا يظهر أي شيء على شاشة اللاعب
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     }
 
