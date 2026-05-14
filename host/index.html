@@ -1169,15 +1169,15 @@
         const playerEl = document.getElementById('buzzerAlertPlayer');
         container.classList.remove('green','orange');
         
-        // إظهار اسم الفريق فقط بشكل أفضل كما طلب المستخدم
+        // إظهار اسم الفريق مع لونه
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + (buzz.team || '');
         
-        // إخفاء اسم الشخص لمنع التضارب
-        playerEl.textContent = ''; 
-        playerEl.style.display = 'none';
+        // إظهار اسم اللاعب الذي ضغط الزر
+        playerEl.textContent = buzz.name || '';
+        playerEl.style.display = buzz.name ? 'block' : 'none';
 
-        const containerTeam = buzz.team; // استخدام فريق الشخص الذي ضغط مباشرة
+        const containerTeam = buzz.team;
         if (containerTeam) container.classList.add(containerTeam);
         container.classList.add('active');
         try {
