@@ -392,14 +392,15 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            animation: buzzSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transition: all 0.2s ease;
+            animation: buzzSlideIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.1s ease;
             border: 3px solid rgba(255, 255, 255, 0.4);
             position: relative;
             overflow: hidden;
+            z-index: 2000;
         }
         
-        /* Instant visibility and glowing effect */
+        /* Instant visibility */
         .buzzer-alert-container.active {
             display: flex !important;
         }
@@ -421,33 +422,30 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Using dynamic colors from CSS variables */
         .buzzer-alert-container.green {
-            background: linear-gradient(135deg, #2ecc00, #1b5e20);
+            background: linear-gradient(135deg, var(--team1-color), #1b5e20);
             box-shadow: 0 0 40px rgba(46, 204, 0, 0.7), inset 0 0 20px rgba(255,255,255,0.3);
         }
         .buzzer-alert-container.orange {
-            background: linear-gradient(135deg, #ff6d00, #e65100);
+            background: linear-gradient(135deg, var(--team2-color), #e65100);
             box-shadow: 0 0 40px rgba(255, 109, 0, 0.7), inset 0 0 20px rgba(255,255,255,0.3);
         }
-        .buzzer-alert-container.green .buzzer-alert-text,
-        .buzzer-alert-container.green .buzzer-alert-player {
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .buzzer-alert-container.orange .buzzer-alert-text,
-        .buzzer-alert-container.orange .buzzer-alert-player {
+        
+        .buzzer-alert-container .buzzer-alert-text,
+        .buzzer-alert-container .buzzer-alert-player {
             color: white;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         @keyframes buzzSlideIn {
-            0% { transform: scale(0.8) translateY(-30px); opacity: 0; }
+            0% { transform: scale(0.9) translateY(-10px); opacity: 0; }
             100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         @keyframes buzzPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-            50% { transform: scale(1.03); box-shadow: 0 0 40px rgba(255,255,255,0.4); }
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         .buzzer-alert {
@@ -977,7 +975,7 @@
         setTimeout(() => btn.classList.remove('bell-active'), 400);
     }
 
-    /* ===== BUZZER LISTENER ===== */
+    /* ===== BUZZER LISTENER - ORIGINAL LOGIC RESTORED ===== */
     onValue(buzzLockRef(), (snap) => {
         const lock = snap.val();
         if (lock && lock.active) {
@@ -991,17 +989,18 @@
         const teamEl = document.getElementById('buzzerAlertTeam');
         const playerEl = document.getElementById('buzzerAlertPlayer');
         
-        // Instant visual reset and setup
-        container.style.display = 'flex';
-        container.classList.remove('green','orange', 'active');
-        void container.offsetWidth; // Force reflow for instant animation trigger
-        
+        // Visual setup
+        container.classList.remove('green','orange');
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + (buzz.team || '');
         playerEl.textContent = buzz.name;
         
-        const containerTeam = buzz.team;
+        const containerTeam = lastSelectedTeam || buzz.team;
         if (containerTeam) container.classList.add(containerTeam);
+        
+        // Show immediately
+        container.style.display = 'flex';
+        void container.offsetWidth; // Trigger reflow for animation
         container.classList.add('active');
         
         try {
@@ -1018,12 +1017,7 @@
     function resetBuzzFromPresenter() {
         const container = document.getElementById('buzzerAlert');
         container.classList.remove('active');
-        // Small delay before hiding to allow fade out if needed, but here we just hide
-        setTimeout(() => {
-            if (!container.classList.contains('active')) {
-                container.style.display = 'none';
-            }
-        }, 300);
+        setTimeout(() => { container.style.display = 'none'; }, 200);
         
         currentBuzz = null;
         remove(buzzRef());
@@ -1060,7 +1054,7 @@
 
     document.addEventListener('fullscreenchange', () => {
         if (document.fullscreenElement) {
-            fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
+            fullscreenIcon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2-h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
         } else {
             fullscreenIcon.innerHTML = '<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
         }
