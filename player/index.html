@@ -757,9 +757,8 @@
     function showBuzzStatus() {
         const status = document.getElementById('buzzStatus');
         const text = document.getElementById('buzzStatusText');
-        const teamName = playerTeam === 'green' ? settings.team1 : settings.team2;
-        // إظهار اسم الفريق فقط لمنع التضارب كما طلب المستخدم
-        text.textContent = teamName;
+        // إظهار رسالة محايدة فقط على شاشة اللاعب
+        text.textContent = '✅ تم الضغط!';
         status.classList.add('active');
         if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     }
