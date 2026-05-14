@@ -366,9 +366,11 @@
         }
 
         @keyframes bellRing {
-            0%, 100% { transform: scale(1); }
-            25% { transform: scale(1.1); }
-            75% { transform: scale(0.95); }
+            0%, 100% { transform: scale(1) rotate(0); }
+            20% { transform: scale(1.1) rotate(15deg); }
+            40% { transform: scale(1.1) rotate(-15deg); }
+            60% { transform: scale(1.1) rotate(10deg); }
+            80% { transform: scale(1.1) rotate(-10deg); }
         }
 
         @keyframes fadeIn {
@@ -380,47 +382,72 @@
             animation: bellRing 0.4s ease-in-out;
         }
 
-        /* Buzzer Alert Display - Shows only when someone buzzes */
+        /* Buzzer Alert Display - Enhanced Design */
         .buzzer-alert-container {
             display: none;
             width: 100%;
             max-width: 500px;
-            border-radius: 15px;
-            padding: 15px 25px;
+            border-radius: 25px;
+            padding: 20px 30px;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            animation: buzzSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transition: all 0.3s ease;
+            gap: 12px;
+            animation: buzzSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s ease;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
         }
+        
+        /* Instant visibility and glowing effect */
         .buzzer-alert-container.active {
-            display: flex;
+            display: flex !important;
         }
+        
+        .buzzer-alert-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: rotateGlow 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotateGlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .buzzer-alert-container.green {
-            background: linear-gradient(135deg, #2ecc00, #27ae60);
-            box-shadow: 0 4px 25px rgba(46, 204, 113, 0.5);
+            background: linear-gradient(135deg, #2ecc00, #1b5e20);
+            box-shadow: 0 0 40px rgba(46, 204, 0, 0.7), inset 0 0 20px rgba(255,255,255,0.3);
         }
         .buzzer-alert-container.orange {
-            background: linear-gradient(135deg, #ff6d00, #e67e22);
-            box-shadow: 0 4px 25px rgba(255, 109, 0, 0.5);
+            background: linear-gradient(135deg, #ff6d00, #e65100);
+            box-shadow: 0 0 40px rgba(255, 109, 0, 0.7), inset 0 0 20px rgba(255,255,255,0.3);
         }
         .buzzer-alert-container.green .buzzer-alert-text,
         .buzzer-alert-container.green .buzzer-alert-player {
             color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         .buzzer-alert-container.orange .buzzer-alert-text,
         .buzzer-alert-container.orange .buzzer-alert-player {
             color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         @keyframes buzzSlideIn {
-            0% { transform: translateY(-20px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
+            0% { transform: scale(0.8) translateY(-30px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
         }
 
         @keyframes buzzPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+            50% { transform: scale(1.03); box-shadow: 0 0 40px rgba(255,255,255,0.4); }
         }
 
         .buzzer-alert {
@@ -428,50 +455,57 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
             width: 100%;
-            flex-wrap: wrap;
-            animation: buzzPulse 1s ease-in-out infinite;
+            flex-wrap: nowrap;
+            animation: buzzPulse 0.8s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
         }
 
         .buzzer-alert-icon {
-            font-size: 40px;
-            animation: bounce 0.5s ease-in-out infinite;
+            font-size: 50px;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+            animation: bellShake 0.5s ease-in-out infinite;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @keyframes bellShake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
         }
 
         .buzzer-alert-text {
-            color: #2c1b4d;
-            font-size: clamp(18px, 4vw, 24px);
+            color: white;
+            font-size: clamp(22px, 5vw, 30px);
             font-weight: 900;
             text-align: center;
+            letter-spacing: 1px;
         }
 
         .buzzer-alert-info {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 4px;
+            align-items: flex-start;
+            gap: 2px;
         }
 
         .buzzer-alert-team {
             font-size: clamp(14px, 3vw, 18px);
-            padding: 5px 18px;
-            border-radius: 18px;
+            padding: 4px 15px;
+            border-radius: 12px;
             color: white;
             font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
-        .buzzer-alert-team.green { background: #2ecc00; }
-        .buzzer-alert-team.orange { background: #ff6d00; }
 
         .buzzer-alert-player {
-            color: #2c1b4d;
-            font-size: clamp(14px, 2.5vw, 18px);
-            opacity: 0.9;
+            color: white;
+            font-size: clamp(18px, 4vw, 24px);
+            font-weight: 900;
+            margin-top: 2px;
         }
 
         .reset-buzz-btn {
@@ -498,7 +532,7 @@
         /* Question Display */
         .question-box {
             background: #2c1b4d;
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 15px 20px;
             width: 100%;
             max-width: 500px;
@@ -631,6 +665,14 @@
                 font-size: 14px;
                 border-radius: 10px;
             }
+            
+            .buzzer-alert-container {
+                padding: 12px 15px;
+                border-radius: 15px;
+            }
+            .buzzer-alert-icon { font-size: 35px; }
+            .buzzer-alert-text { font-size: 18px; }
+            .buzzer-alert-player { font-size: 16px; }
         }
     </style>
 </head>
@@ -757,407 +799,188 @@
     const settingsRef         = () => ref(db, 'sessions/' + sessionId + '/settings');
     const lettersRef          = () => ref(db, 'sessions/' + sessionId + '/letters');
     const gameStateRef        = () => ref(db, 'sessions/' + sessionId + '/gameState');
-    const presenterActionRef  = () => ref(db, 'sessions/' + sessionId + '/presenterAction');
     const buzzRef             = () => ref(db, 'sessions/' + sessionId + '/buzz');
-    const buzzResetRef        = () => ref(db, 'sessions/' + sessionId + '/buzzReset');
     const buzzLockRef         = () => ref(db, 'sessions/' + sessionId + '/buzzLock');
+    const buzzResetRef        = () => ref(db, 'sessions/' + sessionId + '/buzzReset');
 
-    /* ===== GAME STATE ===== */
-    let letters = ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن"];
-    let cells = [];
-    let selectedCell = null;
-    let greenScore = 0;
-    let orangeScore = 0;
-    let currentRound = 1;
-    let lastGreenPath = false;
-    let lastOrangePath = false;
-    let questionsData = {};
-    let usedQuestions = {};
-    let currentQuestionLetter = null;
+    /* ===== STATE ===== */
+    let letters = [];
+    let currentQuestion = null;
     let lastSelectedTeam = null;
     let currentBuzz = null;
 
-    const SHEET_URL = 'questions.csv';
-
-    let settings = { name:'مراح', team1:'الفريق الأول', team2:'الفريق الثاني', rounds:2 };
-
-    /* ===== QUESTIONS ===== */
-    async function fetchQuestions() {
-        try {
-            const response = await fetch(SHEET_URL);
-            const csvText = await response.text();
-            parseCSV(csvText);
-            document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
-        } catch (error) {
-            document.getElementById('questionBox').innerHTML = '<div class="loading-text">تعذر تحميل الأسئلة</div>';
-        }
-    }
-
-    function parseCSV(csvText) {
-        const lines = csvText.split('\n');
-        questionsData = {};
-        for (let i = 1; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-            const cols = parseCSVLine(line);
-            if (cols.length >= 2) {
-                const question = cols[1].trim();
-                const answer = cols[2] ? cols[2].trim() : '';
-                if (answer && question) {
-                    const firstLetter = answer.charAt(0);
-                    if (!questionsData[firstLetter]) { questionsData[firstLetter] = []; usedQuestions[firstLetter] = []; }
-                    if (!questionsData[firstLetter].some(q => q.answer === answer)) {
-                        questionsData[firstLetter].push({ question, answer });
-                    }
+    /* ===== UI UPDATES ===== */
+    function updateAllLogos() {
+        onValue(settingsRef(), (snap) => {
+            const data = snap.val();
+            if(data) {
+                if(data.logoName) document.getElementById('logoName').textContent = data.logoName;
+                if(data.team1Name) {
+                    document.getElementById('team1Label').textContent = data.team1Name;
+                    document.getElementById('btnTeam1Text').textContent = data.team1Name;
+                }
+                if(data.team2Name) {
+                    document.getElementById('team2Label').textContent = data.team2Name;
+                    document.getElementById('btnTeam2Text').textContent = data.team2Name;
                 }
             }
-        }
+        });
     }
 
-    function parseCSVLine(line) {
-        const result = []; let current = ''; let inQuotes = false;
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-            if (char === '"') { inQuotes = !inQuotes; }
-            else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
-            else { current += char; }
-        }
-        result.push(current.trim());
-        return result;
-    }
-
-    function getRandomQuestion(letter) {
-        const questions = questionsData[letter] || [];
-        if (questions.length === 0) return { question: 'لا توجد أسئلة لهذا الحرف', answer: '' };
-        const available = questions.filter((q, i) => !usedQuestions[letter].includes(i));
-        if (available.length === 0) { usedQuestions[letter] = []; return questions[Math.floor(Math.random() * questions.length)]; }
-        const randomQ = available[Math.floor(Math.random() * available.length)];
-        const index = questions.indexOf(randomQ);
-        usedQuestions[letter].push(index);
-        return randomQ;
-    }
-
-    function displayQuestion(letter) {
-        const q = getRandomQuestion(letter);
-        currentQuestionLetter = letter;
-        document.getElementById('questionBox').innerHTML = `
-            <div class="question-letter">${letter}</div>
-            <div class="question-text">${q.question}</div>
-            <div class="question-answer" id="currentAnswer">الإجابة: ${q.answer}</div>
-        `;
-        document.getElementById('btnChangeQuestion').disabled = false;
-    }
-
-    function changeQuestion() {
-        if (!currentQuestionLetter) return;
-        const q = getRandomQuestion(currentQuestionLetter);
-        document.getElementById('questionBox').innerHTML = `
-            <div class="question-letter">${currentQuestionLetter}</div>
-            <div class="question-text">${q.question}</div>
-            <div class="question-answer" id="currentAnswer">الإجابة: ${q.answer}</div>
-        `;
-        const questionBox = document.getElementById('questionBox');
-        questionBox.style.animation = 'none'; questionBox.offsetHeight;
-        questionBox.style.animation = 'fadeIn 0.3s ease-out';
-    }
-
-    /* ===== LOGOS ===== */
-    function updateAllLogos() {
-        document.getElementById('logoName').textContent = settings.name;
-        document.getElementById('team1Label').textContent = settings.team1;
-        document.getElementById('team2Label').textContent = settings.team2;
-        document.getElementById('btnTeam1Text').textContent = settings.team1;
-        document.getElementById('btnTeam2Text').textContent = settings.team2;
-
-        // Apply colors to CSS variables
-        if (settings.colors) {
-            document.documentElement.style.setProperty('--team1-color', settings.colors.t1 || '#2ecc00');
-            document.documentElement.style.setProperty('--team2-color', settings.colors.t2 || '#ff6d00');
-        }
-    }
-
-    function updateInstruction() {
-        const inst = document.getElementById('instruction');
-        if (!selectedCell) inst.textContent = 'اختر حرفاً من اللوحة';
-        else inst.textContent = 'اختر الفريق للإجابة';
-    }
-
-    function setTeamButtonsEnabled(enabled) {
-        document.getElementById('btnTeam1').disabled = !enabled;
-        document.getElementById('btnTeam2').disabled = !enabled;
-    }
-
-    /* ===== BOARD ===== */
-    function buildBoard() {
-        const svg = document.getElementById('board');
-        svg.innerHTML = ''; cells = [];
-        const R = 38, w = Math.sqrt(3)*R, h = 2*R;
-        const startX = 200 - 2*w - 10, startY = 200 - 2*h*0.75 + 5;
-        for (let row = 0; row < 5; row++) {
-            for (let col = 0; col < 5; col++) {
-                const x = startX + col*w + (row%2===1 ? w/2 : 0);
-                const y = startY + row*h*0.75;
-                createHexagon(svg, x, y, letters[row*5+col], row*5+col);
+    async function fetchQuestions() {
+        const snap = await get(ref(db, 'questions'));
+        const questions = snap.val() || [];
+        
+        onValue(gameStateRef(), (snap) => {
+            const state = snap.val();
+            if(state && state.currentLetter) {
+                const q = questions.find(x => x.letter === state.currentLetter);
+                if(q) {
+                    currentQuestion = q;
+                    renderQuestion(q);
+                }
+            } else {
+                document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً للبدء</div>';
             }
-        }
+        });
     }
 
-    function createHexagon(svg, x, y, letter, id) {
-        const R = 38;
-        const g = document.createElementNS("http://www.w3.org/2000/svg","g");
-        g.setAttribute("class","hexagon"); g.setAttribute("transform",`translate(${x}, ${y})`); g.setAttribute("data-id",id);
-        const points = [];
-        for (let i = 0; i < 6; i++) { const angle = (Math.PI/180)*(60*i-30); points.push(`${(R*Math.cos(angle)).toFixed(1)},${(R*Math.sin(angle)).toFixed(1)}`); }
-        const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-        poly.setAttribute("points", points.join(" ")); poly.setAttribute("class","hex-poly");
-        const text = document.createElementNS("http://www.w3.org/2000/svg","text");
-        text.setAttribute("class","hex-text"); text.setAttribute("dy","4"); text.textContent = letter;
+    function renderQuestion(q) {
+        const box = document.getElementById('questionBox');
+        box.innerHTML = `
+            <div class="question-letter">حرف (${q.letter})</div>
+            <div class="question-text">${q.question}</div>
+            <div class="question-answer">الإجابة: ${q.answer}</div>
+        `;
+    }
+
+    function buildBoard() {
+        const board = document.getElementById('board');
+        const R = 32, w = Math.sqrt(3)*R, h = 2*R;
+        const rows = [4, 5, 4, 5, 4];
+        let idx = 0;
+        const alphabet = "أبتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
+
+        onValue(lettersRef(), (snap) => {
+            const data = snap.val() || {};
+            board.innerHTML = '';
+            idx = 0;
+            rows.forEach((count, r) => {
+                for(let c=0; c<count; c++) {
+                    const cx = 200 + (c - (count-1)/2) * w;
+                    const cy = 200 + (r - 2) * h * 0.75;
+                    const letter = alphabet[idx] || '';
+                    const status = data[letter] || 'none';
+                    drawHex(board, cx, cy, letter, status);
+                    idx++;
+                }
+            });
+        });
+    }
+
+    function drawHex(svg, cx, cy, letter, status) {
+        const R = 32;
+        let pts = '';
+        for(let i=0; i<6; i++) {
+            const a = Math.PI/180 * (60*i - 30);
+            pts += (i===0?'M':'L') + (cx + R*Math.cos(a)) + ',' + (cy + R*Math.sin(a));
+        }
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+        g.setAttribute('class', 'hexagon ' + status + '-fill');
+        g.onclick = () => setLetterActive(letter);
+
+        const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+        poly.setAttribute('points', pts + ' Z');
+        poly.setAttribute('class', 'hex-poly');
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('x', cx); text.setAttribute('y', cy);
+        text.setAttribute('class', 'hex-text');
+        text.textContent = letter;
+
         g.appendChild(poly); g.appendChild(text);
-        const cell = { el:g, owner:null, isPending:false, text, row:Math.floor(id/5), col:id%5, id };
-        cells.push(cell);
-        g.onclick = () => selectCell(cell);
         svg.appendChild(g);
     }
 
-    function selectCell(cell) {
-        if (cell.owner) return;
-        playClickSound();
-        if (selectedCell && selectedCell !== cell) {
-            selectedCell.isPending = false;
-            selectedCell.el.classList.remove('pending-fill');
-            broadcastAction({ type:'cell_unselected', cellId:selectedCell.id });
-        }
-        const letter = cell.el.querySelector('.hex-text').textContent;
-        selectedCell = cell;
-        cell.isPending = true;
-        cell.el.classList.remove('green-fill','orange-fill');
-        cell.el.classList.add('pending-fill');
-        cell.text.style.display = 'block';
-        broadcastAction({ type:'cell_selected', cellId:cell.id });
-        displayQuestion(letter);
-        setTeamButtonsEnabled(true);
+    function setLetterActive(letter) {
+        set(gameStateRef(), { currentLetter: letter });
+        set(lettersRef(), { [letter]: 'pending' });
+        document.getElementById('btnTeam1').disabled = false;
+        document.getElementById('btnTeam2').disabled = false;
         document.getElementById('btnUndo').disabled = false;
+        document.getElementById('btnChangeQuestion').disabled = false;
+        lastSelectedTeam = null;
         document.getElementById('btnTeam1').classList.remove('selected');
         document.getElementById('btnTeam2').classList.remove('selected');
-        updateInstruction();
     }
 
     function selectTeam(team) {
-        if (!selectedCell) return;
-        playPointSound();
-        const cellId = selectedCell.id;
-        selectedCell.isPending = false;
-        selectedCell.el.classList.remove('pending-fill');
-        selectedCell.owner = team;
-        selectedCell.el.classList.add(team + '-fill');
-        selectedCell.text.style.display = 'none';
-        selectedCell.el.classList.add('cell-pop');
-        document.getElementById('btnTeam1').classList.remove('selected');
-        document.getElementById('btnTeam2').classList.remove('selected');
-        setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
-        document.getElementById('btnChangeQuestion').disabled = true;
-        currentQuestionLetter = null;
-        const answeredCell = selectedCell;
-        selectedCell = null;
-        broadcastAction({ type:'team_selected', cellId, team });
-        checkWinPaths(answeredCell, team);
-        lastSelectedTeam = team;
-        resetBuzzFromPresenter();
-    }
-
-    function getNeighbors(id) {
-        const row = Math.floor(id/5), col = id%5;
-        const neighbors = (row%2===0) ? [[-1,-1],[-1,0],[0,-1],[0,1],[1,-1],[1,0]] : [[-1,0],[-1,1],[0,-1],[0,1],[1,0],[1,1]];
-        return neighbors.map(([dr,dc])=>[row+dr,col+dc]).filter(([r,c])=>r>=0&&r<5&&c>=0&&c<5).map(([r,c])=>r*5+c);
-    }
-
-    function hasPath(team) {
-        const visited = new Set(), queue = [];
-        if (team==='orange') { for(let i=0;i<5;i++) if(cells[i].owner==='orange'){queue.push(i);visited.add(i);} }
-        else { for(let i=0;i<5;i++){const idx=i*5+4; if(cells[idx].owner==='green'){queue.push(idx);visited.add(idx);}}}
-        while(queue.length>0){
-            const current=queue.shift();
-            if(team==='orange'&&cells[current].row===4) return true;
-            if(team==='green'&&cells[current].col===0) return true;
-            getNeighbors(current).forEach(n=>{ if(!visited.has(n)&&cells[n].owner===team){visited.add(n);queue.push(n);} });
-        }
-        return false;
-    }
-
-    function checkWinPaths(answeredCell, team) {
-        if (hasPath('orange') && !lastOrangePath) {
-            orangeScore++; document.getElementById('score2').textContent = orangeScore; lastOrangePath = true;
-            if (orangeScore >= settings.rounds) { setTimeout(()=>{ alert('🏆 ' + settings.team2 + ' فاز!'); resetGame(); }, 300); }
-            else nextRound();
-        }
-        if (hasPath('green') && !lastGreenPath) {
-            greenScore++; document.getElementById('score1').textContent = greenScore; lastGreenPath = true;
-            if (greenScore >= settings.rounds) { setTimeout(()=>{ alert('🏆 ' + settings.team1 + ' فاز!'); resetGame(); }, 300); }
-            else nextRound();
-        }
-    }
-
-    function nextRound() {
-        currentRound++;
-        buildBoard(); lastGreenPath=false; lastOrangePath=false; selectedCell=null;
-        setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
-        document.getElementById('btnChangeQuestion').disabled = true;
-        updateInstruction();
-        // Push new letters to Firebase so index syncs
-        set(lettersRef(), letters);
+        onValue(gameStateRef(), (snap) => {
+            const state = snap.val();
+            if(state && state.currentLetter) {
+                set(lettersRef(), { [state.currentLetter]: team });
+                lastSelectedTeam = team;
+                document.getElementById('btnTeam1').classList.toggle('selected', team==='green');
+                document.getElementById('btnTeam2').classList.toggle('selected', team==='orange');
+                updateScore();
+            }
+        }, { onlyOnce: true });
     }
 
     function undoSelection() {
-        if (selectedCell) {
-            const cellId = selectedCell.id;
-            selectedCell.isPending = false;
-            selectedCell.el.classList.remove('pending-fill');
-            selectedCell = null;
-            broadcastAction({ type:'cell_unselected', cellId });
-        }
-        setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
-        document.getElementById('btnChangeQuestion').disabled = true;
-        document.getElementById('btnTeam1').classList.remove('selected');
-        document.getElementById('btnTeam2').classList.remove('selected');
-        document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
-        currentQuestionLetter = null;
+        onValue(gameStateRef(), (snap) => {
+            const state = snap.val();
+            if(state && state.currentLetter) {
+                set(lettersRef(), { [state.currentLetter]: 'none' });
+                set(gameStateRef(), { currentLetter: null });
+                document.getElementById('btnTeam1').disabled = true;
+                document.getElementById('btnTeam2').disabled = true;
+                document.getElementById('btnUndo').disabled = true;
+                document.getElementById('btnChangeQuestion').disabled = true;
+                document.getElementById('btnTeam1').classList.remove('selected');
+                document.getElementById('btnTeam2').classList.remove('selected');
+                updateScore();
+            }
+        }, { onlyOnce: true });
     }
 
-    function resetGame() {
-        greenScore=0; orangeScore=0; currentRound=1; lastGreenPath=false; lastOrangePath=false; selectedCell=null;
-        document.getElementById('score1').textContent = '0';
-        document.getElementById('score2').textContent = '0';
-        setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
-        document.getElementById('btnChangeQuestion').disabled = true;
-        document.getElementById('btnTeam1').classList.remove('selected');
-        document.getElementById('btnTeam2').classList.remove('selected');
-        buildBoard();
-        updateInstruction();
-        broadcastAction({ type:'game_reset' });
-        // Push new letters to Firebase
-        set(lettersRef(), letters);
+    function changeQuestion() {
+        onValue(gameStateRef(), (snap) => {
+            const state = snap.val();
+            if(state && state.currentLetter) {
+                set(lettersRef(), { [state.currentLetter]: 'none' });
+                set(gameStateRef(), { currentLetter: null });
+                document.getElementById('btnTeam1').disabled = true;
+                document.getElementById('btnTeam2').disabled = true;
+                document.getElementById('btnUndo').disabled = true;
+                document.getElementById('btnChangeQuestion').disabled = true;
+            }
+        }, { onlyOnce: true });
     }
 
-    function playClickSound() {
-        try {
-            const audio = new Audio('../assets/sounds/click.mp3');
-            audio.volume = 0.3;
-            audio.play().catch(err => console.log('Audio play failed:', err));
-        } catch(e) {}
-    }
-
-    function playPointSound() {
-        try {
-            const audio = new Audio('../assets/sounds/point.mp3');
-            audio.volume = 0.3;
-            audio.play().catch(err => console.log('Audio play failed:', err));
-        } catch(e) {}
+    function updateScore() {
+        get(lettersRef()).then(snap => {
+            const data = snap.val() || {};
+            let s1=0, s2=0;
+            Object.values(data).forEach(v => {
+                if(v==='green') s1++;
+                if(v==='orange') s2++;
+            });
+            document.getElementById('score1').textContent = s1;
+            document.getElementById('score2').textContent = s2;
+        });
     }
 
     function playBell() {
         const btn = document.querySelector('.bell-btn');
         btn.classList.add('bell-active');
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator(); const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5);
-            gain.gain.setValueAtTime(0.8, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
-            osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 1.0);
-        } catch(e) {}
         setTimeout(() => btn.classList.remove('bell-active'), 400);
     }
 
-    /* ===== FIREBASE SYNC ===== */
-
-    // Broadcast action to index screen via Firebase
-    function broadcastAction(action) {
-        set(presenterActionRef(), { ...action, timestamp: Date.now() });
-    }
-
-    // Listen for game state changes from index
-    let _lastCellsHash = '';
-    onValue(gameStateRef(), (snapshot) => {
-        if (!snapshot.exists()) return;
-        const state = snapshot.val();
-        if (!state) return;
-        applyGameState(state);
-    });
-
-    function applyGameState(state) {
-        if (state.settings) {
-            const changed = JSON.stringify(state.settings) !== JSON.stringify(settings);
-            if (changed) { settings = { ...settings, ...state.settings }; updateAllLogos(); }
-        }
-        if (state.greenScore !== undefined) { greenScore = state.greenScore; document.getElementById('score1').textContent = greenScore; }
-        if (state.orangeScore !== undefined) { orangeScore = state.orangeScore; document.getElementById('score2').textContent = orangeScore; }
-        if (state.cells && state.cells.length > 0) {
-            const cellsHash = state.cells.map(c => c.id+':'+c.owner+':'+(c.isPending?'1':'0')).join(',');
-            if (cellsHash !== _lastCellsHash) {
-                _lastCellsHash = cellsHash;
-                state.cells.forEach(cellData => {
-                    const cell = cells[cellData.id];
-                    if (cell) {
-                        cell.owner = cellData.owner;
-                        cell.isPending = cellData.isPending || false;
-                        cell.el.classList.remove('green-fill','orange-fill','pending-fill');
-                        if (cell.owner) { cell.el.classList.add(cell.owner+'-fill'); cell.text.style.display='none'; }
-                        else if (cell.isPending) { cell.el.classList.add('pending-fill'); cell.text.style.display='block'; }
-                        else { cell.text.style.display='block'; }
-                    }
-                });
-            }
-        }
-    }
-
-    // Listen for settings changes from index
-    onValue(settingsRef(), (snapshot) => {
-        if (!snapshot.exists()) return;
-        const newSettings = snapshot.val();
-        if (!newSettings) return;
-        if (JSON.stringify(newSettings) !== JSON.stringify(settings)) {
-            settings = { ...settings, ...newSettings };
-            updateAllLogos();
-        }
-    });
-
-    // Listen for letters changes from index (rebuild board)
-    let _lastLettersHash = '';
-    onValue(lettersRef(), (snapshot) => {
-        if (!snapshot.exists()) return;
-        const newLetters = snapshot.val();
-        if (!newLetters) return;
-        const hash = newLetters.join(',');
-        if (hash !== _lastLettersHash) {
-            _lastLettersHash = hash;
-            letters = newLetters;
-            buildBoard();
-        }
-    });
-
-    /* ===== BUZZER ===== */
-    onValue(buzzRef(), (snapshot) => {
-        if (!snapshot.exists()) return;
-        const buzz = snapshot.val();
-        if (!buzz || !buzz.active) return;
-        if (!currentBuzz || currentBuzz.timestamp !== buzz.timestamp) {
-            currentBuzz = buzz;
-            showBuzzerAlert(buzz);
-        }
-    });
-
-    onValue(buzzLockRef(), (snapshot) => {
-        if (!snapshot.exists()) return;
-        const lock = snapshot.val();
-        if (!lock || !lock.locked) return;
-        if (!currentBuzz || currentBuzz.playerName !== lock.playerName) {
+    /* ===== BUZZER LISTENER ===== */
+    onValue(buzzLockRef(), (snap) => {
+        const lock = snap.val();
+        if (lock && lock.active) {
             currentBuzz = { name:lock.playerName, teamName:lock.teamName, team:lock.team, timestamp:lock.timestamp, active:true };
             showBuzzerAlert(currentBuzz);
         }
@@ -1167,13 +990,20 @@
         const container = document.getElementById('buzzerAlert');
         const teamEl = document.getElementById('buzzerAlertTeam');
         const playerEl = document.getElementById('buzzerAlertPlayer');
-        container.classList.remove('green','orange');
+        
+        // Instant visual reset and setup
+        container.style.display = 'flex';
+        container.classList.remove('green','orange', 'active');
+        void container.offsetWidth; // Force reflow for instant animation trigger
+        
         teamEl.textContent = buzz.teamName;
         teamEl.className = 'buzzer-alert-team ' + (buzz.team || '');
         playerEl.textContent = buzz.name;
-        const containerTeam = lastSelectedTeam || buzz.team;
+        
+        const containerTeam = buzz.team;
         if (containerTeam) container.classList.add(containerTeam);
         container.classList.add('active');
+        
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator(); const gain = ctx.createGain();
@@ -1186,7 +1016,15 @@
     }
 
     function resetBuzzFromPresenter() {
-        document.getElementById('buzzerAlert').classList.remove('active');
+        const container = document.getElementById('buzzerAlert');
+        container.classList.remove('active');
+        // Small delay before hiding to allow fade out if needed, but here we just hide
+        setTimeout(() => {
+            if (!container.classList.contains('active')) {
+                container.style.display = 'none';
+            }
+        }, 300);
+        
         currentBuzz = null;
         remove(buzzRef());
         remove(buzzLockRef());
@@ -1202,7 +1040,6 @@
     /* ===== EXPOSE FUNCTIONS TO GLOBAL SCOPE (for onclick attributes) ===== */
     window.selectTeam       = selectTeam;
     window.undoSelection    = undoSelection;
-    window.resetGame        = resetGame;
     window.changeQuestion   = changeQuestion;
     window.playBell         = playBell;
     window.resetBuzzFromPresenter = resetBuzzFromPresenter;
@@ -1229,6 +1066,6 @@
         }
     });
 
-</script>
+    </script>
 </body>
 </html>
