@@ -604,13 +604,14 @@
             width: clamp(220px, 28vw, 400px);
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: clamp(10px, 1.5vw, 20px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
             height: 100vh;
             overflow-y: auto;
             scrollbar-width: none;
+            gap: clamp(10px, 1.5vw, 20px);
         }
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
@@ -622,10 +623,11 @@
         .logo-container .logo-ma   { letter-spacing: clamp(8px, 1.2vw, 15px); }
         .title-container {
             text-align: center;
-            margin-top: auto;
-            margin-bottom: auto;
+            margin-top: clamp(20px, 3vw, 40px);
+            margin-bottom: 0;
             transition: all 0.3s ease;
             flex-shrink: 0;
+            width: 100%;
         }
         .title-word { display: block; font-weight: 900; line-height: 1.1; }
         .title-round {
@@ -640,7 +642,7 @@
             text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
                 0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
         }
-        .score-container { margin-top: auto; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); flex-shrink: 0; }
+        .score-container { margin-top: auto; margin-bottom: 0; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); flex-shrink: 0; width: 100%; justify-content: center; }
         .score-box {
             width: clamp(60px, 8vw, 105px); height: clamp(60px, 8vw, 105px);
             display: flex; justify-content: center; align-items: center;
@@ -1217,16 +1219,16 @@
             <span class="title-word title-round">الجولة</span>
             <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
         </div>
-        <div id="sidebar-question-container" style="display:none; width:100%; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:15px; margin:auto 0; text-align:center; flex-shrink:0;">
-            <div id="sidebar-q-letter" style="width:60px; height:60px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; color:white; margin:0 auto 12px;">أ</div>
-            <div id="sidebar-q-text" style="font-size:18px; font-weight:900; color:white; margin-bottom:12px; line-height:1.3; min-height:60px;">السؤال</div>
-            <div onclick="revealSidebarAnswer()" style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.2); border-radius:15px; padding:12px; margin-bottom:12px; cursor:pointer;">
-                <div id="sidebar-q-answer-hint" style="color:#f1c40f; font-size:14px; font-weight:700;">🔦 اظهر الاجابة</div>
-                <div id="sidebar-q-answer" style="font-size:16px; font-weight:900; color:white; display:none;">الإجابة</div>
+        <div id="sidebar-question-container" style="display:none; width:100%; max-width:clamp(180px, 90%, 350px); background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:clamp(12px, 2vw, 18px); margin:auto; text-align:center; flex-shrink:0; align-self:center;">
+            <div id="sidebar-q-letter" style="width:clamp(50px, 10vw, 70px); height:clamp(50px, 10vw, 70px); background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:clamp(24px, 5vw, 36px); font-weight:900; color:white; margin:0 auto 12px;">أ</div>
+            <div id="sidebar-q-text" style="font-size:clamp(14px, 2.5vw, 18px); font-weight:900; color:white; margin-bottom:12px; line-height:1.3; min-height:clamp(50px, 8vw, 70px);">السؤال</div>
+            <div onclick="revealSidebarAnswer()" style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.2); border-radius:15px; padding:clamp(10px, 1.5vw, 14px); margin-bottom:12px; cursor:pointer;">
+                <div id="sidebar-q-answer-hint" style="color:#f1c40f; font-size:clamp(12px, 2vw, 16px); font-weight:700;">🔎 اظهر الاجابة</div>
+                <div id="sidebar-q-answer" style="font-size:clamp(14px, 2.2vw, 18px); font-weight:900; color:white; display:none;">الإجابة</div>
             </div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                <button onclick="changeSidebarQuestion()" style="padding:10px; border-radius:12px; border:none; font-size:14px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">🔄 سؤال جديد</button>
-                <button onclick="closeSidebarQuestion()" style="padding:10px; border-radius:12px; border:none; font-size:14px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">✕ إغلاق</button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:clamp(8px, 1.5vw, 12px);">
+                <button onclick="changeSidebarQuestion()" style="padding:clamp(8px, 1.2vw, 12px); border-radius:12px; border:none; font-size:clamp(12px, 1.8vw, 16px); font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">🔄 سؤال جديد</button>
+                <button onclick="closeSidebarQuestion()" style="padding:clamp(8px, 1.2vw, 12px); border-radius:12px; border:none; font-size:clamp(12px, 1.8vw, 16px); font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">✗ إغلاق</button>
             </div>
         </div>
         <div class="score-container">
@@ -1611,6 +1613,11 @@
             // Hide round title and show question card
             document.querySelector('.title-container').style.display = 'none';
             document.getElementById('sidebar-question-container').style.display = 'block';
+            
+            // Broadcast cell selection to presenter with question details
+            _ignorePresenterAction = true;
+            update(presenterActionsRef(), { type: 'cell_selected', cellId: cell.id, letter: letter, question: currentLetterQs[qIndex].q, answer: currentLetterQs[qIndex].a, timestamp: Date.now() });
+            setTimeout(() => { _ignorePresenterAction = false; }, 100);
         } else {
             document.getElementById('team-choice-modal').classList.add('active');
         }
@@ -1708,7 +1715,7 @@
         const text=document.createElementNS("http://www.w3.org/2000/svg","text");
         text.setAttribute("class","hex-text"); text.textContent=letter; text.setAttribute("dy","5");
         g.appendChild(poly); g.appendChild(text);
-        const cell={el:g,owner:null,text,row,col,id};
+        const cell={el:g,owner:null,isPending:false,text,row,col,id};
         cells.push(cell);
         g.onclick=()=>{ 
             if(cell.owner) return; 
@@ -2059,6 +2066,20 @@
                         cell.isPending = true;
                         cell.el.classList.add('pending-fill');
                         playClickSound();
+                        if (action.letter && action.question && action.answer) {
+                            currentLetterQs = questionsData[action.letter] || [];
+                            if (currentLetterQs.length > 0) {
+                                qIndex = 0;
+                                document.getElementById('sidebar-q-letter').textContent = action.letter;
+                                document.getElementById('sidebar-q-text').textContent = action.question;
+                                document.getElementById('sidebar-q-answer').textContent = action.answer;
+                                document.getElementById('sidebar-q-answer').style.display = 'none';
+                                document.getElementById('sidebar-q-answer-hint').style.display = 'block';
+                                document.querySelector('.title-container').style.display = 'none';
+                                document.getElementById('sidebar-question-container').style.display = 'block';
+                                pendingCell = cell;
+                            }
+                        }
                     }
                 }
                 break;
