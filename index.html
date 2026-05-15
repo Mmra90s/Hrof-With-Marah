@@ -604,6 +604,7 @@
             width: clamp(220px, 28vw, 400px);
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
+            justify-content: center;
             padding: clamp(10px, 1.5vw, 20px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
@@ -1407,6 +1408,8 @@
             pendingCell.el.classList.remove('pending-fill');
         }
         pendingCell = null;
+        // Sync to Firebase
+        update(gameStateRef(), { pendingCellId: null });
     };
 
     window.changeSidebarQuestion = () => {
@@ -1574,6 +1577,13 @@
     }
 
     function showTeamChoice(cell) {
+        // If clicking the same pending cell, cancel selection
+        if (pendingCell === cell) {
+            closeSidebarQuestion();
+            hideTeamChoice();
+            return;
+        }
+
         // Remove pending-fill from any previous cell
         cells.forEach(c => c.el.classList.remove('pending-fill'));
         
@@ -1689,7 +1699,13 @@
         g.appendChild(poly); g.appendChild(text);
         const cell={el:g,owner:null,text,row,col,id};
         cells.push(cell);
-        g.onclick=()=>{ if(cell.owner) return; playClickSound(); showTeamChoice(cell); };
+        g.onclick=()=>{ 
+            if(cell.owner) return; 
+            playClickSound(); 
+            showTeamChoice(cell); 
+            // Sync pending state to Firebase for presenter screen
+            update(gameStateRef(), { pendingCellId: pendingCell ? pendingCell.id : null });
+        };
         svg.appendChild(g);
     }
 
