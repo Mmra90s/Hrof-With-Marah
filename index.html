@@ -621,8 +621,8 @@
             transform: rotate(-8deg); pointer-events: none; line-height: 1.1;
             flex-shrink: 0;
         }
-        .logo-container .logo-word { font-size: clamp(18px, 4vh, 38px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(4px, 1vh, 10px); }
+        .logo-container .logo-word { font-size: clamp(14px, 3.5vh, 38px); }
+        .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.8vh, 10px); }
         .title-container {
             text-align: center;
             margin-top: auto;
@@ -1218,9 +1218,9 @@
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
         <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:hidden;">
-            <div class="title-container" id="title-container-sidebar" style="margin: clamp(5px, 1.5vh, 15px) 0;">
-                <span class="title-word title-round" style="font-size: clamp(18px, 4vh, 44px);">الجولة</span>
-                <span class="title-word title-first" id="round-label" style="margin-top: clamp(2px, 1vh, 10px); font-size: clamp(30px, 8vh, 80px);">الأولى</span>
+            <div class="title-container" id="title-container-sidebar">
+                <span class="title-word title-round">الجولة</span>
+                <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
             </div>
         <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:10px; margin:clamp(5px, 1.5vh, 15px) auto; text-align:center; flex:1; align-self:center; min-height:80px; max-height:none; flex-direction:column; justify-content:center; gap:6px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
             <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
@@ -1406,18 +1406,23 @@
         const container = el.parentElement;
         const letter = document.getElementById('sidebar-q-letter');
         const buttons = el.parentElement.querySelector('div[style*="grid"]');
-        const reservedHeight = (letter ? letter.offsetHeight : 0) + (buttons ? buttons.offsetHeight : 0) + 30;
+        
+        // Use offsetHeight if available, otherwise estimate
+        const letterH = letter ? letter.offsetHeight || 32 : 32;
+        const buttonsH = buttons ? buttons.offsetHeight || 40 : 40;
+        const reservedHeight = letterH + buttonsH + 25; 
+        
         const maxHeight = container.clientHeight - reservedHeight;
-        const maxWidth = container.clientWidth - 20;
+        const maxWidth = container.clientWidth - 15;
 
-        let minFontSize = 12;
-        let maxFontSize = 80;
+        let minFontSize = 8; // Lower minimum for very long questions
+        let maxFontSize = 70;
         let bestFontSize = minFontSize;
 
-        // Binary search for the best font size
         while (minFontSize <= maxFontSize) {
             let mid = Math.floor((minFontSize + maxFontSize) / 2);
             el.style.fontSize = mid + 'px';
+            // Check if content fits without causing overflow
             if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
                 bestFontSize = mid;
                 minFontSize = mid + 1;
