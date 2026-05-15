@@ -625,6 +625,7 @@
             margin-top: auto;
             margin-bottom: auto;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
         .title-word { display: block; font-weight: 900; line-height: 1.1; }
         .title-round {
@@ -639,7 +640,7 @@
             text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
                 0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
         }
-        .score-container { margin-top: auto; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); }
+        .score-container { margin-top: auto; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); flex-shrink: 0; }
         .score-box {
             width: clamp(60px, 8vw, 105px); height: clamp(60px, 8vw, 105px);
             display: flex; justify-content: center; align-items: center;
@@ -1216,7 +1217,7 @@
             <span class="title-word title-round">الجولة</span>
             <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
         </div>
-        <div id="sidebar-question-container" style="display:none; width:100%; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:15px; margin-bottom:20px; text-align:center;">
+        <div id="sidebar-question-container" style="display:none; width:100%; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:15px; margin:auto 0; text-align:center; flex-shrink:0;">
             <div id="sidebar-q-letter" style="width:60px; height:60px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; color:white; margin:0 auto 12px;">أ</div>
             <div id="sidebar-q-text" style="font-size:18px; font-weight:900; color:white; margin-bottom:12px; line-height:1.3; min-height:60px;">السؤال</div>
             <div onclick="revealSidebarAnswer()" style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.2); border-radius:15px; padding:12px; margin-bottom:12px; cursor:pointer;">
@@ -1387,7 +1388,9 @@
         if (!pendingCell) return;
         const cell = pendingCell;
         cell.owner = team;
+        cell.isPending = false;
         cell.el.classList.add(team + '-fill');
+        cell.el.classList.remove('pending-fill');
         cell.text.style.display = 'none';
         playPointSound();
         checkPaths();
@@ -1405,11 +1408,12 @@
         // Show round title again
         document.querySelector('.title-container').style.display = 'block';
         if (pendingCell) {
+            pendingCell.isPending = false;
             pendingCell.el.classList.remove('pending-fill');
         }
         pendingCell = null;
         // Sync to Firebase
-        update(gameStateRef(), { pendingCellId: null });
+        syncGameState();
     };
 
     window.changeSidebarQuestion = () => {
@@ -1585,9 +1589,13 @@
         }
 
         // Remove pending-fill from any previous cell
-        cells.forEach(c => c.el.classList.remove('pending-fill'));
+        cells.forEach(c => {
+            c.isPending = false;
+            c.el.classList.remove('pending-fill');
+        });
         
         pendingCell = cell;
+        cell.isPending = true;
         cell.el.classList.add('pending-fill');
         
         const letter = cell.el.querySelector('.hex-text').textContent;
@@ -1611,6 +1619,7 @@
     function hideTeamChoice() {
         document.getElementById('team-choice-modal').classList.remove('active');
         if (pendingCell) {
+            pendingCell.isPending = false;
             pendingCell.el.classList.remove('pending-fill');
         }
         pendingCell = null;
@@ -1621,6 +1630,8 @@
         const cell = pendingCell;
         hideTeamChoice();
         cell.owner = team;
+        cell.isPending = false;
+        cell.el.classList.remove('pending-fill');
         cell.el.classList.add(team + '-fill');
         cell.text.style.display = 'none';
         playPointSound();
