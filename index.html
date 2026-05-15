@@ -604,10 +604,14 @@
             width: clamp(220px, 28vw, 400px);
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
-            padding: clamp(12px, 2vw, 30px) clamp(10px, 1.5vw, 20px);
+            padding: clamp(10px, 1.5vw, 20px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            z-index: 10; position: relative; overflow: hidden;
+            z-index: 10; position: relative; 
+            height: 100vh;
+            overflow-y: auto;
+            scrollbar-width: none;
         }
+        .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
             position: absolute; top: clamp(8px, 1.2vw, 15px); left: clamp(8px, 1.2vw, 15px);
             display: flex; flex-direction: column; align-items: center;
@@ -617,8 +621,9 @@
         .logo-container .logo-ma   { letter-spacing: clamp(8px, 1.2vw, 15px); }
         .title-container {
             text-align: center;
-            margin-top: clamp(100px, 18vw, 220px);
-            margin-bottom: clamp(8px, 1.5vw, 20px);
+            margin-top: auto;
+            margin-bottom: auto;
+            transition: all 0.3s ease;
         }
         .title-word { display: block; font-weight: 900; line-height: 1.1; }
         .title-round {
@@ -1396,6 +1401,11 @@
 
     window.closeSidebarQuestion = () => {
         document.getElementById('sidebar-question-container').style.display = 'none';
+        // Show round title again
+        document.querySelector('.title-container').style.display = 'block';
+        if (pendingCell) {
+            pendingCell.el.classList.remove('pending-fill');
+        }
         pendingCell = null;
     };
 
@@ -1564,7 +1574,12 @@
     }
 
     function showTeamChoice(cell) {
+        // Remove pending-fill from any previous cell
+        cells.forEach(c => c.el.classList.remove('pending-fill'));
+        
         pendingCell = cell;
+        cell.el.classList.add('pending-fill');
+        
         const letter = cell.el.querySelector('.hex-text').textContent;
         currentLetterQs = questionsData[letter] || [];
         if (currentLetterQs.length > 0) {
@@ -1574,6 +1589,9 @@
             document.getElementById('sidebar-q-answer').textContent = currentLetterQs[qIndex].a;
             document.getElementById('sidebar-q-answer').style.display = 'none';
             document.getElementById('sidebar-q-answer-hint').style.display = 'block';
+            
+            // Hide round title and show question card
+            document.querySelector('.title-container').style.display = 'none';
             document.getElementById('sidebar-question-container').style.display = 'block';
         } else {
             document.getElementById('team-choice-modal').classList.add('active');
@@ -1582,6 +1600,9 @@
 
     function hideTeamChoice() {
         document.getElementById('team-choice-modal').classList.remove('active');
+        if (pendingCell) {
+            pendingCell.el.classList.remove('pending-fill');
+        }
         pendingCell = null;
     }
 
