@@ -924,10 +924,25 @@
     function selectCell(cell) {
         if (cell.owner) return;
         playClickSound();
-        if (selectedCell && selectedCell !== cell) {
+        // إزالة pending من جميع الخلايا الأخرى
+        cells.forEach(c => {
+            if (c.isPending && c !== cell) {
+                c.isPending = false;
+                c.el.classList.remove('pending-fill');
+            }
+        });
+        // إذا كانت نفس الخلية المختارة، إلغاء التحديد
+        if (selectedCell === cell) {
             selectedCell.isPending = false;
             selectedCell.el.classList.remove('pending-fill');
-            broadcastAction({ type:'cell_unselected', cellId:selectedCell.id });
+            selectedCell = null;
+            broadcastAction({ type:'cell_unselected', cellId:cell.id });
+            setTeamButtonsEnabled(false);
+            document.getElementById('btnUndo').disabled = true;
+            document.getElementById('btnChangeQuestion').disabled = true;
+            document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
+            updateInstruction();
+            return;
         }
         const letter = cell.el.querySelector('.hex-text').textContent;
         selectedCell = cell;
