@@ -615,14 +615,14 @@
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
             position: relative; 
-            margin-top: clamp(5px, 2vh, 15px); 
-            margin-bottom: clamp(5px, 2vh, 15px);
+            margin-top: clamp(2px, 1vh, 10px); 
+            margin-bottom: clamp(2px, 1vh, 10px);
             display: flex; flex-direction: column; align-items: center;
             transform: rotate(-8deg); pointer-events: none; line-height: 1.1;
             flex-shrink: 0;
         }
-        .logo-container .logo-word { font-size: clamp(14px, 3.5vh, 38px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.8vh, 10px); }
+        .logo-container .logo-word { font-size: clamp(12px, 3vh, 38px); }
+        .logo-container .logo-ma   { letter-spacing: clamp(1px, 0.5vh, 10px); }
         .title-container {
             text-align: center;
             margin-top: auto;
@@ -1217,12 +1217,12 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:hidden;">
-            <div class="title-container" id="title-container-sidebar">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-start; width:100%; overflow:hidden;">
+            <div class="title-container" id="title-container-sidebar" style="margin-top: 5px; flex-shrink: 0;">
                 <span class="title-word title-round">الجولة</span>
-                <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
+                <span class="title-word title-first" id="round-label" style="margin-top:5px;">الأولى</span>
             </div>
-        <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:10px; margin:clamp(5px, 1.5vh, 15px) auto; text-align:center; flex:1; align-self:center; min-height:80px; max-height:none; flex-direction:column; justify-content:center; gap:6px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
+        <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:8px; margin:5px auto; text-align:center; flex:1; align-self:center; min-height:60px; max-height:none; flex-direction:column; justify-content:center; gap:5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
             <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
             <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">السؤال</div>
             <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px; line-height:1.2; flex:1; align-items:center; justify-content:center; overflow:hidden;">الإجابة</div>
@@ -2327,4 +2327,4 @@
 
 </script>
 </body>
-</html>
+    </html>
