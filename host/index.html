@@ -950,7 +950,8 @@
         cell.el.classList.remove('green-fill','orange-fill');
         cell.el.classList.add('pending-fill');
         cell.text.style.display = 'block';
-        broadcastAction({ type:'cell_selected', cellId:cell.id });
+        const q = getRandomQuestion(letter);
+        broadcastAction({ type:'cell_selected', cellId:cell.id, letter:letter, question:q.question, answer:q.answer });
         displayQuestion(letter);
         setTeamButtonsEnabled(true);
         document.getElementById('btnUndo').disabled = false;
