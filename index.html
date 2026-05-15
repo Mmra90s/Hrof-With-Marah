@@ -1215,7 +1215,7 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div class="title-container">
+        <div class="title-container" id="title-container-sidebar">
             <span class="title-word title-round">الجولة</span>
             <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
         </div>
@@ -1398,14 +1398,16 @@
     };
 
     window.revealSidebarAnswer = () => {
-        document.getElementById('sidebar-q-answer').style.display = 'block';
-        document.getElementById('sidebar-q-answer-hint').style.display = 'none';
+        const answerEl = document.getElementById('sidebar-q-answer');
+        if (answerEl) {
+            answerEl.style.display = answerEl.style.display === 'none' ? 'block' : 'none';
+        }
     };
 
     window.closeSidebarQuestion = () => {
         document.getElementById('sidebar-question-container').style.display = 'none';
         // Show round title again
-        document.querySelector('.title-container').style.display = 'block';
+        document.getElementById('title-container-sidebar').style.display = 'block';
         if (pendingCell) {
             pendingCell.isPending = false;
             pendingCell.el.classList.remove('pending-fill');
@@ -1421,7 +1423,6 @@
             document.getElementById('sidebar-q-text').textContent = currentLetterQs[qIndex].q;
             document.getElementById('sidebar-q-answer').textContent = currentLetterQs[qIndex].a;
             document.getElementById('sidebar-q-answer').style.display = 'none';
-            document.getElementById('sidebar-q-answer-hint').style.display = 'block';
         }
     };
 
@@ -1605,10 +1606,9 @@
             document.getElementById('sidebar-q-text').textContent = currentLetterQs[qIndex].q;
             document.getElementById('sidebar-q-answer').textContent = currentLetterQs[qIndex].a;
             document.getElementById('sidebar-q-answer').style.display = 'none';
-            document.getElementById('sidebar-q-answer-hint').style.display = 'block';
             
             // Hide round title and show question card
-            document.querySelector('.title-container').style.display = 'none';
+            document.getElementById('title-container-sidebar').style.display = 'none';
             document.getElementById('sidebar-question-container').style.display = 'flex';
             
             // Broadcast cell selection to presenter with question details
@@ -2071,8 +2071,7 @@
                                 document.getElementById('sidebar-q-text').textContent = action.question;
                                 document.getElementById('sidebar-q-answer').textContent = action.answer;
                                 document.getElementById('sidebar-q-answer').style.display = 'none';
-                                document.getElementById('sidebar-q-answer-hint').style.display = 'block';
-                                document.querySelector('.title-container').style.display = 'none';
+                                document.getElementById('title-container-sidebar').style.display = 'none';
                                 document.getElementById('sidebar-question-container').style.display = 'flex';
                                 pendingCell = cell;
                             }
@@ -2263,4 +2262,4 @@
 
 </script>
 </body>
-        </html>
+    </html>
