@@ -1210,14 +1210,26 @@
             <span class="title-word title-round">الجولة</span>
             <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
         </div>
+        <div id="sidebar-question-container" style="display:none; width:100%; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:15px; margin-bottom:20px; text-align:center;">
+            <div id="sidebar-q-letter" style="width:60px; height:60px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:30px; font-weight:900; color:white; margin:0 auto 12px;">أ</div>
+            <div id="sidebar-q-text" style="font-size:18px; font-weight:900; color:white; margin-bottom:12px; line-height:1.3; min-height:60px;">السؤال</div>
+            <div onclick="revealSidebarAnswer()" style="background:rgba(255,255,255,0.1); border:1px dashed rgba(255,255,255,0.2); border-radius:15px; padding:12px; margin-bottom:12px; cursor:pointer;">
+                <div id="sidebar-q-answer-hint" style="color:#f1c40f; font-size:14px; font-weight:700;">🔦 اظهر الاجابة</div>
+                <div id="sidebar-q-answer" style="font-size:16px; font-weight:900; color:white; display:none;">الإجابة</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <button onclick="changeSidebarQuestion()" style="padding:10px; border-radius:12px; border:none; font-size:14px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">🔄 سؤال جديد</button>
+                <button onclick="closeSidebarQuestion()" style="padding:10px; border-radius:12px; border:none; font-size:14px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white;">✕ إغلاق</button>
+            </div>
+        </div>
         <div class="score-container">
             <div style="display:flex;flex-direction:column;align-items:center;">
                 <div class="team-label" style="color:#2ecc00;" id="label-team1">الفريق الأول</div>
-                <div class="score-box green-score" id="score-g">0</div>
+                <div class="score-box green-score" id="score-g" onclick="grantQuestionToTeam('green')" style="cursor:pointer; transition:all 0.2s; user-select:none;">0</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:center;">
                 <div class="team-label" style="color:#ff6d00;" id="label-team2">الفريق الثاني</div>
-                <div class="score-box orange-score" id="score-o">0</div>
+                <div class="score-box orange-score" id="score-o" onclick="grantQuestionToTeam('orange')" style="cursor:pointer; transition:all 0.2s; user-select:none;">0</div>
             </div>
         </div>
     </div>
@@ -1363,6 +1375,39 @@
         }
     };
     window.chooseTeamFromQuestion = (team) => { chooseTeam(team); closeQuestionModal(); };
+
+    /* ===== SIDEBAR QUESTION FUNCTIONS ===== */
+    window.grantQuestionToTeam = (team) => {
+        if (!pendingCell) return;
+        const cell = pendingCell;
+        cell.owner = team;
+        cell.el.classList.add(team + '-fill');
+        cell.text.style.display = 'none';
+        playPointSound();
+        checkPaths();
+        syncGameState();
+        closeSidebarQuestion();
+    };
+
+    window.revealSidebarAnswer = () => {
+        document.getElementById('sidebar-q-answer').style.display = 'block';
+        document.getElementById('sidebar-q-answer-hint').style.display = 'none';
+    };
+
+    window.closeSidebarQuestion = () => {
+        document.getElementById('sidebar-question-container').style.display = 'none';
+        pendingCell = null;
+    };
+
+    window.changeSidebarQuestion = () => {
+        if (currentLetterQs.length > 1) {
+            qIndex = (qIndex + 1) % currentLetterQs.length;
+            document.getElementById('sidebar-q-text').textContent = currentLetterQs[qIndex].q;
+            document.getElementById('sidebar-q-answer').textContent = currentLetterQs[qIndex].a;
+            document.getElementById('sidebar-q-answer').style.display = 'none';
+            document.getElementById('sidebar-q-answer-hint').style.display = 'block';
+        }
+    };
 
     /* ===== HEX PATTERN ===== */
     function drawHexPattern(svgEl) {
@@ -1524,15 +1569,12 @@
         currentLetterQs = questionsData[letter] || [];
         if (currentLetterQs.length > 0) {
             qIndex = Math.floor(Math.random() * currentLetterQs.length);
-            document.getElementById('q-letter').textContent = letter;
-            document.getElementById('q-text').textContent = currentLetterQs[qIndex].q;
-            document.getElementById('q-answer').textContent = currentLetterQs[qIndex].a;
-            document.getElementById('q-btn-team1').textContent = settings.team1;
-            document.getElementById('q-btn-team2').textContent = settings.team2;
-            document.getElementById('q-answer').style.display = 'none';
-            document.getElementById('q-answer-hint').style.display = 'block';
-            document.getElementById('q-team-selection').style.display = 'none';
-            document.getElementById('question-modal').style.display = 'flex';
+            document.getElementById('sidebar-q-letter').textContent = letter;
+            document.getElementById('sidebar-q-text').textContent = currentLetterQs[qIndex].q;
+            document.getElementById('sidebar-q-answer').textContent = currentLetterQs[qIndex].a;
+            document.getElementById('sidebar-q-answer').style.display = 'none';
+            document.getElementById('sidebar-q-answer-hint').style.display = 'block';
+            document.getElementById('sidebar-question-container').style.display = 'block';
         } else {
             document.getElementById('team-choice-modal').classList.add('active');
         }
