@@ -604,13 +604,13 @@
             width: clamp(220px, 28vw, 400px);
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             padding: clamp(10px, 1.5vw, 20px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
             height: 100vh;
             overflow: hidden;
-            gap: clamp(10px, 1.5vw, 20px);
+            gap: 0;
         }
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
@@ -1214,12 +1214,12 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%;">
-            <div class="title-container" id="title-container-sidebar">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-start; width:100%; padding-top: clamp(80px, 12vw, 120px);">
+            <div class="title-container" id="title-container-sidebar" style="margin-top: 5px;">
                 <span class="title-word title-round">الجولة</span>
                 <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
             </div>
-        <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:10px; margin:auto auto; text-align:center; flex-shrink:1; align-self:center; min-height:140px; max-height:calc(100vh - 300px); flex-direction:column; justify-content:center; gap:8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
+        <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:10px; margin:5px auto 10px; text-align:center; flex:1; align-self:center; min-height:120px; max-height:none; flex-direction:column; justify-content:center; gap:6px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
             <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto;">أ</div>
             <div id="sidebar-q-text" style="font-size:clamp(13px, 1.8vw, 16px); font-weight:900; color:white; line-height:1.4; display:flex; align-items:center; justify-content:center; overflow-y:auto; scrollbar-width:none; flex:1; width:100%; word-break:break-word;">السؤال</div>
             <div id="sidebar-q-answer" style="font-size:clamp(14px, 2vw, 18px); font-weight:900; color:#f1c40f; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px; line-height:1.2; flex:1; align-items:center; justify-content:center;">الإجابة</div>
@@ -1229,7 +1229,7 @@
             </div>
         </div>
         </div>
-        <div class="score-container">
+        <div class="score-container" style="margin-top: 10px; margin-bottom: 10px;">
             <div style="display:flex;flex-direction:column;align-items:center;">
                 <div class="team-label" style="color:#2ecc00;" id="label-team1">الفريق الأول</div>
                 <div class="score-box green-score" id="score-g" onclick="grantQuestionToTeam('green')" style="cursor:pointer; transition:all 0.2s; user-select:none;">0</div>
