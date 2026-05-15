@@ -609,8 +609,7 @@
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
             height: 100vh;
-            overflow-y: auto;
-            scrollbar-width: none;
+            overflow: hidden;
         }
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
@@ -622,8 +621,7 @@
         .logo-container .logo-ma   { letter-spacing: clamp(8px, 1.2vw, 15px); }
         .title-container {
             text-align: center;
-            margin-top: auto;
-            margin-bottom: auto;
+            margin: auto 0;
             transition: all 0.3s ease;
         }
         .title-word { display: block; font-weight: 900; line-height: 1.1; }
@@ -1603,8 +1601,18 @@
             // Hide round title and show question card
             document.querySelector('.title-container').style.display = 'none';
             document.getElementById('sidebar-question-container').style.display = 'block';
+            
+            // Sync full state to Firebase for presenter screen
+            update(gameStateRef(), { 
+                pendingCellId: cell.id,
+                currentLetter: letter,
+                currentQuestion: currentLetterQs[qIndex].q,
+                currentAnswer: currentLetterQs[qIndex].a
+            });
         } else {
             document.getElementById('team-choice-modal').classList.add('active');
+            // Sync only cell ID if no question
+            update(gameStateRef(), { pendingCellId: cell.id });
         }
     }
 
