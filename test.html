@@ -657,11 +657,11 @@
         .logo-container .logo-word { font-size: clamp(36px, 6vh, 60px); }
         .logo-container .logo-ma   { letter-spacing: clamp(10px, 2vh, 24px); }
         
-        /* Mobile: Small Logo */
+            /* Mobile: Small Logo */
         @media (max-width: 1024px) {
-            .logo-container { margin-top: 5px; margin-bottom: 5px; }
-            .logo-container .logo-word { font-size: clamp(14px, 3vw, 20px); }
-            .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.5vw, 4px); }
+            .logo-container { margin-top: 2px; margin-bottom: 2px; }
+            .logo-container .logo-word { font-size: clamp(10px, 2.5vw, 16px); }
+            .logo-container .logo-ma   { letter-spacing: clamp(1px, 0.4vw, 3px); }
             
             /* Responsive buttons on mobile */
             #sidebar-card-front button, #sidebar-card-back button {
@@ -992,20 +992,29 @@
             #screen-game { flex-direction: column-reverse; }
             .sidebar {
                 width: 100% !important;
-                flex-direction: row !important;
+                flex-direction: column !important;
                 align-items: center !important;
-                justify-content: space-around !important;
-                padding: 10px 16px !important;
+                justify-content: flex-start !important;
+                padding: 5px !important;
                 height: auto !important;
                 box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
             }
-            .logo-container { display: none !important; }
-            .title-container { margin-top: 0 !important; margin-bottom: 0 !important; text-align: center; }
-            .title-round { font-size: clamp(18px, 4vw, 32px); transform: rotate(-6deg) translateX(-10px); }
-            .title-first { font-size: clamp(32px, 7vw, 60px); transform: rotate(6deg) translateX(10px); }
-            .score-container { margin-top: 0 !important; padding-bottom: 0 !important; gap: 14px; }
-            .score-box { width: clamp(44px, 9vw, 70px); height: clamp(44px, 9vw, 70px); font-size: clamp(20px, 4.5vw, 36px); }
-            .team-label { font-size: clamp(11px, 2.5vw, 18px); max-width: 80px; margin-bottom: 4px; }
+            .logo-container { display: flex !important; margin: 2px 0 !important; }
+            .logo-container .logo-word { font-size: 14px !important; }
+            .logo-container .logo-ma { letter-spacing: 2px !important; }
+            
+            /* Ensure title and question container are in the same layout spot */
+            .title-container { margin: 2px 0 !important; order: 2; min-height: 80px; display: flex; flex-direction: column; justify-content: center; }
+            .title-round { font-size: 16px !important; transform: rotate(-4deg) translateX(-5px) !important; margin-bottom: -5px !important; }
+            .title-first { font-size: 24px !important; transform: rotate(4deg) translateX(5px) !important; }
+            
+            #sidebar-question-container { order: 2; height: 180px !important; margin: 5px 0 !important; }
+            #sidebar-q-text, #sidebar-q-answer { font-size: 20px !important; }
+
+            .score-container { order: 3; margin: 5px 0 !important; padding-bottom: 5px !important; gap: 20px !important; }
+            .score-box { width: 45px !important; height: 45px !important; font-size: 20px !important; border-radius: 10px !important; }
+            .team-label { font-size: 12px !important; max-width: 100px !important; margin-bottom: 2px !important; }
+            
             .left { flex: 1 !important; width: 100%; }
         }
 
@@ -1462,57 +1471,64 @@
         closeSidebarQuestion();
     };
 
-    function adjustFontSize(el) {
+        function adjustFontSize(el) {
         if (!el) return;
         const container = el.parentElement;
         if (!container) return;
         
-        // Calculate reserved height by summing up all other children's heights
-        let reservedHeight = 10; // base padding
-        Array.from(container.children).forEach(child => {
-            if (child !== el && child.style.display !== 'none' && child.style.position !== 'absolute') {
-                reservedHeight += child.offsetHeight || 0;
-                const style = window.getComputedStyle(child);
-                reservedHeight += parseInt(style.marginTop) || 0;
-                reservedHeight += parseInt(style.marginBottom) || 0;
+        // Use a small delay to ensure layout is updated
+        requestAnimationFrame(() => {
+            // Calculate reserved height by summing up all other children's heights
+            let reservedHeight = 10; // base padding
+            Array.from(container.children).forEach(child => {
+                if (child !== el && child.style.display !== 'none' && child.style.position !== 'absolute') {
+                    reservedHeight += child.offsetHeight || 0;
+                    const style = window.getComputedStyle(child);
+                    reservedHeight += parseInt(style.marginTop) || 0;
+                    reservedHeight += parseInt(style.marginBottom) || 0;
+                }
+            });
+            
+            // Be more aggressive with safety margin to prevent clipping
+            const maxHeight = Math.max(container.clientHeight - reservedHeight - 15, 20);
+            const maxWidth = Math.max(container.clientWidth - 15, 50);
+
+            let minFS = 8;
+            let maxFS = 60;
+            let bestFS = minFS;
+
+            // Binary search for the best font size
+            while (minFS <= maxFS) {
+                let mid = Math.floor((minFS + maxFS) / 2);
+                el.style.fontSize = mid + 'px';
+                // Use scrollHeight and scrollWidth to detect overflow
+                if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
+                    bestFS = mid;
+                    minFS = mid + 1;
+                } else {
+                    maxFS = mid - 1;
+                }
+            }
+            // Final check: if still overflowing, reduce further
+            el.style.fontSize = bestFS + 'px';
+            if (el.scrollHeight > maxHeight || el.scrollWidth > maxWidth) {
+                el.style.fontSize = Math.max(bestFS * 0.8, 8) + 'px';
             }
         });
-        
-        // Be more aggressive with safety margin to prevent clipping
-        const maxHeight = container.clientHeight - reservedHeight - 15;
-        const maxWidth = container.clientWidth - 15;
-
-        let minFS = 8;
-        let maxFS = 60;
-        let bestFS = minFS;
-
-        // Binary search for the best font size
-        while (minFS <= maxFS) {
-            let mid = Math.floor((minFS + maxFS) / 2);
-            el.style.fontSize = mid + 'px';
-            // Use scrollHeight and scrollWidth to detect overflow
-            if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
-                bestFS = mid;
-                minFS = mid + 1;
-            } else {
-                maxFS = mid - 1;
-            }
-        }
-        // Final check: if still overflowing, reduce further
-        el.style.fontSize = bestFS + 'px';
-        if (el.scrollHeight > maxHeight) {
-            el.style.fontSize = (bestFS * 0.9) + 'px';
-        }
     }
 
-    window.revealSidebarAnswer = () => {
+        window.revealSidebarAnswer = () => {
         const inner = document.getElementById('sidebar-card-inner');
         const answerEl = document.getElementById('sidebar-q-answer');
         const qTextEl = document.getElementById('sidebar-q-text');
         
+        // Ensure elements are display:flex before measuring/flipping
+        answerEl.style.display = 'flex';
+        qTextEl.style.display = 'flex';
+
         if (!inner.style.transform || inner.style.transform === 'rotateY(0deg)') {
             inner.style.transform = 'rotateY(180deg)';
-            // Ensure answer is visible and sized correctly
+            // Ensure answer is sized correctly
             setTimeout(() => {
                 adjustFontSize(answerEl);
             }, 150);
@@ -1524,12 +1540,12 @@
         }
     };
 
-    window.closeSidebarQuestion = () => {
+        window.closeSidebarQuestion = () => {
         const container = document.getElementById('sidebar-question-container');
         const inner = document.getElementById('sidebar-card-inner');
         inner.style.transform = 'rotateY(0deg)';
         container.style.display = 'none';
-        // Show round title again
+        // Ensure round title is visible (it should be anyway)
         document.getElementById('title-container-sidebar').style.display = 'block';
         if (pendingCell) {
             pendingCell.isPending = false;
@@ -2233,7 +2249,7 @@
                                 const qAnsEl = document.getElementById('sidebar-q-answer');
                                 qTextEl.textContent = action.question;
                                 qAnsEl.textContent = action.answer;
-                                qAnsEl.style.display = 'none';
+                                qAnsEl.style.display = 'flex';
                                 qTextEl.style.display = 'flex';
                                 const revealBtn = document.getElementById('sidebar-reveal-btn');
                                 if(revealBtn) revealBtn.textContent = '✓ أظهر';
