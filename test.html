@@ -1982,6 +1982,17 @@
         presenterType = type;
         document.getElementById('type-btn-ai').classList.toggle('active', type === 'ai');
         document.getElementById('type-btn-human').classList.toggle('active', type === 'human');
+
+        // لو تحول لمقدم بشري وكان في كرت ظاهر، أخفيه
+        if (type === 'human') {
+            const wrapper = document.getElementById('flip-card-wrapper');
+            const cardInner = document.getElementById('flip-card-inner');
+            if (wrapper && wrapper.classList.contains('visible')) {
+                cardInner.classList.remove('flipped');
+                wrapper.classList.remove('visible');
+                document.getElementById('title-container-sidebar').style.display = 'flex';
+            }
+        }
     };
     document.addEventListener('click', function(e) {
         const btn = document.getElementById('options-btn');
