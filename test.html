@@ -152,11 +152,55 @@
             0% { transform: rotateY(180deg); }
             100% { transform: rotateY(0deg); }
         }
-        .sidebar-question-container-flip {
-            animation: cardFlip 0.6s ease-in-out forwards;
+        /* ===== FLIP CARD REAL 3D ===== */
+        .flip-card-wrapper {
+            flex: 1;
+            width: 95%;
+            margin: 4px auto;
+            perspective: 1000px;
+            min-height: 70px;
+            align-self: center;
+            display: none;
+            overflow: hidden;
         }
-        .sidebar-question-container-flip-reverse {
-            animation: cardFlipReverse 0.6s ease-in-out forwards;
+        .flip-card-wrapper.visible {
+            display: flex;
+            flex-direction: column;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 70px;
+            transition: transform 0.6s ease-in-out;
+            transform-style: preserve-3d;
+        }
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 6px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: rgba(241,196,15,0.12);
+            border-color: rgba(241,196,15,0.3);
         }
 
         /* Colored glow per word */
@@ -619,7 +663,7 @@
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
             justify-content: flex-start;
-            padding: clamp(10px, 1.5vw, 20px);
+            padding: clamp(8px, 1.2vw, 16px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
             height: 100vh;
@@ -629,36 +673,37 @@
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
             position: relative; 
-            margin-top: clamp(2px, 1vh, 10px); 
-            margin-bottom: clamp(2px, 1vh, 10px);
+            margin-top: clamp(2px, 0.5vh, 6px); 
+            margin-bottom: clamp(2px, 0.5vh, 6px);
             display: flex; flex-direction: column; align-items: center;
-            pointer-events: none; line-height: 1.1;
+            pointer-events: none; line-height: 1.0;
             flex-shrink: 0;
         }
-        .logo-container .logo-word { font-size: clamp(18px, 3.5vh, 32px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(3px, 0.8vh, 8px); }
+        .logo-container .logo-word { font-size: clamp(13px, 2.2vh, 22px); }
+        .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.5vh, 5px); }
         .title-container {
             text-align: center;
-            margin-top: auto;
-            margin-bottom: auto;
+            margin-top: 0;
+            margin-bottom: 0;
             transition: all 0.3s ease;
             flex-shrink: 0;
             width: 100%;
+            padding: clamp(4px, 0.8vh, 10px) 0;
         }
         .title-word { display: block; font-weight: 900; line-height: 1.1; }
         .title-round {
-            color: #e74c3c; font-size: clamp(32px, 5.5vw, 68px);
-            transform: rotate(-10deg) translateX(-20px); display: inline-block; margin-bottom: -10px;
+            color: #e74c3c; font-size: clamp(28px, 5vw, 60px);
+            transform: rotate(0deg) translateX(0px); display: inline-block; margin-bottom: -8px;
             text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
                 0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
         }
         .title-first {
-            color: #f1c40f; font-size: clamp(56px, 9vw, 125px);
-            transform: rotate(10deg) translateX(20px); display: inline-block;
+            color: #f1c40f; font-size: clamp(50px, 8vw, 110px);
+            transform: rotate(0deg) translateX(0px); display: inline-block;
             text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
                 0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
         }
-        .score-container { margin-top: auto; margin-bottom: 10px; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); flex-shrink: 0; width: 100%; justify-content: center; z-index: 11; background: inherit; }
+        .score-container { margin-top: 0; margin-bottom: 10px; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); flex-shrink: 0; width: 100%; justify-content: center; z-index: 11; background: inherit; position: relative; }
         .score-box {
             width: clamp(60px, 8vw, 105px); height: clamp(60px, 8vw, 105px);
             display: flex; justify-content: center; align-items: center;
@@ -928,23 +973,23 @@
 
         /* ===== TABLET (portrait or small landscape) ===== */
         @media (max-width: 900px) and (orientation: landscape) {
-            .sidebar { width: clamp(180px, 26vw, 280px); padding: 10px 12px; }
-            .logo-container .logo-word { font-size: clamp(22px, 3.5vw, 36px); }
-            .title-container { margin-top: clamp(80px, 14vw, 140px); }
-            .title-round  { font-size: clamp(24px, 4vw, 44px); }
-            .title-first  { font-size: clamp(42px, 7vw, 80px); }
+            .sidebar { width: clamp(180px, 26vw, 280px); padding: 8px 10px; }
+            .logo-container .logo-word { font-size: clamp(12px, 2.2vw, 20px); }
+            .title-container { margin-top: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+            .title-round  { font-size: clamp(22px, 3.5vw, 40px); transform: rotate(0deg) translateX(0px) !important; margin-bottom: -6px !important; }
+            .title-first  { font-size: clamp(38px, 6vw, 70px); transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             .score-box { width: clamp(50px, 7vw, 80px); height: clamp(50px, 7vw, 80px); font-size: clamp(22px, 3.5vw, 40px); }
             .team-label { font-size: clamp(11px, 1.5vw, 18px); }
         }
 
         /* ===== MOBILE landscape (phone) ===== */
         @media (max-width: 680px) and (orientation: landscape) {
-            .sidebar { width: 200px; padding: 8px 10px; }
-            .logo-container .logo-word { font-size: 24px; }
-            .logo-container .logo-ma   { letter-spacing: 6px; }
-            .title-container { margin-top: 80px; margin-bottom: 6px; }
-            .title-round  { font-size: 22px; }
-            .title-first  { font-size: 38px; }
+            .sidebar { width: 200px; padding: 6px 8px; }
+            .logo-container .logo-word { font-size: 14px; }
+            .logo-container .logo-ma   { letter-spacing: 3px; }
+            .title-container { margin-top: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+            .title-round  { font-size: 20px; transform: rotate(0deg) translateX(0px) !important; margin-bottom: -4px !important; }
+            .title-first  { font-size: 34px; transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             .score-box { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
             .team-label { font-size: 11px; }
             .score-container { gap: 10px; padding-bottom: 4px; }
@@ -952,6 +997,9 @@
 
         /* ===== PORTRAIT PHONES/TABLETS — stack vertically ===== */
         @media (orientation: portrait) and (max-width: 1024px) {
+            .title-container { display: flex; flex-direction: column; align-items: center; }
+            .title-round { transform: rotate(0deg) translateX(0px) !important; margin-bottom: -6px !important; }
+            .title-first { transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             #screen-game { flex-direction: column-reverse; }
             .sidebar {
                 width: 100% !important;
@@ -964,6 +1012,7 @@
             }
             .logo-container { display: none !important; }
             .title-container { margin-top: 0 !important; margin-bottom: 0 !important; text-align: center; }
+            .flip-card-wrapper { display: none !important; }
             .title-round { font-size: clamp(18px, 4vw, 32px); transform: rotate(-6deg) translateX(-10px); }
             .title-first { font-size: clamp(32px, 7vw, 60px); transform: rotate(6deg) translateX(10px); }
             .score-container { margin-top: 0 !important; padding-bottom: 0 !important; gap: 14px; }
@@ -1231,22 +1280,34 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-start; width:100%; overflow:hidden;">
-            <div class="title-container" id="title-container-sidebar" style="margin-top: 5px; flex-shrink: 0;">
-                <span class="title-word title-round">الجولة</span>
-                <span class="title-word title-first" id="round-label" style="margin-top:5px;">الأولى</span>
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:hidden; gap:0;">
+            <div class="title-container" id="title-container-sidebar" style="flex-shrink: 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0;">
+                <span class="title-word title-round" style="margin-bottom:-8px; transform:rotate(0deg) translateX(0px);">الجولة</span>
+                <span class="title-word title-first" id="round-label" style="margin-top:0px; transform:rotate(0deg) translateX(0px);">الأولى</span>
             </div>
-        <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:8px; margin:5px auto; text-align:center; flex:1; align-self:center; min-height:60px; max-height:none; flex-direction:column; justify-content:center; gap:5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
-            <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
-            <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">السؤال</div>
-            <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px; line-height:1.2; flex:1; align-items:center; justify-content:center; overflow:hidden;">الإجابة</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <button onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
-                <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
+            <!-- FLIP CARD WRAPPER -->
+            <div id="flip-card-wrapper" class="flip-card-wrapper">
+                <div id="flip-card-inner" class="flip-card-inner">
+                    <!-- FRONT: السؤال -->
+                    <div class="flip-card-front">
+                        <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
+                        <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">السؤال</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0;">
+                            <button onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
+                            <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
+                        </div>
+                    </div>
+                    <!-- BACK: الإجابة -->
+                    <div class="flip-card-back">
+                        <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">الإجابة</div>
+                        <div style="flex-shrink:0;">
+                            <button onclick="flipCardBack()" style="width:100%; padding:10px; border-radius:10px; border:none; font-size:15px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.15); color:white; transition:all 0.2s; white-space:nowrap;">↩ عودة</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        </div>
-        <div class="score-container" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="score-container" style="margin-top: auto; margin-bottom: 10px;">
             <div style="display:flex;flex-direction:column;align-items:center;">
                 <div class="team-label" style="color:#2ecc00;" id="label-team1">الفريق الأول</div>
                 <div class="score-box green-score" id="score-g" onclick="grantQuestionToTeam('green')" style="cursor:pointer; transition:all 0.2s; user-select:none;">0</div>
@@ -1416,27 +1477,49 @@
     };
 
     function adjustFontSize(el) {
-        if (!el || el.style.display === 'none') return;
-        const container = el.parentElement;
-        const letter = document.getElementById('sidebar-q-letter');
-        const buttons = el.parentElement.querySelector('div[style*="grid"]');
+        if (!el || el.offsetParent === null) return;
         
-        // Use offsetHeight if available, otherwise estimate
-        const letterH = letter ? letter.offsetHeight || 32 : 32;
-        const buttonsH = buttons ? buttons.offsetHeight || 40 : 40;
-        const reservedHeight = letterH + buttonsH + 25; 
+        // استخدام المنطق الناجح من الملف المرسل مع تعديلات طفيفة للتوافق
+        const container = el.parentElement;
+        const isFront = el.id === 'sidebar-q-text';
+        const isBack = el.id === 'sidebar-q-answer';
+        
+        // حساب المساحة المحجوزة بناءً على العناصر الموجودة فعلياً في الوجه
+        let reservedHeight = 0;
+        const face = isFront ? el.closest('.flip-card-front') : (isBack ? el.closest('.flip-card-back') : null);
+        
+        if (face) {
+            Array.from(face.children).forEach(child => {
+                if (child !== el && window.getComputedStyle(child).position !== 'absolute') {
+                    reservedHeight += child.offsetHeight || 0;
+                }
+            });
+            // إضافة هوامش أمان وفجوات
+            const style = window.getComputedStyle(face);
+            reservedHeight += (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0) + 25;
+        } else {
+            reservedHeight = 80; // قيمة افتراضية في حال تعذر الوصول للوجه
+        }
         
         const maxHeight = container.clientHeight - reservedHeight;
         const maxWidth = container.clientWidth - 15;
 
-        let minFontSize = 8; // Lower minimum for very long questions
-        let maxFontSize = 70;
+        let minFontSize = 8; 
+        let maxFontSize = isBack ? 150 : 70; // الإجابة يمكن أن تكون أكبر
         let bestFontSize = minFontSize;
+
+        // إعدادات النص الأساسية
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.wordBreak = 'break-word';
+        el.style.whiteSpace = 'normal';
+        el.style.wordWrap = 'break-word';
+        el.style.lineHeight = '1.2';
 
         while (minFontSize <= maxFontSize) {
             let mid = Math.floor((minFontSize + maxFontSize) / 2);
             el.style.fontSize = mid + 'px';
-            // Check if content fits without causing overflow
             if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
                 bestFontSize = mid;
                 minFontSize = mid + 1;
@@ -1448,40 +1531,31 @@
     }
 
     window.revealSidebarAnswer = () => {
-        const qText = document.getElementById('sidebar-q-text');
+        const cardInner = document.getElementById('flip-card-inner');
         const answerEl = document.getElementById('sidebar-q-answer');
-        const btn = document.getElementById('sidebar-reveal-btn');
-        const container = document.getElementById('sidebar-question-container');
-        
-        if (answerEl.style.display === 'none') {
-            container.classList.remove('sidebar-question-container-flip-reverse');
-            container.classList.add('sidebar-question-container-flip');
-            
-            setTimeout(() => {
-                qText.style.display = 'none';
-                answerEl.style.display = 'flex';
-                btn.textContent = '✓ السؤال';
-                setTimeout(() => adjustFontSize(answerEl), 10);
-            }, 300);
-        } else {
-            container.classList.remove('sidebar-question-container-flip');
-            container.classList.add('sidebar-question-container-flip-reverse');
-            
-            setTimeout(() => {
-                qText.style.display = 'flex';
-                answerEl.style.display = 'none';
-                btn.textContent = '✓ أظهر';
-                setTimeout(() => adjustFontSize(qText), 10);
-            }, 300);
-        }
+        // قلب الكرت للوجه الخلفي (الإجابة)
+        cardInner.classList.add('flipped');
+        // ضبط حجم النص في الوجه الخلفي بعد انتهاء الـ flip
+        setTimeout(() => adjustFontSize(answerEl), 700);
+    };
+
+    window.flipCardBack = () => {
+        const cardInner = document.getElementById('flip-card-inner');
+        const qText = document.getElementById('sidebar-q-text');
+        // قلب الكرت للوجه الأمامي (السؤال)
+        cardInner.classList.remove('flipped');
+        // ضبط حجم النص في الوجه الأمامي بعد انتهاء الـ flip
+        setTimeout(() => adjustFontSize(qText), 700);
     };
 
     window.closeSidebarQuestion = () => {
-        const container = document.getElementById('sidebar-question-container');
-        container.classList.remove('sidebar-question-container-flip', 'sidebar-question-container-flip-reverse');
-        container.style.display = 'none';
-        // Show round title again
-        document.getElementById('title-container-sidebar').style.display = 'block';
+        const wrapper = document.getElementById('flip-card-wrapper');
+        const cardInner = document.getElementById('flip-card-inner');
+        // إخفاء الكرت وإعادة ضبط الوجه للأمامي
+        cardInner.classList.remove('flipped');
+        wrapper.classList.remove('visible');
+        // إظهار عنوان الجولة مرة أخرى
+        document.getElementById('title-container-sidebar').style.display = 'flex';
         if (pendingCell) {
             pendingCell.isPending = false;
             pendingCell.el.classList.remove('pending-fill');
@@ -1494,14 +1568,24 @@
     window.changeSidebarQuestion = () => {
         if (currentLetterQs.length > 1) {
             qIndex = (qIndex + 1) % currentLetterQs.length;
-            const container = document.getElementById('sidebar-question-container');
-            container.classList.remove('sidebar-question-container-flip', 'sidebar-question-container-flip-reverse');
-            document.getElementById('sidebar-q-text').textContent = currentLetterQs[qIndex].q;
-            document.getElementById('sidebar-q-answer').textContent = currentLetterQs[qIndex].a;
-            document.getElementById('sidebar-q-answer').style.display = 'none';
-            document.getElementById('sidebar-q-text').style.display = 'flex';
-            const revealBtn = document.getElementById('sidebar-reveal-btn');
-            if(revealBtn) revealBtn.textContent = '✓ أظهر';
+            const cardInner = document.getElementById('flip-card-inner');
+            const qTextEl = document.getElementById('sidebar-q-text');
+            const qAnsEl = document.getElementById('sidebar-q-answer');
+            
+            // إصلاح مشكلة لمح الإجابة: إخفاء الإجابة فوراً قبل أي حركة
+            qAnsEl.style.opacity = '0';
+            cardInner.classList.remove('flipped');
+            
+            // تحديث النصوص
+            qTextEl.textContent = currentLetterQs[qIndex].q;
+            qAnsEl.textContent = currentLetterQs[qIndex].a;
+            
+            // ننتظر انتهاء التفاف الكرت للخلف قبل إظهار الإجابة الجديدة وإعادة حساب حجمها
+            setTimeout(() => {
+                adjustFontSize(qTextEl);
+                qAnsEl.style.opacity = '1';
+                adjustFontSize(qAnsEl);
+            }, 300);
         }
     };
 
@@ -1686,17 +1770,18 @@
             const qAnsEl = document.getElementById('sidebar-q-answer');
             qTextEl.textContent = currentLetterQs[qIndex].q;
             qAnsEl.textContent = currentLetterQs[qIndex].a;
-            qAnsEl.style.display = 'none';
-            qTextEl.style.display = 'flex';
+            // لا نحتاج لإخفاء/إظهار العناصر بعد الآن - الوجهان منفصلان بالـ CSS
             const revealBtn = document.getElementById('sidebar-reveal-btn');
             if(revealBtn) revealBtn.textContent = '✓ أظهر';
             
-            // Hide round title and show question card
+            // إعادة ضبط الكرت للوجه الأمامي قبل العرض
+            document.getElementById('flip-card-inner').classList.remove('flipped');
+            // إخفاء عنوان الجولة وإظهار كرت السؤال
             document.getElementById('title-container-sidebar').style.display = 'none';
-            document.getElementById('sidebar-question-container').style.display = 'flex';
+            document.getElementById('flip-card-wrapper').classList.add('visible');
             
-            // Adjust font size after display
-            setTimeout(() => adjustFontSize(qTextEl), 10);
+            // ضبط حجم النص بعد العرض
+            setTimeout(() => adjustFontSize(qTextEl), 100);
             
             // Broadcast cell selection to presenter with question details
             _ignorePresenterAction = true;
@@ -2159,15 +2244,16 @@
                                 const qAnsEl = document.getElementById('sidebar-q-answer');
                                 qTextEl.textContent = action.question;
                                 qAnsEl.textContent = action.answer;
-                                qAnsEl.style.display = 'none';
-                                qTextEl.style.display = 'flex';
+                                // لا نحتاج لإخفاء/إظهار - الوجهان منفصلان بالـ CSS
                                 const revealBtn = document.getElementById('sidebar-reveal-btn');
                                 if(revealBtn) revealBtn.textContent = '✓ أظهر';
+                                // إعادة ضبط الكرت للوجه الأمامي
+                                document.getElementById('flip-card-inner').classList.remove('flipped');
                                 document.getElementById('title-container-sidebar').style.display = 'none';
-                                document.getElementById('sidebar-question-container').style.display = 'flex';
+                                document.getElementById('flip-card-wrapper').classList.add('visible');
                                 
                                 // Adjust font size after display
-                                setTimeout(() => adjustFontSize(qTextEl), 10);
+                                setTimeout(() => adjustFontSize(qTextEl), 100);
                                 pendingCell = cell;
                             }
                         }
