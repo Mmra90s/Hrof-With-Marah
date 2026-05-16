@@ -1479,55 +1479,53 @@
     function adjustFontSize(el) {
         if (!el || el.offsetParent === null) return;
         
-        // استخدام المنطق الناجح من الملف المرسل مع تعديلات طفيفة للتوافق
-        const container = el.parentElement;
         const isFront = el.id === 'sidebar-q-text';
         const isBack = el.id === 'sidebar-q-answer';
-        
-        // حساب المساحة المحجوزة بناءً على العناصر الموجودة فعلياً في الوجه
-        let reservedHeight = 0;
         const face = isFront ? el.closest('.flip-card-front') : (isBack ? el.closest('.flip-card-back') : null);
+        if (!face) return;
+
+        // تجهيز العنصر للقياس الدقيق
+        el.style.display = 'block';
+        el.style.height = 'auto';
+        el.style.width = '100%';
+        el.style.flex = 'none';
+
+        // حساب المساحة المتاحة الفعلية من الـ face
+        let reservedH = 0;
+        Array.from(face.children).forEach(child => {
+            if (child !== el && window.getComputedStyle(child).position !== 'absolute') {
+                reservedH += child.offsetHeight || 0;
+            }
+        });
+
+        const style = window.getComputedStyle(face);
+        const paddingH = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) || 12;
+        const gapH = (face.querySelectorAll(':scope > *:not([style*="absolute"])').length - 1) * (parseFloat(style.gap) || 4);
         
-        if (face) {
-            Array.from(face.children).forEach(child => {
-                if (child !== el && window.getComputedStyle(child).position !== 'absolute') {
-                    reservedHeight += child.offsetHeight || 0;
-                }
-            });
-            // إضافة هوامش أمان وفجوات
-            const style = window.getComputedStyle(face);
-            reservedHeight += (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0) + 25;
-        } else {
-            reservedHeight = 80; // قيمة افتراضية في حال تعذر الوصول للوجه
-        }
-        
-        const maxHeight = container.clientHeight - reservedHeight;
-        const maxWidth = container.clientWidth - 15;
+        // المساحة المتاحة للنص مع هامش أمان بسيط
+        const availableH = face.clientHeight - reservedH - paddingH - gapH - 5;
+        const availableW = face.clientWidth - (parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) || 12) - 5;
 
-        let minFontSize = 8; 
-        let maxFontSize = isBack ? 150 : 70; // الإجابة يمكن أن تكون أكبر
-        let bestFontSize = minFontSize;
+        let min = 10, max = isBack ? 150 : 100, best = min;
 
-        // إعدادات النص الأساسية
-        el.style.display = 'flex';
-        el.style.alignItems = 'center';
-        el.style.justifyContent = 'center';
-        el.style.wordBreak = 'break-word';
-        el.style.whiteSpace = 'normal';
-        el.style.wordWrap = 'break-word';
-        el.style.lineHeight = '1.2';
-
-        while (minFontSize <= maxFontSize) {
-            let mid = Math.floor((minFontSize + maxFontSize) / 2);
+        while (min <= max) {
+            let mid = Math.floor((min + max) / 2);
             el.style.fontSize = mid + 'px';
-            if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
-                bestFontSize = mid;
-                minFontSize = mid + 1;
+            
+            // نستخدم offsetHeight للتحقق لأنه الأدق عند تصفير الـ height
+            if (el.offsetHeight <= availableH && el.scrollWidth <= availableW) {
+                best = mid;
+                min = mid + 1;
             } else {
-                maxFontSize = mid - 1;
+                max = mid - 1;
             }
         }
-        el.style.fontSize = bestFontSize + 'px';
+
+        // تطبيق الحجم النهائي وإعادة الـ Flexbox
+        el.style.fontSize = best + 'px';
+        el.style.display = 'flex';
+        el.style.flex = '1';
+        el.style.height = '100%';
     }
 
     window.revealSidebarAnswer = () => {
@@ -1572,20 +1570,25 @@
             const qTextEl = document.getElementById('sidebar-q-text');
             const qAnsEl = document.getElementById('sidebar-q-answer');
             
-            // إصلاح مشكلة لمح الإجابة: إخفاء الإجابة فوراً قبل أي حركة
-            qAnsEl.style.opacity = '0';
+            // إخفاء النصوص تماماً أثناء التغيير لمنع أي لمح
+            qTextEl.style.visibility = 'hidden';
+            qAnsEl.style.visibility = 'hidden';
+            
+            // العودة للوجه الأمامي
             cardInner.classList.remove('flipped');
             
-            // تحديث النصوص
+            // تحديث المحتوى
             qTextEl.textContent = currentLetterQs[qIndex].q;
             qAnsEl.textContent = currentLetterQs[qIndex].a;
             
-            // ننتظر انتهاء التفاف الكرت للخلف قبل إظهار الإجابة الجديدة وإعادة حساب حجمها
+            // ننتظر قليلاً حتى يستقر الكرت ثم نظهر النص ونحسب حجمه
             setTimeout(() => {
+                qTextEl.style.visibility = 'visible';
                 adjustFontSize(qTextEl);
-                qAnsEl.style.opacity = '1';
+                // الإجابة تبقى مخفية حتى يتم قلب الكرت لاحقاً، لكن نحسب حجمها الآن
                 adjustFontSize(qAnsEl);
-            }, 300);
+                qAnsEl.style.visibility = 'visible';
+            }, 400);
         }
     };
 
