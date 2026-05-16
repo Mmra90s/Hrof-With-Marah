@@ -1479,7 +1479,8 @@
     function adjustFontSize(el) {
         if (!el) return;
         
-        requestAnimationFrame(() => {
+        // استخدم setTimeout بدل requestAnimationFrame لضمان وقت كافي للـ layout
+        setTimeout(() => {
             const isFront = el.id === 'sidebar-q-text';
             const isBack  = el.id === 'sidebar-q-answer';
             const face = isFront ? el.closest('.flip-card-front') : (isBack ? el.closest('.flip-card-back') : null);
@@ -1488,52 +1489,50 @@
             const wrapper = document.getElementById('flip-card-wrapper');
             if (!wrapper || wrapper.clientHeight === 0 || wrapper.clientWidth === 0) return;
             
-            // تطبيق white-space: normal لضمان التفاف صحيح
+            // تطبيق الخصائص الأساسية للنص
             el.style.whiteSpace = 'normal';
             el.style.wordWrap = 'break-word';
             el.style.overflowWrap = 'break-word';
+            el.style.textAlign = 'center';
+            el.style.width = '100%';
             
             const wrapperH = wrapper.clientHeight;
             const wrapperW = wrapper.clientWidth;
             
-            // حساب المساحة المحجوزة بدقة أكبر
+            // حساب المساحة المحجوزة بدقة
             let reservedHeight = 0;
-            let reservedWidth = 0;
             
             const letter  = face.querySelector('#sidebar-q-letter');
             const buttons = face.querySelector('div[style*="grid"]');
             
             if (letter && letter.offsetHeight > 0) {
-                reservedHeight += letter.offsetHeight + 8; // gap أقل
+                reservedHeight += letter.offsetHeight + 6; // gap
             }
             if (buttons && buttons.offsetHeight > 0) {
-                reservedHeight += buttons.offsetHeight + 8; // gap أقل
+                reservedHeight += buttons.offsetHeight + 6; // gap
             }
             
-            // padding الوجه (8px من كل جانب)
-            reservedHeight += 12; // top + bottom padding مع margin أقل
-            reservedWidth = 12; // left + right padding
+            // padding الوجه + margin أمان صغير
+            reservedHeight += 14; // 6px top + 6px bottom + 2px margin
             
-            const maxHeight = Math.max(wrapperH - reservedHeight, 30);
-            const maxWidth  = Math.max(wrapperW - reservedWidth, 30);
+            const maxHeight = Math.max(wrapperH - reservedHeight, 25);
+            const maxWidth  = Math.max(wrapperW - 10, 25); // 5px من كل جانب
 
-            let minFontSize = 12; // حد أدنى أعلى قليلاً
-            let maxFontSize = 100; // حد أقصى أعلى
+            let minFontSize = 10;
+            let maxFontSize = 120; // حد أقصى أعلى للسماح بنصوص أكبر
             let bestFontSize = minFontSize;
-            let lastGoodSize = minFontSize;
 
-            // Binary search مع تحسينات
+            // Binary search دقيق
             while (minFontSize <= maxFontSize) {
                 let mid = Math.floor((minFontSize + maxFontSize) / 2);
                 el.style.fontSize = mid + 'px';
                 
-                // انتظر قليلاً حتى يتم تحديث الـ layout
+                // قراءة الأبعاد الفعلية
                 let scrollH = el.scrollHeight;
                 let scrollW = el.scrollWidth;
                 
-                // التحقق مع margin صغير للأمان
-                if (scrollH <= maxHeight && scrollW <= maxWidth) {
-                    lastGoodSize = mid;
+                // التحقق مع margin أمان صغير جداً
+                if (scrollH <= maxHeight + 2 && scrollW <= maxWidth + 2) {
                     bestFontSize = mid;
                     minFontSize = mid + 1; // جرب أكبر
                 } else {
@@ -1541,9 +1540,9 @@
                 }
             }
             
-            // استخدم آخر حجم نجح
-            el.style.fontSize = lastGoodSize + 'px';
-        });
+            // تطبيق الحجم النهائي
+            el.style.fontSize = bestFontSize + 'px';
+        }, 50); // 50ms لضمان وقت كافي للـ layout
     }
 
     window.revealSidebarAnswer = () => {
@@ -1552,7 +1551,7 @@
         // قلب الكرت للوجه الخلفي (الإجابة)
         cardInner.classList.add('flipped');
         // ضبط حجم النص في الوجه الخلفي بعد انتهاء الـ flip
-        setTimeout(() => adjustFontSize(answerEl), 650);
+        setTimeout(() => adjustFontSize(answerEl), 700);
     };
 
     window.flipCardBack = () => {
@@ -1561,7 +1560,7 @@
         // قلب الكرت للوجه الأمامي (السؤال)
         cardInner.classList.remove('flipped');
         // ضبط حجم النص في الوجه الأمامي بعد انتهاء الـ flip
-        setTimeout(() => adjustFontSize(qText), 650);
+        setTimeout(() => adjustFontSize(qText), 700);
     };
 
     window.closeSidebarQuestion = () => {
@@ -1571,7 +1570,7 @@
         cardInner.classList.remove('flipped');
         wrapper.classList.remove('visible');
         // إظهار عنوان الجولة مرة أخرى
-        document.getElementById('title-container-sidebar').style.display = 'block';
+        document.getElementById('title-container-sidebar').style.display = 'flex';
         if (pendingCell) {
             pendingCell.isPending = false;
             pendingCell.el.classList.remove('pending-fill');
@@ -1594,7 +1593,7 @@
             qAnsEl.textContent = currentLetterQs[qIndex].a;
             // إعادة تشغيل خوارزمية حجم النص بعد reset الكرت
             // ننتظر قليلاً حتى ينتهي الـ transition إن كان الكرت مقلوباً
-            setTimeout(() => adjustFontSize(qTextEl), 50);
+            setTimeout(() => adjustFontSize(qTextEl), 100);
         }
     };
 
@@ -1790,7 +1789,7 @@
             document.getElementById('flip-card-wrapper').classList.add('visible');
             
             // ضبط حجم النص بعد العرض
-            setTimeout(() => adjustFontSize(qTextEl), 10);
+            setTimeout(() => adjustFontSize(qTextEl), 100);
             
             // Broadcast cell selection to presenter with question details
             _ignorePresenterAction = true;
@@ -2262,7 +2261,7 @@
                                 document.getElementById('flip-card-wrapper').classList.add('visible');
                                 
                                 // Adjust font size after display
-                                setTimeout(() => adjustFontSize(qTextEl), 10);
+                                setTimeout(() => adjustFontSize(qTextEl), 100);
                                 pendingCell = cell;
                             }
                         }
