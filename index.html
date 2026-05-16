@@ -1264,7 +1264,7 @@
                     <div class="flip-card-front">
                         <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
                         <div id="sidebar-q-text" style="font-size:16px; font-weight:900; color:white; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">السؤال</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0;">
+                        <div id="sidebar-card-buttons" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0;">
                             <button onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
                             <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
                         </div>
@@ -1542,11 +1542,11 @@
     window.closeSidebarQuestion = () => {
         const wrapper = document.getElementById('flip-card-wrapper');
         const cardInner = document.getElementById('flip-card-inner');
-        // إخفاء الكرت وإعادة ضبط الوجه للأمامي
         cardInner.classList.remove('flipped');
         wrapper.classList.remove('visible');
-        // إخفاء overlay السؤال
-        
+        // إظهار الأزرار مجددًا
+        const btns = document.getElementById('sidebar-card-buttons');
+        if (btns) btns.style.display = 'grid';
         // إظهار عنوان الجولة مرة أخرى
         document.getElementById('title-container-sidebar').style.display = 'flex';
         if (pendingCell) {
@@ -2226,9 +2226,20 @@
         handlePresenterAction(action);
     });
 
+    function hideGameCard() {
+        document.getElementById('flip-card-inner').classList.remove('flipped');
+        document.getElementById('flip-card-wrapper').classList.remove('visible');
+        document.getElementById('title-container-sidebar').style.display = 'flex';
+        // إظهار الأزرار مجددًا
+        const btns = document.getElementById('sidebar-card-buttons');
+        if (btns) btns.style.display = 'grid';
+    }
+
     function handlePresenterAction(action) {
         switch(action.type) {
             case 'cell_selected':
+                // إخفاء الكرت عند أي خلية جديدة - لازم المقدم يضغط "عرض السؤال" من جديد
+                hideGameCard();
                 if (action.cellId !== undefined) {
                     cells.forEach(c => {
                         if (c.isPending) { c.isPending = false; c.el.classList.remove('pending-fill'); }
@@ -2238,57 +2249,54 @@
                         cell.isPending = true;
                         cell.el.classList.add('pending-fill');
                         playClickSound();
-                        if (action.letter && action.question && action.answer) {
+                        pendingCell = cell;
+                        // وضع آلي: يعرض الكرت تلقائيًا
+                        if (presenterType !== 'human' && action.letter && action.question && action.answer) {
                             currentLetterQs = questionsData[action.letter] || [];
-                            if (currentLetterQs.length > 0) {
-                                qIndex = 0;
-                                document.getElementById('sidebar-q-letter').textContent = action.letter;
-                                const qTextEl = document.getElementById('sidebar-q-text');
-                                const qAnsEl = document.getElementById('sidebar-q-answer');
-                                qTextEl.textContent = action.question;
-                                qAnsEl.textContent = action.answer;
-                                // لا نحتاج لإخفاء/إظهار - الوجهان منفصلان بالـ CSS
-                                const revealBtn = document.getElementById('sidebar-reveal-btn');
-                                if(revealBtn) revealBtn.textContent = '✓ أظهر';
-                                // إعادة ضبط الكرت للوجه الأمامي
-                                document.getElementById('flip-card-inner').classList.remove('flipped');
-                                document.getElementById('title-container-sidebar').style.display = 'none';
-                                document.getElementById('flip-card-wrapper').classList.add('visible');
-                                
-                                // Adjust font size after display
-                                setTimeout(() => adjustFontSize(qTextEl), 100);
-                                pendingCell = cell;
-                            }
-                        }
-                        // وضع مقدم بشري: فقط تحديد الخلية بدون عرض السؤال
-                        if (presenterType === 'human' && action.cellId !== undefined) {
-                            pendingCell = cell;
+                            qIndex = 0;
+                            document.getElementById('sidebar-q-letter').textContent = action.letter;
+                            const qTextEl = document.getElementById('sidebar-q-text');
+                            const qAnsEl  = document.getElementById('sidebar-q-answer');
+                            qTextEl.textContent = action.question;
+                            qAnsEl.textContent  = action.answer;
+                            const revealBtn = document.getElementById('sidebar-reveal-btn');
+                            if (revealBtn) revealBtn.textContent = '✓ أظهر';
+                            document.getElementById('flip-card-inner').classList.remove('flipped');
+                            document.getElementById('title-container-sidebar').style.display = 'none';
+                            document.getElementById('flip-card-wrapper').classList.add('visible');
+                            setTimeout(() => adjustFontSize(qTextEl), 100);
                         }
                     }
                 }
                 break;
+
             case 'cell_unselected':
+                hideGameCard();
                 if (action.cellId !== undefined) {
                     const cell = cells[action.cellId];
                     if (cell) { cell.isPending = false; cell.el.classList.remove('pending-fill'); }
-                    // أخفِ الـ overlay لو كان ظاهر
-                    
                 }
+                pendingCell = null;
                 break;
+
             case 'show_question_on_screen':
-                // فقط في وضع مقدم بشري - يعرض السؤال في كرت السؤال بالـ sidebar
+                // فقط في وضع مقدم بشري - يعرض الحرف والسؤال فقط بدون أزرار
                 if (presenterType === 'human' && action.letter && action.question) {
                     document.getElementById('sidebar-q-letter').textContent = action.letter;
                     const qTextEl = document.getElementById('sidebar-q-text');
                     qTextEl.textContent = action.question;
-                    // إخفاء الإجابة - الوجه الأمامي فقط
+                    // إخفاء الأزرار
+                    const btns = document.getElementById('sidebar-card-buttons');
+                    if (btns) btns.style.display = 'none';
                     document.getElementById('flip-card-inner').classList.remove('flipped');
                     document.getElementById('title-container-sidebar').style.display = 'none';
                     document.getElementById('flip-card-wrapper').classList.add('visible');
                     setTimeout(() => adjustFontSize(qTextEl), 100);
                 }
                 break;
+
             case 'team_selected':
+                hideGameCard();
                 if (action.cellId !== undefined) {
                     const cell = cells[action.cellId];
                     if (cell && !cell.owner) {
@@ -2302,11 +2310,11 @@
                         syncGameState();
                     }
                 }
-                // أخفِ الـ overlay عند اختيار الفريق
-                
+                pendingCell = null;
                 break;
+
             case 'game_reset':
-                
+                hideGameCard();
                 startGame();
                 break;
         }
@@ -2464,4 +2472,4 @@
 
 </script>
 </body>
-            </html>
+    </html>
