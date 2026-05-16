@@ -78,6 +78,9 @@
         * {
             font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
             box-sizing: border-box; margin: 0; padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .screen { display: none; width: 100vw; height: 100vh; }
@@ -143,6 +146,64 @@
         @keyframes fadeSlideUp {
             from { opacity:0; transform: translateY(40px); }
             to   { opacity:1; transform: translateY(0); }
+        }
+        @keyframes cardFlip {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(180deg); }
+        }
+        @keyframes cardFlipReverse {
+            0% { transform: rotateY(180deg); }
+            100% { transform: rotateY(0deg); }
+        }
+        /* ===== FLIP CARD REAL 3D ===== */
+        .flip-card-wrapper {
+            flex: 1;
+            width: 95%;
+            margin: 4px auto;
+            perspective: 1000px;
+            min-height: 70px;
+            align-self: center;
+            display: none;
+            overflow: hidden;
+        }
+        .flip-card-wrapper.visible {
+            display: flex;
+            flex-direction: column;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            min-height: 70px;
+            transition: transform 0.6s ease-in-out;
+            transform-style: preserve-3d;
+        }
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 6px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background: rgba(241,196,15,0.12);
+            border-color: rgba(241,196,15,0.3);
         }
 
         /* Colored glow per word */
@@ -345,55 +406,6 @@
         .play-again-btn:active { transform: translateY(2px) scale(0.98); }
 
         /* ===== TEAM CHOICE MODAL ===== */
-        #team-choice-modal {
-            position: fixed; inset: 0; z-index: 600;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.7);
-        }
-        #team-choice-modal.active { display: flex; }
-        .team-choice-content {
-            background: #2c1b4d; border-radius: 24px; padding: clamp(15px, 4vw, 30px);
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            max-width: 92vw; max-height: 90vh; overflow-y: auto;
-            scrollbar-width: none;
-        }
-        .team-choice-content::-webkit-scrollbar { display: none; }
-        @keyframes modalPop {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .team-choice-title {
-            font-size: clamp(22px, 4vw, 32px); font-weight: 900; color: white;
-            text-align: center;
-        }
-        .team-buttons {
-            display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-        }
-        .team-choice-btn {
-            padding: clamp(14px, 2.5vw, 20px) clamp(30px, 5vw, 50px);
-            border: none; border-radius: 16px; font-size: clamp(18px, 3vw, 26px);
-            font-weight: 900; cursor: pointer; color: white;
-            transition: transform 0.15s, box-shadow 0.15s;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .team-choice-btn.green {
-            background: var(--team1-color) !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .team-choice-btn.orange {
-            background: var(--team2-color) !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .team-choice-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
-        .team-choice-btn:active {
-            transform: translateY(2px) scale(0.98);
-        }
-
         /* ===== NEW GAME CONFIRM MODAL ===== */
         #new-game-modal {
             position: fixed; inset: 0; z-index: 600;
@@ -604,36 +616,58 @@
             width: clamp(220px, 28vw, 400px);
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
-            padding: clamp(12px, 2vw, 30px) clamp(10px, 1.5vw, 20px);
+            justify-content: flex-start;
+            padding: clamp(8px, 1.2vw, 16px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-            z-index: 10; position: relative; overflow: hidden;
+            z-index: 10; position: relative; 
+            height: 100vh;
+            overflow: hidden;
+            gap: 0;
         }
+        .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
-            position: absolute; top: clamp(8px, 1.2vw, 15px); left: clamp(8px, 1.2vw, 15px);
+            position: relative; 
+            margin-top: clamp(2px, 0.5vh, 6px); 
+            margin-bottom: clamp(2px, 0.5vh, 6px);
             display: flex; flex-direction: column; align-items: center;
-            transform: rotate(-8deg); pointer-events: none; line-height: 1.1;
+            pointer-events: none; line-height: 1.0;
+            flex-shrink: 0;
         }
-        .logo-container .logo-word { font-size: clamp(28px, 4vw, 52px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(8px, 1.2vw, 15px); }
+        .logo-container .logo-word { font-size: clamp(13px, 2.2vh, 22px); }
+        .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.5vh, 5px); }
+
+        /* شعار كبير على الكمبيوتر (شاشات أعرض من 900px landscape) */
+        @media (min-width: 900px) and (orientation: landscape) {
+            .logo-container .logo-word { font-size: clamp(28px, 3.8vh, 52px); }
+            .logo-container .logo-ma   { letter-spacing: clamp(4px, 1vh, 10px); }
+            .logo-container {
+                margin-top: clamp(6px, 1vh, 14px);
+                margin-bottom: clamp(6px, 1vh, 14px);
+            }
+        }
         .title-container {
             text-align: center;
-            margin-top: clamp(100px, 18vw, 220px);
-            margin-bottom: clamp(8px, 1.5vw, 20px);
+            margin-top: 0;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            width: 100%;
+            padding: clamp(4px, 0.8vh, 10px) 0;
         }
         .title-word { display: block; font-weight: 900; line-height: 1.1; }
         .title-round {
-            color: #e74c3c; font-size: clamp(32px, 5.5vw, 68px);
-            transform: rotate(-10deg) translateX(-20px); display: inline-block; margin-bottom: -10px;
+            color: #e74c3c; font-size: clamp(28px, 5vw, 60px);
+            transform: rotate(0deg) translateX(0px); display: inline-block; margin-bottom: -8px;
             text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
                 0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
         }
         .title-first {
-            color: #f1c40f; font-size: clamp(56px, 9vw, 125px);
-            transform: rotate(10deg) translateX(20px); display: inline-block;
+            color: #f1c40f; font-size: clamp(50px, 8vw, 110px);
+            transform: rotate(0deg) translateX(0px); display: inline-block;
             text-shadow: 0 1px 0 #000,0 2px 0 #000,0 3px 0 #000,0 4px 0 #000,
                 0 5px 0 #000,0 6px 0 #000,0 7px 0 #000,0 8px 15px rgba(0,0,0,0.5);
         }
-        .score-container { margin-top: auto; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); }
+        .score-container { margin-top: 0; margin-bottom: 10px; display: flex; gap: clamp(12px, 2vw, 28px); padding-bottom: clamp(6px, 1vw, 10px); flex-shrink: 0; width: 100%; justify-content: center; z-index: 11; background: inherit; position: relative; }
         .score-box {
             width: clamp(60px, 8vw, 105px); height: clamp(60px, 8vw, 105px);
             display: flex; justify-content: center; align-items: center;
@@ -814,6 +848,29 @@
         .opt-btn.disabled { opacity: 0.45; cursor: default; }
         .opt-btn.disabled:hover { background: transparent; }
 
+        /* ===== PRESENTER TYPE TOGGLE IN DROPDOWN ===== */
+        .presenter-type-container {
+            padding: 10px 12px 8px;
+            border-bottom: 1px solid rgba(106,48,147,0.12);
+        }
+        .presenter-type-label {
+            color: #6a3093; font-size: 13px; font-weight: 900;
+            margin-bottom: 8px; text-align: right;
+        }
+        .presenter-type-btns {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .presenter-type-btn {
+            padding: 9px 6px; border-radius: 12px; border: none;
+            font-size: 14px; font-weight: 900; cursor: pointer;
+            background: #ede9f5; color: #6a3093;
+            transition: background 0.18s, color 0.18s;
+            text-align: center;
+        }
+        .presenter-type-btn.active {
+            background: #6a3093; color: white;
+        }
+
         /* ===== PRESENTER MODAL (Pop-up) ===== */
         #presenter-modal {
             position: fixed; inset: 0; z-index: 2000;
@@ -903,23 +960,23 @@
 
         /* ===== TABLET (portrait or small landscape) ===== */
         @media (max-width: 900px) and (orientation: landscape) {
-            .sidebar { width: clamp(180px, 26vw, 280px); padding: 10px 12px; }
-            .logo-container .logo-word { font-size: clamp(22px, 3.5vw, 36px); }
-            .title-container { margin-top: clamp(80px, 14vw, 140px); }
-            .title-round  { font-size: clamp(24px, 4vw, 44px); }
-            .title-first  { font-size: clamp(42px, 7vw, 80px); }
+            .sidebar { width: clamp(180px, 26vw, 280px); padding: 8px 10px; }
+            .logo-container .logo-word { font-size: clamp(12px, 2.2vw, 20px); }
+            .title-container { margin-top: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+            .title-round  { font-size: clamp(22px, 3.5vw, 40px); transform: rotate(0deg) translateX(0px) !important; margin-bottom: -6px !important; }
+            .title-first  { font-size: clamp(38px, 6vw, 70px); transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             .score-box { width: clamp(50px, 7vw, 80px); height: clamp(50px, 7vw, 80px); font-size: clamp(22px, 3.5vw, 40px); }
             .team-label { font-size: clamp(11px, 1.5vw, 18px); }
         }
 
         /* ===== MOBILE landscape (phone) ===== */
         @media (max-width: 680px) and (orientation: landscape) {
-            .sidebar { width: 200px; padding: 8px 10px; }
-            .logo-container .logo-word { font-size: 24px; }
-            .logo-container .logo-ma   { letter-spacing: 6px; }
-            .title-container { margin-top: 80px; margin-bottom: 6px; }
-            .title-round  { font-size: 22px; }
-            .title-first  { font-size: 38px; }
+            .sidebar { width: 200px; padding: 6px 8px; }
+            .logo-container .logo-word { font-size: 14px; }
+            .logo-container .logo-ma   { letter-spacing: 3px; }
+            .title-container { margin-top: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+            .title-round  { font-size: 20px; transform: rotate(0deg) translateX(0px) !important; margin-bottom: -4px !important; }
+            .title-first  { font-size: 34px; transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             .score-box { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
             .team-label { font-size: 11px; }
             .score-container { gap: 10px; padding-bottom: 4px; }
@@ -927,6 +984,9 @@
 
         /* ===== PORTRAIT PHONES/TABLETS — stack vertically ===== */
         @media (orientation: portrait) and (max-width: 1024px) {
+            .title-container { display: flex; flex-direction: column; align-items: center; }
+            .title-round { transform: rotate(0deg) translateX(0px) !important; margin-bottom: -6px !important; }
+            .title-first { transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             #screen-game { flex-direction: column-reverse; }
             .sidebar {
                 width: 100% !important;
@@ -939,6 +999,7 @@
             }
             .logo-container { display: none !important; }
             .title-container { margin-top: 0 !important; margin-bottom: 0 !important; text-align: center; }
+            .flip-card-wrapper { display: none !important; }
             .title-round { font-size: clamp(18px, 4vw, 32px); transform: rotate(-6deg) translateX(-10px); }
             .title-first { font-size: clamp(32px, 7vw, 60px); transform: rotate(6deg) translateX(10px); }
             .score-container { margin-top: 0 !important; padding-bottom: 0 !important; gap: 14px; }
@@ -1042,9 +1103,9 @@
 
 <!-- ===== QUESTION MODAL ===== -->
 <div id="question-modal" style="position:fixed; inset:0; z-index:1200; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px);">
-    <div style="background:#2c1b4d; border-radius:35px; width:90%; max-width:800px; padding:clamp(20px, 5vw, 40px); position:relative; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.6); border:2px solid rgba(255,255,255,0.1); max-height:92vh; overflow-y:auto; scrollbar-width:none;">
+    <div style="background:#2c1b4d; border-radius:35px; width:90%; max-width:800px; height: clamp(400px, 80vh, 600px); padding:clamp(20px, 5vw, 40px); position:relative; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,0.6); border:2px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; justify-content: center; overflow: hidden;">
         <div id="q-letter" style="width:80px; height:80px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:900; color:white; margin:0 auto 30px;">أ</div>
-        <div id="q-text" style="font-size:32px; font-weight:900; color:white; margin-bottom:40px; line-height:1.4;">ما هو السؤال؟</div>
+        <div id="q-text" style="font-size:clamp(18px, 4vw, 28px); font-weight:900; color:white; margin-bottom:20px; line-height:1.4; flex-grow: 1; display: flex; align-items: center; justify-content: center; overflow-y: auto; scrollbar-width: none;">ما هو السؤال؟</div>
         <div onclick="revealAnswer()" style="background:rgba(255,255,255,0.08); border:2px dashed rgba(255,255,255,0.2); border-radius:25px; padding:25px; margin-bottom:30px; cursor:pointer;">
             <div id="q-answer-hint" style="color:#f1c40f; font-size:20px; font-weight:700;"><span class="icon-svg"><script>document.write(Icons.lightbulb)</script></span> اظهر الاجابة</div>
             <div id="q-answer" style="font-size:28px; font-weight:900; color:white; display:none;">الإجابة تظهر هنا</div>
@@ -1059,21 +1120,6 @@
         </div>
     </div>
 </div>
-<!-- ===== TEAM CHOICE MODAL ===== -->
-<div id="team-choice-modal">
-    <div class="team-choice-content">
-        <div class="team-choice-title"><span class="icon-svg"><script>document.write(Icons.pointing_up)</script></span> اختار الفريق</div>
-        <div class="team-buttons">
-            <button class="team-choice-btn green" onclick="chooseTeam('green')">
-                ✓ <span id="modal-team1">الفريق الأول</span>
-            </button>
-            <button class="team-choice-btn orange" onclick="chooseTeam('orange')">
-                ✓ <span id="modal-team2">الفريق الثاني</span>
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- ===== NEW GAME CONFIRM MODAL ===== -->
 <div id="new-game-modal">
     <div class="new-game-content">
@@ -1206,18 +1252,41 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div class="title-container">
-            <span class="title-word title-round">الجولة</span>
-            <span class="title-word title-first" id="round-label" style="margin-top:10px;">الأولى</span>
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:hidden; gap:0;">
+            <div class="title-container" id="title-container-sidebar" style="flex-shrink: 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0;">
+                <span class="title-word title-round" style="margin-bottom:-8px; transform:rotate(0deg) translateX(0px);">الجولة</span>
+                <span class="title-word title-first" id="round-label" style="margin-top:0px; transform:rotate(0deg) translateX(0px);">الأولى</span>
+            </div>
+            <!-- FLIP CARD WRAPPER -->
+            <div id="flip-card-wrapper" class="flip-card-wrapper">
+                <div id="flip-card-inner" class="flip-card-inner">
+                    <!-- FRONT: السؤال -->
+                    <div class="flip-card-front">
+                        <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
+                        <div id="sidebar-q-text" style="font-size:16px; font-weight:900; color:white; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">السؤال</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0;">
+                            <button onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
+                            <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
+                        </div>
+                    </div>
+                    <!-- BACK: الإجابة -->
+                    <div class="flip-card-back">
+                        <div id="sidebar-q-answer" style="font-size:16px; font-weight:900; color:#f1c40f; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">الإجابة</div>
+                        <div style="flex-shrink:0;">
+                            <button onclick="flipCardBack()" style="width:100%; padding:10px; border-radius:10px; border:none; font-size:15px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.15); color:white; transition:all 0.2s; white-space:nowrap;">↩ عودة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="score-container">
+        <div class="score-container" style="margin-top: auto; margin-bottom: 10px;">
             <div style="display:flex;flex-direction:column;align-items:center;">
                 <div class="team-label" style="color:#2ecc00;" id="label-team1">الفريق الأول</div>
-                <div class="score-box green-score" id="score-g">0</div>
+                <div class="score-box green-score" id="score-g" onclick="grantQuestionToTeam('green')" style="cursor:pointer; transition:all 0.2s; user-select:none;">0</div>
             </div>
             <div style="display:flex;flex-direction:column;align-items:center;">
                 <div class="team-label" style="color:#ff6d00;" id="label-team2">الفريق الثاني</div>
-                <div class="score-box orange-score" id="score-o">0</div>
+                <div class="score-box orange-score" id="score-o" onclick="grantQuestionToTeam('orange')" style="cursor:pointer; transition:all 0.2s; user-select:none;">0</div>
             </div>
         </div>
     </div>
@@ -1237,6 +1306,14 @@
 <!-- ===== OPTIONS BUTTON & DROPDOWN ===== -->
 <button id="options-btn" onclick="toggleOptions()">⚙️ الخيارات</button>
 <div id="options-dropdown">
+    <!-- نوع المقدم -->
+    <div class="presenter-type-container">
+        <div class="presenter-type-label">نوع المقدم</div>
+        <div class="presenter-type-btns">
+            <button class="presenter-type-btn active" id="type-btn-ai" onclick="setPresenterType('ai')">مقدم آلي</button>
+            <button class="presenter-type-btn" id="type-btn-human" onclick="setPresenterType('human')">مقدم بشري</button>
+        </div>
+    </div>
     <button class="opt-btn" onclick="closeOptions(); showPresenterModal()"><span class="icon-svg"><script>document.write(Icons.television)</script></span> شاشة المقدم</button>
     <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()"><span class="icon-svg"><script>document.write(Icons.running)</script></span> جرس اللاعبين</button>
     <button class="opt-btn" onclick="closeOptions(); confirmNewGame()"><span class="icon-svg"><script>document.write(Icons.refresh)</script></span> بداية لعبة جديدة</button>
@@ -1362,7 +1439,153 @@
             document.getElementById('q-team-selection').style.display = 'none';
         }
     };
-    window.chooseTeamFromQuestion = (team) => { chooseTeam(team); closeQuestionModal(); };
+    window.chooseTeamFromQuestion = (team) => { closeQuestionModal(); };
+
+    /* ===== SIDEBAR QUESTION FUNCTIONS ===== */
+    window.grantQuestionToTeam = (team) => {
+        if (!pendingCell) return;
+        const cell = pendingCell;
+        cell.owner = team;
+        cell.isPending = false;
+        cell.el.classList.add(team + '-fill');
+        cell.el.classList.remove('pending-fill');
+        cell.text.style.display = 'none';
+        playPointSound();
+        checkPaths();
+        syncGameState();
+        closeSidebarQuestion();
+    };
+
+    function adjustFontSize(el) {
+        if (!el) return;
+
+        const isFront = el.id === 'sidebar-q-text';
+        const isBack  = el.id === 'sidebar-q-answer';
+        const face = isFront ? el.closest('.flip-card-front')
+                              : (isBack ? el.closest('.flip-card-back') : null);
+        if (!face) return;
+
+        // --- حساب المساحة المتاحة ---
+        const faceW = face.clientWidth  || face.getBoundingClientRect().width  || 200;
+        const faceH = face.clientHeight || face.getBoundingClientRect().height || 200;
+
+        // حجز مساحة الأزرار والحرف (تقديري إن لم يكن مرئياً بعد)
+        const letterEl  = face.querySelector('#sidebar-q-letter');
+        const buttonsEl = face.querySelector('div[style*="grid"]') ||
+                          face.querySelector('div > button')?.parentElement;
+
+        const letterH  = (letterEl  && letterEl.offsetHeight)  ? letterEl.offsetHeight  : 36;
+        const buttonsH = (buttonsEl && buttonsEl.offsetHeight)  ? buttonsEl.offsetHeight : 44;
+        const padding  = 32; // padding داخلي + gap
+
+        const maxW = faceW - 20;
+        const maxH = Math.max(40, faceH - letterH - buttonsH - padding);
+
+        // --- إيقاف Flex مؤقتاً لقياس دقيق ---
+        const prevDisplay = el.style.display;
+        const prevFlex    = el.style.flex;
+        const prevHeight  = el.style.height;
+        el.style.display    = 'block';
+        el.style.flex       = 'none';
+        el.style.height     = 'auto';
+        el.style.whiteSpace = 'normal';
+        el.style.wordBreak  = 'break-word';
+        el.style.width      = maxW + 'px';
+
+        // --- Binary Search على حجم الخط ---
+        let lo = 10, hi = 160, best = 10;
+        while (lo <= hi) {
+            const mid = (lo + hi) >> 1;
+            el.style.fontSize = mid + 'px';
+            // scrollHeight هو الارتفاع الحقيقي للنص
+            if (el.scrollHeight <= maxH && el.scrollWidth <= maxW) {
+                best = mid;
+                lo   = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+
+        // --- تطبيق النتيجة وإعادة Flex ---
+        el.style.fontSize = best + 'px';
+        el.style.display  = 'flex';
+        el.style.flex     = '1';
+        el.style.height   = '';
+        el.style.width    = '100%';
+    }
+
+    window.revealSidebarAnswer = () => {
+        const cardInner = document.getElementById('flip-card-inner');
+        const answerEl  = document.getElementById('sidebar-q-answer');
+        cardInner.classList.add('flipped');
+        // ننتظر انتهاء الـ flip (600ms) ثم نحسب مرتين للتأكد
+        setTimeout(() => adjustFontSize(answerEl), 650);
+        setTimeout(() => adjustFontSize(answerEl), 950);
+    };
+
+    window.flipCardBack = () => {
+        const cardInner = document.getElementById('flip-card-inner');
+        const qText     = document.getElementById('sidebar-q-text');
+        cardInner.classList.remove('flipped');
+        setTimeout(() => adjustFontSize(qText), 650);
+        setTimeout(() => adjustFontSize(qText), 950);
+    };
+
+    // إعادة الحساب عند تغيير حجم النافذة
+    window.addEventListener('resize', () => {
+        const wrapper = document.getElementById('flip-card-wrapper');
+        if (!wrapper || !wrapper.classList.contains('visible')) return;
+        const isFlipped = document.getElementById('flip-card-inner').classList.contains('flipped');
+        adjustFontSize(document.getElementById(isFlipped ? 'sidebar-q-answer' : 'sidebar-q-text'));
+    });
+
+    window.closeSidebarQuestion = () => {
+        const wrapper = document.getElementById('flip-card-wrapper');
+        const cardInner = document.getElementById('flip-card-inner');
+        // إخفاء الكرت وإعادة ضبط الوجه للأمامي
+        cardInner.classList.remove('flipped');
+        wrapper.classList.remove('visible');
+        // إخفاء overlay السؤال
+        
+        // إظهار عنوان الجولة مرة أخرى
+        document.getElementById('title-container-sidebar').style.display = 'flex';
+        if (pendingCell) {
+            pendingCell.isPending = false;
+            pendingCell.el.classList.remove('pending-fill');
+        }
+        pendingCell = null;
+        // Sync to Firebase
+        syncGameState();
+    };
+
+    window.changeSidebarQuestion = () => {
+        if (currentLetterQs.length > 1) {
+            qIndex = (qIndex + 1) % currentLetterQs.length;
+            const cardInner = document.getElementById('flip-card-inner');
+            const qTextEl = document.getElementById('sidebar-q-text');
+            const qAnsEl = document.getElementById('sidebar-q-answer');
+            
+            // إخفاء النصوص تماماً أثناء التغيير لمنع أي لمح
+            qTextEl.style.visibility = 'hidden';
+            qAnsEl.style.visibility = 'hidden';
+            
+            // العودة للوجه الأمامي
+            cardInner.classList.remove('flipped');
+            
+            // تحديث المحتوى
+            qTextEl.textContent = currentLetterQs[qIndex].q;
+            qAnsEl.textContent = currentLetterQs[qIndex].a;
+            
+            // ننتظر قليلاً حتى يستقر الكرت ثم نظهر النص ونحسب حجمه
+            setTimeout(() => {
+                qTextEl.style.visibility = 'visible';
+                adjustFontSize(qTextEl);
+                // الإجابة تبقى مخفية حتى يتم قلب الكرت لاحقاً، لكن نحسب حجمها الآن
+                adjustFontSize(qAnsEl);
+                qAnsEl.style.visibility = 'visible';
+            }, 400);
+        }
+    };
 
     /* ===== HEX PATTERN ===== */
     function drawHexPattern(svgEl) {
@@ -1509,8 +1732,6 @@
         updateAllLogos();
         document.getElementById('label-team1').textContent = settings.team1;
         document.getElementById('label-team2').textContent = settings.team2;
-        document.getElementById('modal-team1').textContent = settings.team1;
-        document.getElementById('modal-team2').textContent = settings.team2;
         document.getElementById('score-g').textContent = '0';
         document.getElementById('score-o').textContent = '0';
         document.getElementById('round-label').textContent = roundWords[1];
@@ -1519,40 +1740,62 @@
     }
 
     function showTeamChoice(cell) {
+        // If clicking the same pending cell, cancel selection
+        if (pendingCell === cell) {
+            closeSidebarQuestion();
+            return;
+        }
+
+        // Remove pending-fill from any previous cell
+        cells.forEach(c => {
+            c.isPending = false;
+            c.el.classList.remove('pending-fill');
+        });
+        
         pendingCell = cell;
+        cell.isPending = true;
+        cell.el.classList.add('pending-fill');
+        
         const letter = cell.el.querySelector('.hex-text').textContent;
         currentLetterQs = questionsData[letter] || [];
+
+        // مقدم بشري: لا شيء يظهر، الخلية تبقى pending فقط
+        if (presenterType === 'human') {
+            // إرسال للمقدم لتزامن الخلية المختارة
+            _ignorePresenterAction = true;
+            update(presenterActionsRef(), { type: 'cell_selected', cellId: cell.id, letter: letter, question: '', answer: '', timestamp: Date.now() });
+            setTimeout(() => { _ignorePresenterAction = false; }, 100);
+            return;
+        }
+
         if (currentLetterQs.length > 0) {
             qIndex = Math.floor(Math.random() * currentLetterQs.length);
-            document.getElementById('q-letter').textContent = letter;
-            document.getElementById('q-text').textContent = currentLetterQs[qIndex].q;
-            document.getElementById('q-answer').textContent = currentLetterQs[qIndex].a;
-            document.getElementById('q-btn-team1').textContent = settings.team1;
-            document.getElementById('q-btn-team2').textContent = settings.team2;
-            document.getElementById('q-answer').style.display = 'none';
-            document.getElementById('q-answer-hint').style.display = 'block';
-            document.getElementById('q-team-selection').style.display = 'none';
-            document.getElementById('question-modal').style.display = 'flex';
+            document.getElementById('sidebar-q-letter').textContent = letter;
+            const qTextEl = document.getElementById('sidebar-q-text');
+            const qAnsEl = document.getElementById('sidebar-q-answer');
+            qTextEl.textContent = currentLetterQs[qIndex].q;
+            qAnsEl.textContent = currentLetterQs[qIndex].a;
+            // لا نحتاج لإخفاء/إظهار العناصر بعد الآن - الوجهان منفصلان بالـ CSS
+            const revealBtn = document.getElementById('sidebar-reveal-btn');
+            if(revealBtn) revealBtn.textContent = '✓ أظهر';
+            
+            // إعادة ضبط الكرت للوجه الأمامي قبل العرض
+            document.getElementById('flip-card-inner').classList.remove('flipped');
+            // إخفاء عنوان الجولة وإظهار كرت السؤال
+            document.getElementById('title-container-sidebar').style.display = 'none';
+            document.getElementById('flip-card-wrapper').classList.add('visible');
+            
+            // ضبط حجم النص بعد العرض (مرتين للتأكد من اكتمال الـ layout)
+            setTimeout(() => adjustFontSize(qTextEl), 120);
+            setTimeout(() => adjustFontSize(qTextEl), 400);
+            
+            // Broadcast cell selection to presenter with question details
+            _ignorePresenterAction = true;
+            update(presenterActionsRef(), { type: 'cell_selected', cellId: cell.id, letter: letter, question: currentLetterQs[qIndex].q, answer: currentLetterQs[qIndex].a, timestamp: Date.now() });
+            setTimeout(() => { _ignorePresenterAction = false; }, 100);
         } else {
-            document.getElementById('team-choice-modal').classList.add('active');
+            // لا توجد أسئلة لهذا الحرف - الخلية تبقى pending
         }
-    }
-
-    function hideTeamChoice() {
-        document.getElementById('team-choice-modal').classList.remove('active');
-        pendingCell = null;
-    }
-
-    function chooseTeam(team) {
-        if (!pendingCell) return;
-        const cell = pendingCell;
-        hideTeamChoice();
-        cell.owner = team;
-        cell.el.classList.add(team + '-fill');
-        cell.text.style.display = 'none';
-        playPointSound();
-        checkPaths();
-        syncGameState();
     }
 
     /* ===== TRANSITION ===== */
@@ -1624,9 +1867,15 @@
         const text=document.createElementNS("http://www.w3.org/2000/svg","text");
         text.setAttribute("class","hex-text"); text.textContent=letter; text.setAttribute("dy","5");
         g.appendChild(poly); g.appendChild(text);
-        const cell={el:g,owner:null,text,row,col,id};
+        const cell={el:g,owner:null,isPending:false,text,row,col,id};
         cells.push(cell);
-        g.onclick=()=>{ if(cell.owner) return; playClickSound(); showTeamChoice(cell); };
+        g.onclick=()=>{ 
+            if(cell.owner) return; 
+            playClickSound(); 
+            showTeamChoice(cell); 
+            // Sync pending state to Firebase for presenter screen
+            update(gameStateRef(), { pendingCellId: pendingCell ? pendingCell.id : null });
+        };
         svg.appendChild(g);
     }
 
@@ -1731,6 +1980,26 @@
     /* ===== OPTIONS ===== */
     function toggleOptions() { document.getElementById('options-dropdown').classList.toggle('open'); }
     function closeOptions() { document.getElementById('options-dropdown').classList.remove('open'); }
+
+    /* ===== PRESENTER TYPE ===== */
+    let presenterType = 'ai'; // 'ai' | 'human'
+
+    window.setPresenterType = (type) => {
+        presenterType = type;
+        document.getElementById('type-btn-ai').classList.toggle('active', type === 'ai');
+        document.getElementById('type-btn-human').classList.toggle('active', type === 'human');
+
+        // لو تحول لمقدم بشري وكان في كرت ظاهر، أخفيه
+        if (type === 'human') {
+            const wrapper = document.getElementById('flip-card-wrapper');
+            const cardInner = document.getElementById('flip-card-inner');
+            if (wrapper && wrapper.classList.contains('visible')) {
+                cardInner.classList.remove('flipped');
+                wrapper.classList.remove('visible');
+                document.getElementById('title-container-sidebar').style.display = 'flex';
+            }
+        }
+    };
     document.addEventListener('click', function(e) {
         const btn = document.getElementById('options-btn');
         const dd  = document.getElementById('options-dropdown');
@@ -1969,6 +2238,32 @@
                         cell.isPending = true;
                         cell.el.classList.add('pending-fill');
                         playClickSound();
+                        if (action.letter && action.question && action.answer) {
+                            currentLetterQs = questionsData[action.letter] || [];
+                            if (currentLetterQs.length > 0) {
+                                qIndex = 0;
+                                document.getElementById('sidebar-q-letter').textContent = action.letter;
+                                const qTextEl = document.getElementById('sidebar-q-text');
+                                const qAnsEl = document.getElementById('sidebar-q-answer');
+                                qTextEl.textContent = action.question;
+                                qAnsEl.textContent = action.answer;
+                                // لا نحتاج لإخفاء/إظهار - الوجهان منفصلان بالـ CSS
+                                const revealBtn = document.getElementById('sidebar-reveal-btn');
+                                if(revealBtn) revealBtn.textContent = '✓ أظهر';
+                                // إعادة ضبط الكرت للوجه الأمامي
+                                document.getElementById('flip-card-inner').classList.remove('flipped');
+                                document.getElementById('title-container-sidebar').style.display = 'none';
+                                document.getElementById('flip-card-wrapper').classList.add('visible');
+                                
+                                // Adjust font size after display
+                                setTimeout(() => adjustFontSize(qTextEl), 100);
+                                pendingCell = cell;
+                            }
+                        }
+                        // وضع مقدم بشري: فقط تحديد الخلية بدون عرض السؤال
+                        if (presenterType === 'human' && action.cellId !== undefined) {
+                            pendingCell = cell;
+                        }
                     }
                 }
                 break;
@@ -1976,6 +2271,21 @@
                 if (action.cellId !== undefined) {
                     const cell = cells[action.cellId];
                     if (cell) { cell.isPending = false; cell.el.classList.remove('pending-fill'); }
+                    // أخفِ الـ overlay لو كان ظاهر
+                    
+                }
+                break;
+            case 'show_question_on_screen':
+                // فقط في وضع مقدم بشري - يعرض السؤال في كرت السؤال بالـ sidebar
+                if (presenterType === 'human' && action.letter && action.question) {
+                    document.getElementById('sidebar-q-letter').textContent = action.letter;
+                    const qTextEl = document.getElementById('sidebar-q-text');
+                    qTextEl.textContent = action.question;
+                    // إخفاء الإجابة - الوجه الأمامي فقط
+                    document.getElementById('flip-card-inner').classList.remove('flipped');
+                    document.getElementById('title-container-sidebar').style.display = 'none';
+                    document.getElementById('flip-card-wrapper').classList.add('visible');
+                    setTimeout(() => adjustFontSize(qTextEl), 100);
                 }
                 break;
             case 'team_selected':
@@ -1992,8 +2302,11 @@
                         syncGameState();
                     }
                 }
+                // أخفِ الـ overlay عند اختيار الفريق
+                
                 break;
             case 'game_reset':
+                
                 startGame();
                 break;
         }
@@ -2012,8 +2325,6 @@
             document.getElementById('label-team2').textContent = settings.team2;
             document.getElementById('label-team1').style.color = settings.colors?.t1 || '#2ecc00';
             document.getElementById('label-team2').style.color = settings.colors?.t2 || '#ff6d00';
-            document.getElementById('modal-team1').textContent = settings.team1;
-            document.getElementById('modal-team2').textContent = settings.team2;
         }
     });
 
@@ -2088,8 +2399,6 @@
     window.showStart        = showStart;
     window.selectRounds     = selectRounds;
     window.showTeamChoice   = showTeamChoice;
-    window.hideTeamChoice   = hideTeamChoice;
-    window.chooseTeam       = chooseTeam;
     window.toggleOptions    = toggleOptions;
     window.closeOptions     = closeOptions;
     window.showPresenterModal = showPresenterModal;
@@ -2155,4 +2464,4 @@
 
 </script>
 </body>
-</html>
+            </html>
