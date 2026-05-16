@@ -78,6 +78,9 @@
         * {
             font-family: 'AA-GALAXY-BOLD', 'AA-GALAXY', sans-serif !important;
             box-sizing: border-box; margin: 0; padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .screen { display: none; width: 100vw; height: 100vh; }
@@ -681,6 +684,16 @@
         }
         .logo-container .logo-word { font-size: clamp(13px, 2.2vh, 22px); }
         .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.5vh, 5px); }
+
+        /* شعار كبير على الكمبيوتر (شاشات أعرض من 900px landscape) */
+        @media (min-width: 900px) and (orientation: landscape) {
+            .logo-container .logo-word { font-size: clamp(28px, 3.8vh, 52px); }
+            .logo-container .logo-ma   { letter-spacing: clamp(4px, 1vh, 10px); }
+            .logo-container {
+                margin-top: clamp(6px, 1vh, 14px);
+                margin-bottom: clamp(6px, 1vh, 14px);
+            }
+        }
         .title-container {
             text-align: center;
             margin-top: 0;
@@ -2460,4 +2473,4 @@
 
 </script>
 </body>
-                                                                                                                                                                                               </html>
+</html>
