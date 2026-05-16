@@ -145,18 +145,30 @@
             to   { opacity:1; transform: translateY(0); }
         }
         @keyframes cardFlip {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(180deg); }
+            0% { transform: perspective(1000px) rotateY(0deg); }
+            100% { transform: perspective(1000px) rotateY(180deg); }
         }
         @keyframes cardFlipReverse {
-            0% { transform: rotateY(180deg); }
-            100% { transform: rotateY(0deg); }
+            0% { transform: perspective(1000px) rotateY(180deg); }
+            100% { transform: perspective(1000px) rotateY(0deg); }
         }
         .sidebar-question-container-flip {
-            animation: cardFlip 0.6s ease-in-out forwards;
+            animation: cardFlip 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
         .sidebar-question-container-flip-reverse {
-            animation: cardFlipReverse 0.6s ease-in-out forwards;
+            animation: cardFlipReverse 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        /* Fix mirrored text on back side */
+        #sidebar-q-answer {
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+        }
+        #sidebar-q-text, #sidebar-q-letter, .sidebar-q-btns {
+            backface-visibility: hidden;
         }
 
         /* Colored glow per word */
@@ -618,7 +630,7 @@
             width: clamp(220px, 28vw, 400px);
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             padding: clamp(10px, 1.5vw, 20px);
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
@@ -629,14 +641,21 @@
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
             position: relative; 
-            margin-top: clamp(2px, 1vh, 10px); 
-            margin-bottom: clamp(2px, 1vh, 10px);
+            margin-top: clamp(5px, 2vh, 20px); 
+            margin-bottom: clamp(5px, 2vh, 20px);
             display: flex; flex-direction: column; align-items: center;
             pointer-events: none; line-height: 1.1;
             flex-shrink: 0;
         }
-        .logo-container .logo-word { font-size: clamp(18px, 3.5vh, 32px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(3px, 0.8vh, 8px); }
+        /* Desktop: Large Logo */
+        .logo-container .logo-word { font-size: clamp(24px, 4vh, 42px); }
+        .logo-container .logo-ma   { letter-spacing: clamp(5px, 1vh, 12px); }
+        
+        /* Mobile: Small Logo */
+        @media (max-width: 1024px) {
+            .logo-container .logo-word { font-size: clamp(16px, 3vh, 24px); }
+            .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.5vh, 6px); }
+        }
         .title-container {
             text-align: center;
             margin-top: auto;
@@ -1231,20 +1250,20 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-start; width:100%; overflow:hidden;">
-            <div class="title-container" id="title-container-sidebar" style="margin-top: 5px; flex-shrink: 0;">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:hidden;">
+            <div class="title-container" id="title-container-sidebar" style="flex-shrink: 0;">
                 <span class="title-word title-round">الجولة</span>
                 <span class="title-word title-first" id="round-label" style="margin-top:5px;">الأولى</span>
             </div>
-        <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:8px; margin:5px auto; text-align:center; flex:1; align-self:center; min-height:60px; max-height:none; flex-direction:column; justify-content:center; gap:5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden;">
-            <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
-            <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">السؤال</div>
-            <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px; line-height:1.2; flex:1; align-items:center; justify-content:center; overflow:hidden;">الإجابة</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <button onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
-                <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
+            <div id="sidebar-question-container" style="display:none; width:96%; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:8px; margin:5px auto; text-align:center; flex:1; align-self:center; min-height:60px; max-height:none; flex-direction:column; justify-content:center; gap:5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow:hidden; position:relative;">
+                <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
+                <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">السؤال</div>
+                <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; display:none; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:8px; line-height:1.2; flex:1; align-items:center; justify-content:center; overflow:hidden; width:100%; height:100%; position:absolute; top:0; left:0; box-sizing:border-box;">الإجابة</div>
+                <div class="sidebar-q-btns" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
+                    <button id="sidebar-new-btn" onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
+                    <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
+                </div>
             </div>
-        </div>
         </div>
         <div class="score-container" style="margin-top: 10px; margin-bottom: 10px;">
             <div style="display:flex;flex-direction:column;align-items:center;">
@@ -1451,6 +1470,7 @@
         const qText = document.getElementById('sidebar-q-text');
         const answerEl = document.getElementById('sidebar-q-answer');
         const btn = document.getElementById('sidebar-reveal-btn');
+        const newBtn = document.getElementById('sidebar-new-btn');
         const container = document.getElementById('sidebar-question-container');
         
         if (answerEl.style.display === 'none') {
@@ -1458,9 +1478,10 @@
             container.classList.add('sidebar-question-container-flip');
             
             setTimeout(() => {
-                qText.style.display = 'none';
+                qText.style.visibility = 'hidden';
                 answerEl.style.display = 'flex';
-                btn.textContent = '✓ السؤال';
+                btn.textContent = '✓ عودة';
+                newBtn.style.visibility = 'hidden';
                 setTimeout(() => adjustFontSize(answerEl), 10);
             }, 300);
         } else {
@@ -1468,9 +1489,10 @@
             container.classList.add('sidebar-question-container-flip-reverse');
             
             setTimeout(() => {
-                qText.style.display = 'flex';
+                qText.style.visibility = 'visible';
                 answerEl.style.display = 'none';
                 btn.textContent = '✓ أظهر';
+                newBtn.style.visibility = 'visible';
                 setTimeout(() => adjustFontSize(qText), 10);
             }, 300);
         }
@@ -1663,7 +1685,6 @@
         // If clicking the same pending cell, cancel selection
         if (pendingCell === cell) {
             closeSidebarQuestion();
-            hideTeamChoice();
             return;
         }
 
@@ -1679,31 +1700,42 @@
         
         const letter = cell.el.querySelector('.hex-text').textContent;
         currentLetterQs = questionsData[letter] || [];
+        
+        document.getElementById('sidebar-q-letter').textContent = letter;
+        const qTextEl = document.getElementById('sidebar-q-text');
+        const qAnsEl = document.getElementById('sidebar-q-answer');
+        const revealBtn = document.getElementById('sidebar-reveal-btn');
+        const newBtn = document.getElementById('sidebar-new-btn');
+        
         if (currentLetterQs.length > 0) {
             qIndex = Math.floor(Math.random() * currentLetterQs.length);
-            document.getElementById('sidebar-q-letter').textContent = letter;
-            const qTextEl = document.getElementById('sidebar-q-text');
-            const qAnsEl = document.getElementById('sidebar-q-answer');
             qTextEl.textContent = currentLetterQs[qIndex].q;
             qAnsEl.textContent = currentLetterQs[qIndex].a;
-            qAnsEl.style.display = 'none';
-            qTextEl.style.display = 'flex';
-            const revealBtn = document.getElementById('sidebar-reveal-btn');
-            if(revealBtn) revealBtn.textContent = '✓ أظهر';
-            
-            // Hide round title and show question card
-            document.getElementById('title-container-sidebar').style.display = 'none';
-            document.getElementById('sidebar-question-container').style.display = 'flex';
-            
-            // Adjust font size after display
-            setTimeout(() => adjustFontSize(qTextEl), 10);
-            
-            // Broadcast cell selection to presenter with question details
+            if(newBtn) newBtn.style.display = 'block';
+        } else {
+            qTextEl.textContent = "لا توجد أسئلة لهذا الحرف حالياً";
+            qAnsEl.textContent = "يرجى إضافة أسئلة في ملف البيانات";
+            if(newBtn) newBtn.style.display = 'none';
+        }
+        
+        qAnsEl.style.display = 'none';
+        qTextEl.style.visibility = 'visible';
+        qTextEl.style.display = 'flex';
+        if(revealBtn) revealBtn.textContent = '✓ أظهر';
+        if(newBtn) newBtn.style.visibility = 'visible';
+        
+        // Hide round title and show question card
+        document.getElementById('title-container-sidebar').style.display = 'none';
+        document.getElementById('sidebar-question-container').style.display = 'flex';
+        
+        // Adjust font size after display
+        setTimeout(() => adjustFontSize(qTextEl), 10);
+        
+        // Broadcast cell selection to presenter
+        if (currentLetterQs.length > 0) {
             _ignorePresenterAction = true;
             update(presenterActionsRef(), { type: 'cell_selected', cellId: cell.id, letter: letter, question: currentLetterQs[qIndex].q, answer: currentLetterQs[qIndex].a, timestamp: Date.now() });
             setTimeout(() => { _ignorePresenterAction = false; }, 100);
-        } else {
-            document.getElementById('team-choice-modal').classList.add('active');
         }
     }
 
