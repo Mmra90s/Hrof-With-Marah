@@ -1484,25 +1484,22 @@
         const face = isFront ? el.closest('.flip-card-front') : (isBack ? el.closest('.flip-card-back') : null);
         if (!face) return;
 
-        // تجهيز العنصر للقياس
+        // تصفير الخصائص التي قد تعيق القياس
         el.style.display = 'block';
         el.style.height = 'auto';
+        el.style.width = '100%';
         el.style.flex = 'none';
 
-        // حساب المساحة المتاحة من الـ face
-        let occupiedH = 0;
-        Array.from(face.children).forEach(child => {
-            if (child !== el && window.getComputedStyle(child).position !== 'absolute') {
-                occupiedH += child.offsetHeight || 0;
-            }
-        });
-
-        const style = window.getComputedStyle(face);
-        const paddingH = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
-        const gapH = (face.querySelectorAll(':scope > *:not([style*="absolute"])').length - 1) * (parseFloat(style.gap) || 4);
+        // حساب المساحة المتاحة الفعلية
+        const letter = face.querySelector('#sidebar-q-letter');
+        const buttons = face.querySelector('div[style*="grid"]') || face.querySelector('.sidebar-buttons') || face.querySelector('button')?.parentElement;
         
-        const maxH = face.clientHeight - occupiedH - paddingH - gapH - 10;
-        const maxW = face.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0) - 10;
+        const letterH = letter ? letter.offsetHeight || 32 : 0;
+        const buttonsH = buttons ? buttons.offsetHeight || 40 : 0;
+        const reservedH = letterH + buttonsH + 30; 
+        
+        const maxH = face.clientHeight - reservedH;
+        const maxW = face.clientWidth - 20;
 
         let low = 10, high = isBack ? 150 : 100, best = 10;
 
@@ -1519,10 +1516,11 @@
             }
         }
 
+        // تطبيق الحجم النهائي وإعادة الـ Flexbox
         el.style.fontSize = best + 'px';
         el.style.display = 'flex';
         el.style.flex = '1';
-        el.style.height = 'auto'; // السماح للـ Flexbox بالتحكم
+        el.style.height = '100%';
     }
 
     window.revealSidebarAnswer = () => {
