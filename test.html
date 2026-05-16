@@ -155,10 +155,10 @@
         /* ===== FLIP CARD REAL 3D ===== */
         .flip-card-wrapper {
             flex: 1;
-            width: 96%;
-            margin: 5px auto;
+            width: 95%;
+            margin: 4px auto;
             perspective: 1000px;
-            min-height: 80px;
+            min-height: 70px;
             align-self: center;
             display: none;
             overflow: hidden;
@@ -171,7 +171,7 @@
             position: relative;
             width: 100%;
             flex: 1;
-            min-height: 80px;
+            min-height: 70px;
             transition: transform 0.6s ease-in-out;
             transform-style: preserve-3d;
         }
@@ -188,12 +188,12 @@
             background: rgba(255,255,255,0.1);
             border: 2px solid rgba(255,255,255,0.2);
             border-radius: 20px;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             overflow: hidden;
         }
@@ -975,9 +975,9 @@
         @media (max-width: 900px) and (orientation: landscape) {
             .sidebar { width: clamp(180px, 26vw, 280px); padding: 8px 10px; }
             .logo-container .logo-word { font-size: clamp(12px, 2.2vw, 20px); }
-            .title-container { margin-top: 0; margin-bottom: 0; }
-            .title-round  { font-size: clamp(22px, 3.5vw, 40px); }
-            .title-first  { font-size: clamp(38px, 6vw, 70px); }
+            .title-container { margin-top: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+            .title-round  { font-size: clamp(22px, 3.5vw, 40px); transform: rotate(0deg) translateX(0px) !important; margin-bottom: -6px !important; }
+            .title-first  { font-size: clamp(38px, 6vw, 70px); transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             .score-box { width: clamp(50px, 7vw, 80px); height: clamp(50px, 7vw, 80px); font-size: clamp(22px, 3.5vw, 40px); }
             .team-label { font-size: clamp(11px, 1.5vw, 18px); }
         }
@@ -987,9 +987,9 @@
             .sidebar { width: 200px; padding: 6px 8px; }
             .logo-container .logo-word { font-size: 14px; }
             .logo-container .logo-ma   { letter-spacing: 3px; }
-            .title-container { margin-top: 0; margin-bottom: 0; }
-            .title-round  { font-size: 20px; }
-            .title-first  { font-size: 34px; }
+            .title-container { margin-top: 0; margin-bottom: 0; display: flex; flex-direction: column; align-items: center; }
+            .title-round  { font-size: 20px; transform: rotate(0deg) translateX(0px) !important; margin-bottom: -4px !important; }
+            .title-first  { font-size: 34px; transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             .score-box { width: 46px; height: 46px; font-size: 22px; border-radius: 10px; }
             .team-label { font-size: 11px; }
             .score-container { gap: 10px; padding-bottom: 4px; }
@@ -997,6 +997,9 @@
 
         /* ===== PORTRAIT PHONES/TABLETS — stack vertically ===== */
         @media (orientation: portrait) and (max-width: 1024px) {
+            .title-container { display: flex; flex-direction: column; align-items: center; }
+            .title-round { transform: rotate(0deg) translateX(0px) !important; margin-bottom: -6px !important; }
+            .title-first { transform: rotate(0deg) translateX(0px) !important; margin-top: 0px !important; }
             #screen-game { flex-direction: column-reverse; }
             .sidebar {
                 width: 100% !important;
@@ -1288,7 +1291,7 @@
                     <!-- FRONT: السؤال -->
                     <div class="flip-card-front">
                         <div id="sidebar-q-letter" style="width:32px; height:32px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
-                        <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">السؤال</div>
+                        <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">السؤال</div>
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0;">
                             <button onclick="changeSidebarQuestion()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
                             <button id="sidebar-reveal-btn" onclick="revealSidebarAnswer()" style="padding:8px; border-radius:10px; border:none; font-size:13px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
@@ -1296,7 +1299,7 @@
                     </div>
                     <!-- BACK: الإجابة -->
                     <div class="flip-card-back">
-                        <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">الإجابة</div>
+                        <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; line-height:1.3; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; white-space:normal; word-wrap:break-word; overflow-wrap:break-word;">الإجابة</div>
                         <div style="flex-shrink:0;">
                             <button onclick="flipCardBack()" style="width:100%; padding:10px; border-radius:10px; border:none; font-size:15px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.15); color:white; transition:all 0.2s; white-space:nowrap;">↩ عودة</button>
                         </div>
@@ -1485,44 +1488,61 @@
             const wrapper = document.getElementById('flip-card-wrapper');
             if (!wrapper || wrapper.clientHeight === 0 || wrapper.clientWidth === 0) return;
             
+            // تطبيق white-space: normal لضمان التفاف صحيح
+            el.style.whiteSpace = 'normal';
+            el.style.wordWrap = 'break-word';
+            el.style.overflowWrap = 'break-word';
+            
             const wrapperH = wrapper.clientHeight;
             const wrapperW = wrapper.clientWidth;
             
+            // حساب المساحة المحجوزة بدقة أكبر
             let reservedHeight = 0;
+            let reservedWidth = 0;
             
             const letter  = face.querySelector('#sidebar-q-letter');
             const buttons = face.querySelector('div[style*="grid"]');
             
-            if (letter) {
-                reservedHeight += letter.offsetHeight + 10;
+            if (letter && letter.offsetHeight > 0) {
+                reservedHeight += letter.offsetHeight + 8; // gap أقل
             }
-            if (buttons) {
-                reservedHeight += buttons.offsetHeight + 10;
+            if (buttons && buttons.offsetHeight > 0) {
+                reservedHeight += buttons.offsetHeight + 8; // gap أقل
             }
             
-            reservedHeight += 16;
-            const reservedWidth = 16;
+            // padding الوجه (8px من كل جانب)
+            reservedHeight += 12; // top + bottom padding مع margin أقل
+            reservedWidth = 12; // left + right padding
             
-            const maxHeight = Math.max(wrapperH - reservedHeight, 20);
-            const maxWidth  = Math.max(wrapperW - reservedWidth, 20);
+            const maxHeight = Math.max(wrapperH - reservedHeight, 30);
+            const maxWidth  = Math.max(wrapperW - reservedWidth, 30);
 
-            let minFontSize = 8;
-            let maxFontSize = 70;
+            let minFontSize = 12; // حد أدنى أعلى قليلاً
+            let maxFontSize = 100; // حد أقصى أعلى
             let bestFontSize = minFontSize;
+            let lastGoodSize = minFontSize;
 
+            // Binary search مع تحسينات
             while (minFontSize <= maxFontSize) {
                 let mid = Math.floor((minFontSize + maxFontSize) / 2);
                 el.style.fontSize = mid + 'px';
                 
-                if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
+                // انتظر قليلاً حتى يتم تحديث الـ layout
+                let scrollH = el.scrollHeight;
+                let scrollW = el.scrollWidth;
+                
+                // التحقق مع margin صغير للأمان
+                if (scrollH <= maxHeight && scrollW <= maxWidth) {
+                    lastGoodSize = mid;
                     bestFontSize = mid;
-                    minFontSize = mid + 1;
+                    minFontSize = mid + 1; // جرب أكبر
                 } else {
-                    maxFontSize = mid - 1;
+                    maxFontSize = mid - 1; // جرب أصغر
                 }
             }
             
-            el.style.fontSize = bestFontSize + 'px';
+            // استخدم آخر حجم نجح
+            el.style.fontSize = lastGoodSize + 'px';
         });
     }
 
