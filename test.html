@@ -1484,48 +1484,45 @@
         const face = isFront ? el.closest('.flip-card-front') : (isBack ? el.closest('.flip-card-back') : null);
         if (!face) return;
 
-        // تجهيز العنصر للقياس الدقيق
+        // تجهيز العنصر للقياس
         el.style.display = 'block';
         el.style.height = 'auto';
-        el.style.width = '100%';
         el.style.flex = 'none';
 
-        // حساب المساحة المتاحة الفعلية من الـ face
-        let reservedH = 0;
+        // حساب المساحة المتاحة من الـ face
+        let occupiedH = 0;
         Array.from(face.children).forEach(child => {
             if (child !== el && window.getComputedStyle(child).position !== 'absolute') {
-                reservedH += child.offsetHeight || 0;
+                occupiedH += child.offsetHeight || 0;
             }
         });
 
         const style = window.getComputedStyle(face);
-        const paddingH = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom) || 12;
+        const paddingH = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0);
         const gapH = (face.querySelectorAll(':scope > *:not([style*="absolute"])').length - 1) * (parseFloat(style.gap) || 4);
         
-        // المساحة المتاحة للنص مع هامش أمان بسيط
-        const availableH = face.clientHeight - reservedH - paddingH - gapH - 5;
-        const availableW = face.clientWidth - (parseFloat(style.paddingLeft) + parseFloat(style.paddingRight) || 12) - 5;
+        const maxH = face.clientHeight - occupiedH - paddingH - gapH - 10;
+        const maxW = face.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0) - 10;
 
-        let min = 10, max = isBack ? 150 : 100, best = min;
+        let low = 10, high = isBack ? 150 : 100, best = 10;
 
-        while (min <= max) {
-            let mid = Math.floor((min + max) / 2);
+        while (low <= high) {
+            let mid = Math.floor((low + high) / 2);
             el.style.fontSize = mid + 'px';
             
-            // نستخدم offsetHeight للتحقق لأنه الأدق عند تصفير الـ height
-            if (el.offsetHeight <= availableH && el.scrollWidth <= availableW) {
+            // نستخدم scrollHeight للتحقق من التجاوز
+            if (el.scrollHeight <= maxH && el.scrollWidth <= maxW) {
                 best = mid;
-                min = mid + 1;
+                low = mid + 1;
             } else {
-                max = mid - 1;
+                high = mid - 1;
             }
         }
 
-        // تطبيق الحجم النهائي وإعادة الـ Flexbox
         el.style.fontSize = best + 'px';
         el.style.display = 'flex';
         el.style.flex = '1';
-        el.style.height = '100%';
+        el.style.height = 'auto'; // السماح للـ Flexbox بالتحكم
     }
 
     window.revealSidebarAnswer = () => {
