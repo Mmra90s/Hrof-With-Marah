@@ -304,7 +304,7 @@
 
         .btn-team1 { background: var(--team1-color); text-shadow: 0 0 8px rgba(255,255,255,0.6), 0 2px 4px rgba(0,0,0,0.8); }
         .btn-team2 { background: var(--team2-color); text-shadow: 0 0 8px rgba(255,255,255,0.6), 0 2px 4px rgba(0,0,0,0.8); }
-        .btn-undo { background: #ef5350; }
+        .btn-show-question { background: linear-gradient(135deg, #7c4dff, #651fff); }
         .btn-change { background: linear-gradient(90deg, #26c6da, #00acc1); }
 
         /* Team selected state */
@@ -699,8 +699,8 @@
                 <button class="control-btn btn-team2" id="btnTeam2" onclick="selectTeam('orange')" disabled>
                     <span id="btnTeam2Text">الفريق الثاني</span>
                 </button>
-                <button class="control-btn btn-undo" id="btnUndo" onclick="undoSelection()" disabled>
-                    إلغاء التحديد
+                <button class="control-btn btn-show-question" id="btnShowQuestion" onclick="showQuestionOnScreen()" disabled>
+                    عرض السؤال على الشاشة
                 </button>
                 <button class="control-btn btn-change" id="btnChangeQuestion" onclick="changeQuestion()" disabled>
                     تغيير السؤال
@@ -938,7 +938,7 @@
             selectedCell = null;
             broadcastAction({ type:'cell_unselected', cellId:cell.id });
             setTeamButtonsEnabled(false);
-            document.getElementById('btnUndo').disabled = true;
+            document.getElementById('btnShowQuestion').disabled = true;
             document.getElementById('btnChangeQuestion').disabled = true;
             document.getElementById('questionBox').innerHTML = '<div class="loading-text">اختر حرفاً من اللوحة</div>';
             updateInstruction();
@@ -954,7 +954,7 @@
         broadcastAction({ type:'cell_selected', cellId:cell.id, letter:letter, question:q.question, answer:q.answer });
         displayQuestion(letter);
         setTeamButtonsEnabled(true);
-        document.getElementById('btnUndo').disabled = false;
+        document.getElementById('btnShowQuestion').disabled = false;
         document.getElementById('btnTeam1').classList.remove('selected');
         document.getElementById('btnTeam2').classList.remove('selected');
         updateInstruction();
@@ -973,7 +973,7 @@
         document.getElementById('btnTeam1').classList.remove('selected');
         document.getElementById('btnTeam2').classList.remove('selected');
         setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
+        document.getElementById('btnShowQuestion').disabled = true;
         document.getElementById('btnChangeQuestion').disabled = true;
         currentQuestionLetter = null;
         const answeredCell = selectedCell;
@@ -1020,11 +1020,19 @@
         currentRound++;
         buildBoard(); lastGreenPath=false; lastOrangePath=false; selectedCell=null;
         setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
+        document.getElementById('btnShowQuestion').disabled = true;
         document.getElementById('btnChangeQuestion').disabled = true;
         updateInstruction();
         // Push new letters to Firebase so index syncs
         set(lettersRef(), letters);
+    }
+
+    function showQuestionOnScreen() {
+        if (!selectedCell || !currentQuestionLetter) return;
+        const questionBox = document.getElementById('questionBox');
+        const letter = questionBox.querySelector('.question-letter')?.textContent || currentQuestionLetter;
+        const questionText = questionBox.querySelector('.question-text')?.textContent || '';
+        broadcastAction({ type: 'show_question_on_screen', letter: letter, question: questionText });
     }
 
     function undoSelection() {
@@ -1036,7 +1044,7 @@
             broadcastAction({ type:'cell_unselected', cellId });
         }
         setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
+        document.getElementById('btnShowQuestion').disabled = true;
         document.getElementById('btnChangeQuestion').disabled = true;
         document.getElementById('btnTeam1').classList.remove('selected');
         document.getElementById('btnTeam2').classList.remove('selected');
@@ -1049,7 +1057,7 @@
         document.getElementById('score1').textContent = '0';
         document.getElementById('score2').textContent = '0';
         setTeamButtonsEnabled(false);
-        document.getElementById('btnUndo').disabled = true;
+        document.getElementById('btnShowQuestion').disabled = true;
         document.getElementById('btnChangeQuestion').disabled = true;
         document.getElementById('btnTeam1').classList.remove('selected');
         document.getElementById('btnTeam2').classList.remove('selected');
@@ -1218,6 +1226,43 @@
         setTimeout(() => remove(buzzResetRef()), 2000);
     }
 
+    // Listen for cell selections broadcast by game screen (human mode sync)
+    let _lastPresenterActionTS = 0;
+    onValue(presenterActionRef(), (snapshot) => {
+        if (!snapshot.exists()) return;
+        const action = snapshot.val();
+        if (!action || !action.timestamp || action.timestamp === _lastPresenterActionTS) return;
+        // Only process actions written by the game screen (not by us)
+        // We detect this by checking if it was written very recently after our own broadcast
+        applyExternalCellAction(action);
+    });
+
+    function applyExternalCellAction(action) {
+        if (action.type === 'cell_selected' && action.cellId !== undefined) {
+            // Only sync pending highlight if this came from game screen (question/answer empty = human mode)
+            if (!action.question && !action.answer) {
+                cells.forEach(c => {
+                    if (c.isPending) { c.isPending = false; c.el.classList.remove('pending-fill'); }
+                });
+                const cell = cells[action.cellId];
+                if (cell && !cell.owner) {
+                    cell.isPending = true;
+                    cell.el.classList.add('pending-fill');
+                    if (!selectedCell) {
+                        selectedCell = cell;
+                        const letter = cell.el.querySelector('.hex-text').textContent;
+                        displayQuestion(letter);
+                        setTeamButtonsEnabled(true);
+                        document.getElementById('btnShowQuestion').disabled = false;
+                    }
+                }
+            }
+        } else if (action.type === 'cell_unselected' && action.cellId !== undefined) {
+            const cell = cells[action.cellId];
+            if (cell) { cell.isPending = false; cell.el.classList.remove('pending-fill'); }
+        }
+    }
+
     /* ===== INIT ===== */
     updateAllLogos();
     fetchQuestions();
@@ -1230,6 +1275,7 @@
     window.changeQuestion   = changeQuestion;
     window.playBell         = playBell;
     window.resetBuzzFromPresenter = resetBuzzFromPresenter;
+    window.showQuestionOnScreen = showQuestionOnScreen;
 
     // Fullscreen Logic
     const fullscreenBtn = document.getElementById('fullscreen-btn');
@@ -1255,4 +1301,4 @@
 
 </script>
 </body>
-    </html>
+</html>
