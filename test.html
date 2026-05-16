@@ -660,8 +660,20 @@
         /* Mobile: Small Logo */
         @media (max-width: 1024px) {
             .logo-container { margin-top: 5px; margin-bottom: 5px; }
-            .logo-container .logo-word { font-size: clamp(16px, 3.5vw, 24px); }
-            .logo-container .logo-ma   { letter-spacing: clamp(3px, 0.8vw, 6px); }
+            .logo-container .logo-word { font-size: clamp(14px, 3vw, 20px); }
+            .logo-container .logo-ma   { letter-spacing: clamp(2px, 0.5vw, 4px); }
+            
+            /* Responsive buttons on mobile */
+            #sidebar-card-front button, #sidebar-card-back button {
+                padding: 8px !important;
+                font-size: 12px !important;
+                border-radius: 8px !important;
+            }
+            #sidebar-q-letter {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 16px !important;
+            }
         }
         .title-container {
             text-align: center;
@@ -1456,7 +1468,7 @@
         if (!container) return;
         
         // Calculate reserved height by summing up all other children's heights
-        let reservedHeight = 20; // base padding
+        let reservedHeight = 10; // base padding
         Array.from(container.children).forEach(child => {
             if (child !== el && child.style.display !== 'none' && child.style.position !== 'absolute') {
                 reservedHeight += child.offsetHeight || 0;
@@ -1466,17 +1478,19 @@
             }
         });
         
-        const maxHeight = container.clientHeight - reservedHeight - 10;
-        const maxWidth = container.clientWidth - 20;
+        // Be more aggressive with safety margin to prevent clipping
+        const maxHeight = container.clientHeight - reservedHeight - 15;
+        const maxWidth = container.clientWidth - 15;
 
-        let minFS = 10;
-        let maxFS = 70;
+        let minFS = 8;
+        let maxFS = 60;
         let bestFS = minFS;
 
         // Binary search for the best font size
         while (minFS <= maxFS) {
             let mid = Math.floor((minFS + maxFS) / 2);
             el.style.fontSize = mid + 'px';
+            // Use scrollHeight and scrollWidth to detect overflow
             if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
                 bestFS = mid;
                 minFS = mid + 1;
@@ -1484,7 +1498,11 @@
                 maxFS = mid - 1;
             }
         }
+        // Final check: if still overflowing, reduce further
         el.style.fontSize = bestFS + 'px';
+        if (el.scrollHeight > maxHeight) {
+            el.style.fontSize = (bestFS * 0.9) + 'px';
+        }
     }
 
     window.revealSidebarAnswer = () => {
@@ -1497,12 +1515,12 @@
             // Ensure answer is visible and sized correctly
             setTimeout(() => {
                 adjustFontSize(answerEl);
-            }, 100);
+            }, 150);
         } else {
             inner.style.transform = 'rotateY(0deg)';
             setTimeout(() => {
                 adjustFontSize(qTextEl);
-            }, 100);
+            }, 150);
         }
     };
 
