@@ -634,36 +634,38 @@
             background: #6a3093; color: white;
             display: flex; flex-direction: column; align-items: center;
             justify-content: flex-start;
-            padding: clamp(10px, 1.5vw, 20px);
+            padding: 10px;
             box-shadow: -5px 0 15px rgba(0,0,0,0.2);
             z-index: 10; position: relative; 
             height: 100vh;
             overflow: hidden;
             gap: 0;
         }
+        @media (max-width: 1024px) {
+            .sidebar { padding: 8px; }
+        }
         .sidebar::-webkit-scrollbar { display: none; }
         .logo-container {
             position: relative; 
-            margin-top: clamp(10px, 3vh, 30px); 
-            margin-bottom: clamp(10px, 3vh, 30px);
+            margin-top: 0; 
+            margin-bottom: 10px;
             display: flex; flex-direction: column; align-items: center;
             pointer-events: none; line-height: 1.1;
             flex-shrink: 0;
         }
         /* Desktop: Large Logo */
-        .logo-container .logo-word { font-size: clamp(32px, 5vh, 54px); }
-        .logo-container .logo-ma   { letter-spacing: clamp(8px, 1.5vh, 18px); }
+        .logo-container .logo-word { font-size: clamp(36px, 6vh, 60px); }
+        .logo-container .logo-ma   { letter-spacing: clamp(10px, 2vh, 24px); }
         
         /* Mobile: Small Logo */
         @media (max-width: 1024px) {
-            .logo-container { margin-top: 10px; margin-bottom: 10px; }
-            .logo-container .logo-word { font-size: clamp(18px, 4vw, 28px); }
-            .logo-container .logo-ma   { letter-spacing: clamp(4px, 1vw, 8px); }
+            .logo-container { margin-top: 5px; margin-bottom: 5px; }
+            .logo-container .logo-word { font-size: clamp(16px, 3.5vw, 24px); }
+            .logo-container .logo-ma   { letter-spacing: clamp(3px, 0.8vw, 6px); }
         }
         .title-container {
             text-align: center;
-            margin-top: auto;
-            margin-bottom: auto;
+            margin: 10px 0;
             transition: all 0.3s ease;
             flex-shrink: 0;
             width: 100%;
@@ -1254,27 +1256,27 @@
             <span class="logo-word logo-ma">مع</span>
             <span class="logo-word logo-marah" id="logo-name-game">مراح</span>
         </div>
-        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:hidden; position:relative;">
-            <div class="title-container" id="title-container-sidebar" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:100%; z-index:1;">
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; width:100%; overflow:visible; position:relative; min-height:0; margin: 5px 0;">
+            <div class="title-container" id="title-container-sidebar" style="width:100%; z-index:1;">
                 <span class="title-word title-round">الجولة</span>
                 <span class="title-word title-first" id="round-label" style="margin-top:5px;">الأولى</span>
             </div>
             
-            <div id="sidebar-question-container" style="display:none; width:96%; height:80%; margin:0 auto; position:relative; z-index:2; perspective:1000px;">
+            <div id="sidebar-question-container" style="display:none; width:98%; height:98%; margin:0 auto; position:relative; z-index:2; perspective:1200px;">
                 <div id="sidebar-card-inner" style="width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
                     <!-- Front Face (Question) -->
-                    <div id="sidebar-card-front" style="position:absolute; width:100%; height:100%; backface-visibility:hidden; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:15px; display:flex; flex-direction:column; justify-content:center; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box;">
+                    <div id="sidebar-card-front" style="position:absolute; inset:0; backface-visibility:hidden; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); border-radius:20px; padding:15px; display:flex; flex-direction:column; justify-content:center; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box; overflow:hidden;">
                         <div id="sidebar-q-letter" style="width:40px; height:40px; background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:900; color:white; margin:0 auto; flex-shrink:0;">أ</div>
-                        <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word;">السؤال</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; margin-top:auto;">
+                        <div id="sidebar-q-text" style="font-size:40px; font-weight:900; color:white; line-height:1.2; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; text-align:center; padding:5px;">السؤال</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; margin-top:auto; flex-shrink:0;">
                             <button id="sidebar-new-btn" onclick="changeSidebarQuestion()" style="padding:12px; border-radius:12px; border:none; font-size:15px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:white; transition:all 0.2s; white-space:nowrap;">🔄 جديد</button>
                             <button onclick="revealSidebarAnswer()" style="padding:12px; border-radius:12px; border:none; font-size:15px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.1); color:#f1c40f; transition:all 0.2s; white-space:nowrap;">✓ أظهر</button>
                         </div>
                     </div>
                     <!-- Back Face (Answer) -->
-                    <div id="sidebar-card-back" style="position:absolute; width:100%; height:100%; backface-visibility:hidden; transform:rotateY(180deg); background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:20px; padding:15px; display:flex; flex-direction:column; justify-content:center; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box;">
-                        <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; text-align:center;">الإجابة</div>
-                        <button onclick="revealSidebarAnswer()" style="width:100%; padding:12px; border-radius:12px; border:none; font-size:16px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.2); color:#f1c40f; transition:all 0.2s; margin-top:auto;">✓ عودة</button>
+                    <div id="sidebar-card-back" style="position:absolute; inset:0; backface-visibility:hidden; transform:rotateY(180deg); background:rgba(255,255,255,0.15); border:2px solid rgba(255,255,255,0.3); border-radius:20px; padding:15px; display:flex; flex-direction:column; justify-content:center; gap:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box; overflow:hidden;">
+                        <div id="sidebar-q-answer" style="font-size:40px; font-weight:900; color:#f1c40f; display:flex; align-items:center; justify-content:center; overflow:hidden; flex:1; width:100%; word-break:break-word; text-align:center; padding:5px;">الإجابة</div>
+                        <button onclick="revealSidebarAnswer()" style="width:100%; padding:12px; border-radius:12px; border:none; font-size:16px; font-weight:900; cursor:pointer; background:rgba(255,255,255,0.2); color:#f1c40f; transition:all 0.2s; margin-top:auto; flex-shrink:0;">✓ عودة</button>
                     </div>
                 </div>
             </div>
@@ -1449,35 +1451,40 @@
     };
 
     function adjustFontSize(el) {
-        if (!el || el.style.display === 'none') return;
+        if (!el) return;
         const container = el.parentElement;
-        const letter = document.getElementById('sidebar-q-letter');
-        const buttons = el.parentElement.querySelector('div[style*="grid"]');
+        if (!container) return;
         
-        // Use offsetHeight if available, otherwise estimate
-        const letterH = letter ? letter.offsetHeight || 32 : 32;
-        const buttonsH = buttons ? buttons.offsetHeight || 40 : 40;
-        const reservedHeight = letterH + buttonsH + 25; 
+        // Calculate reserved height by summing up all other children's heights
+        let reservedHeight = 20; // base padding
+        Array.from(container.children).forEach(child => {
+            if (child !== el && child.style.display !== 'none' && child.style.position !== 'absolute') {
+                reservedHeight += child.offsetHeight || 0;
+                const style = window.getComputedStyle(child);
+                reservedHeight += parseInt(style.marginTop) || 0;
+                reservedHeight += parseInt(style.marginBottom) || 0;
+            }
+        });
         
-        const maxHeight = container.clientHeight - reservedHeight;
-        const maxWidth = container.clientWidth - 15;
+        const maxHeight = container.clientHeight - reservedHeight - 10;
+        const maxWidth = container.clientWidth - 20;
 
-        let minFontSize = 8; // Lower minimum for very long questions
-        let maxFontSize = 70;
-        let bestFontSize = minFontSize;
+        let minFS = 10;
+        let maxFS = 70;
+        let bestFS = minFS;
 
-        while (minFontSize <= maxFontSize) {
-            let mid = Math.floor((minFontSize + maxFontSize) / 2);
+        // Binary search for the best font size
+        while (minFS <= maxFS) {
+            let mid = Math.floor((minFS + maxFS) / 2);
             el.style.fontSize = mid + 'px';
-            // Check if content fits without causing overflow
             if (el.scrollHeight <= maxHeight && el.scrollWidth <= maxWidth) {
-                bestFontSize = mid;
-                minFontSize = mid + 1;
+                bestFS = mid;
+                minFS = mid + 1;
             } else {
-                maxFontSize = mid - 1;
+                maxFS = mid - 1;
             }
         }
-        el.style.fontSize = bestFontSize + 'px';
+        el.style.fontSize = bestFS + 'px';
     }
 
     window.revealSidebarAnswer = () => {
@@ -1487,10 +1494,15 @@
         
         if (!inner.style.transform || inner.style.transform === 'rotateY(0deg)') {
             inner.style.transform = 'rotateY(180deg)';
-            setTimeout(() => adjustFontSize(answerEl), 300);
+            // Ensure answer is visible and sized correctly
+            setTimeout(() => {
+                adjustFontSize(answerEl);
+            }, 100);
         } else {
             inner.style.transform = 'rotateY(0deg)';
-            setTimeout(() => adjustFontSize(qTextEl), 300);
+            setTimeout(() => {
+                adjustFontSize(qTextEl);
+            }, 100);
         }
     };
 
@@ -1517,7 +1529,15 @@
             const qAnsEl = document.getElementById('sidebar-q-answer');
             qTextEl.textContent = currentLetterQs[qIndex].q;
             qAnsEl.textContent = currentLetterQs[qIndex].a;
-            setTimeout(() => adjustFontSize(qTextEl), 10);
+            
+            // Reset rotation if flipped
+            const inner = document.getElementById('sidebar-card-inner');
+            inner.style.transform = 'rotateY(0deg)';
+            
+            setTimeout(() => {
+                adjustFontSize(qTextEl);
+                adjustFontSize(qAnsEl);
+            }, 50);
         }
     };
 
