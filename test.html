@@ -406,55 +406,6 @@
         .play-again-btn:active { transform: translateY(2px) scale(0.98); }
 
         /* ===== TEAM CHOICE MODAL ===== */
-        #team-choice-modal {
-            position: fixed; inset: 0; z-index: 600;
-            display: none; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.7);
-        }
-        #team-choice-modal.active { display: flex; }
-        .team-choice-content {
-            background: #2c1b4d; border-radius: 24px; padding: clamp(15px, 4vw, 30px);
-            display: flex; flex-direction: column; align-items: center; gap: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            animation: modalPop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
-            max-width: 92vw; max-height: 90vh; overflow-y: auto;
-            scrollbar-width: none;
-        }
-        .team-choice-content::-webkit-scrollbar { display: none; }
-        @keyframes modalPop {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .team-choice-title {
-            font-size: clamp(22px, 4vw, 32px); font-weight: 900; color: white;
-            text-align: center;
-        }
-        .team-buttons {
-            display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-        }
-        .team-choice-btn {
-            padding: clamp(14px, 2.5vw, 20px) clamp(30px, 5vw, 50px);
-            border: none; border-radius: 16px; font-size: clamp(18px, 3vw, 26px);
-            font-weight: 900; cursor: pointer; color: white;
-            transition: transform 0.15s, box-shadow 0.15s;
-            display: flex; align-items: center; gap: 10px;
-        }
-        .team-choice-btn.green {
-            background: var(--team1-color) !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .team-choice-btn.orange {
-            background: var(--team2-color) !important;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-        }
-        .team-choice-btn:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
-        .team-choice-btn:active {
-            transform: translateY(2px) scale(0.98);
-        }
-
         /* ===== NEW GAME CONFIRM MODAL ===== */
         #new-game-modal {
             position: fixed; inset: 0; z-index: 600;
@@ -897,6 +848,29 @@
         .opt-btn.disabled { opacity: 0.45; cursor: default; }
         .opt-btn.disabled:hover { background: transparent; }
 
+        /* ===== PRESENTER TYPE TOGGLE IN DROPDOWN ===== */
+        .presenter-type-container {
+            padding: 10px 12px 8px;
+            border-bottom: 1px solid rgba(106,48,147,0.12);
+        }
+        .presenter-type-label {
+            color: #6a3093; font-size: 13px; font-weight: 900;
+            margin-bottom: 8px; text-align: right;
+        }
+        .presenter-type-btns {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .presenter-type-btn {
+            padding: 9px 6px; border-radius: 12px; border: none;
+            font-size: 14px; font-weight: 900; cursor: pointer;
+            background: #ede9f5; color: #6a3093;
+            transition: background 0.18s, color 0.18s;
+            text-align: center;
+        }
+        .presenter-type-btn.active {
+            background: #6a3093; color: white;
+        }
+
         /* ===== PRESENTER MODAL (Pop-up) ===== */
         #presenter-modal {
             position: fixed; inset: 0; z-index: 2000;
@@ -1146,21 +1120,6 @@
         </div>
     </div>
 </div>
-<!-- ===== TEAM CHOICE MODAL ===== -->
-<div id="team-choice-modal">
-    <div class="team-choice-content">
-        <div class="team-choice-title"><span class="icon-svg"><script>document.write(Icons.pointing_up)</script></span> اختار الفريق</div>
-        <div class="team-buttons">
-            <button class="team-choice-btn green" onclick="chooseTeam('green')">
-                ✓ <span id="modal-team1">الفريق الأول</span>
-            </button>
-            <button class="team-choice-btn orange" onclick="chooseTeam('orange')">
-                ✓ <span id="modal-team2">الفريق الثاني</span>
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- ===== NEW GAME CONFIRM MODAL ===== -->
 <div id="new-game-modal">
     <div class="new-game-content">
@@ -1347,6 +1306,14 @@
 <!-- ===== OPTIONS BUTTON & DROPDOWN ===== -->
 <button id="options-btn" onclick="toggleOptions()">⚙️ الخيارات</button>
 <div id="options-dropdown">
+    <!-- نوع المقدم -->
+    <div class="presenter-type-container">
+        <div class="presenter-type-label">نوع المقدم</div>
+        <div class="presenter-type-btns">
+            <button class="presenter-type-btn active" id="type-btn-ai" onclick="setPresenterType('ai')">مقدم آلي</button>
+            <button class="presenter-type-btn" id="type-btn-human" onclick="setPresenterType('human')">مقدم بشري</button>
+        </div>
+    </div>
     <button class="opt-btn" onclick="closeOptions(); showPresenterModal()"><span class="icon-svg"><script>document.write(Icons.television)</script></span> شاشة المقدم</button>
     <button class="opt-btn" onclick="closeOptions(); showPlayerScreen()"><span class="icon-svg"><script>document.write(Icons.running)</script></span> جرس اللاعبين</button>
     <button class="opt-btn" onclick="closeOptions(); confirmNewGame()"><span class="icon-svg"><script>document.write(Icons.refresh)</script></span> بداية لعبة جديدة</button>
@@ -1472,7 +1439,7 @@
             document.getElementById('q-team-selection').style.display = 'none';
         }
     };
-    window.chooseTeamFromQuestion = (team) => { chooseTeam(team); closeQuestionModal(); };
+    window.chooseTeamFromQuestion = (team) => { closeQuestionModal(); };
 
     /* ===== SIDEBAR QUESTION FUNCTIONS ===== */
     window.grantQuestionToTeam = (team) => {
@@ -1763,8 +1730,6 @@
         updateAllLogos();
         document.getElementById('label-team1').textContent = settings.team1;
         document.getElementById('label-team2').textContent = settings.team2;
-        document.getElementById('modal-team1').textContent = settings.team1;
-        document.getElementById('modal-team2').textContent = settings.team2;
         document.getElementById('score-g').textContent = '0';
         document.getElementById('score-o').textContent = '0';
         document.getElementById('round-label').textContent = roundWords[1];
@@ -1776,7 +1741,6 @@
         // If clicking the same pending cell, cancel selection
         if (pendingCell === cell) {
             closeSidebarQuestion();
-            hideTeamChoice();
             return;
         }
 
@@ -1792,6 +1756,12 @@
         
         const letter = cell.el.querySelector('.hex-text').textContent;
         currentLetterQs = questionsData[letter] || [];
+
+        // مقدم بشري: لا شيء يظهر، الخلية تبقى pending فقط
+        if (presenterType === 'human') {
+            return;
+        }
+
         if (currentLetterQs.length > 0) {
             qIndex = Math.floor(Math.random() * currentLetterQs.length);
             document.getElementById('sidebar-q-letter').textContent = letter;
@@ -1818,31 +1788,8 @@
             update(presenterActionsRef(), { type: 'cell_selected', cellId: cell.id, letter: letter, question: currentLetterQs[qIndex].q, answer: currentLetterQs[qIndex].a, timestamp: Date.now() });
             setTimeout(() => { _ignorePresenterAction = false; }, 100);
         } else {
-            document.getElementById('team-choice-modal').classList.add('active');
+            // لا توجد أسئلة لهذا الحرف - الخلية تبقى pending
         }
-    }
-
-    function hideTeamChoice() {
-        document.getElementById('team-choice-modal').classList.remove('active');
-        if (pendingCell) {
-            pendingCell.isPending = false;
-            pendingCell.el.classList.remove('pending-fill');
-        }
-        pendingCell = null;
-    }
-
-    function chooseTeam(team) {
-        if (!pendingCell) return;
-        const cell = pendingCell;
-        hideTeamChoice();
-        cell.owner = team;
-        cell.isPending = false;
-        cell.el.classList.remove('pending-fill');
-        cell.el.classList.add(team + '-fill');
-        cell.text.style.display = 'none';
-        playPointSound();
-        checkPaths();
-        syncGameState();
     }
 
     /* ===== TRANSITION ===== */
@@ -2027,6 +1974,15 @@
     /* ===== OPTIONS ===== */
     function toggleOptions() { document.getElementById('options-dropdown').classList.toggle('open'); }
     function closeOptions() { document.getElementById('options-dropdown').classList.remove('open'); }
+
+    /* ===== PRESENTER TYPE ===== */
+    let presenterType = 'ai'; // 'ai' | 'human'
+
+    window.setPresenterType = (type) => {
+        presenterType = type;
+        document.getElementById('type-btn-ai').classList.toggle('active', type === 'ai');
+        document.getElementById('type-btn-human').classList.toggle('active', type === 'human');
+    };
     document.addEventListener('click', function(e) {
         const btn = document.getElementById('options-btn');
         const dd  = document.getElementById('options-dropdown');
@@ -2330,8 +2286,6 @@
             document.getElementById('label-team2').textContent = settings.team2;
             document.getElementById('label-team1').style.color = settings.colors?.t1 || '#2ecc00';
             document.getElementById('label-team2').style.color = settings.colors?.t2 || '#ff6d00';
-            document.getElementById('modal-team1').textContent = settings.team1;
-            document.getElementById('modal-team2').textContent = settings.team2;
         }
     });
 
@@ -2406,8 +2360,6 @@
     window.showStart        = showStart;
     window.selectRounds     = selectRounds;
     window.showTeamChoice   = showTeamChoice;
-    window.hideTeamChoice   = hideTeamChoice;
-    window.chooseTeam       = chooseTeam;
     window.toggleOptions    = toggleOptions;
     window.closeOptions     = closeOptions;
     window.showPresenterModal = showPresenterModal;
@@ -2473,4 +2425,4 @@
 
 </script>
 </body>
-</html>
+    </html>
