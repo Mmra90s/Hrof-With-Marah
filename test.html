@@ -605,6 +605,44 @@
         }
         .save-btn:hover { transform: translateY(-2px); }
 
+        /* ===== QUESTION OVERLAY (from presenter in human mode) ===== */
+        #question-screen-overlay {
+            position: fixed; inset: 0; z-index: 700;
+            display: none; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: rgba(44, 27, 77, 0.92);
+            backdrop-filter: blur(6px);
+            animation: fadeInOverlay 0.4s ease;
+        }
+        #question-screen-overlay.active { display: flex; }
+        @keyframes fadeInOverlay {
+            from { opacity: 0; transform: scale(0.95); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .question-overlay-card {
+            background: rgba(255,255,255,0.08);
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 28px;
+            padding: clamp(30px,5vw,60px) clamp(24px,4vw,50px);
+            max-width: min(700px, 90vw);
+            width: 100%;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 24px; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .question-overlay-letter {
+            font-size: clamp(48px, 8vw, 90px);
+            font-weight: 900; color: #fdd835;
+            text-shadow: 0 0 20px rgba(253,216,53,0.6), 0 4px 0 #2c1b4d;
+            line-height: 1;
+        }
+        .question-overlay-text {
+            font-size: clamp(22px, 3.5vw, 42px);
+            font-weight: 900; color: white;
+            line-height: 1.4;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
         /* ===== GAME SCREEN ===== */
         #screen-game { flex-direction: row; overflow: hidden; position: relative; }
         .left {
@@ -1292,6 +1330,14 @@
     </div>
 </div>
 
+<!-- ===== QUESTION SCREEN OVERLAY (from presenter) ===== -->
+<div id="question-screen-overlay">
+    <div class="question-overlay-card">
+        <div class="question-overlay-letter" id="overlay-letter">أ</div>
+        <div class="question-overlay-text" id="overlay-question">السؤال يظهر هنا</div>
+    </div>
+</div>
+
 <!-- Buzzer Alert Overlay & Display -->
 <div class="buzzer-alert-overlay" id="buzzerOverlay"></div>
 <div class="buzzer-alert-container" id="buzzerAlert">
@@ -1545,6 +1591,8 @@
         // إخفاء الكرت وإعادة ضبط الوجه للأمامي
         cardInner.classList.remove('flipped');
         wrapper.classList.remove('visible');
+        // إخفاء overlay السؤال
+        document.getElementById('question-screen-overlay').classList.remove('active');
         // إظهار عنوان الجولة مرة أخرى
         document.getElementById('title-container-sidebar').style.display = 'flex';
         if (pendingCell) {
@@ -1759,6 +1807,10 @@
 
         // مقدم بشري: لا شيء يظهر، الخلية تبقى pending فقط
         if (presenterType === 'human') {
+            // إرسال للمقدم لتزامن الخلية المختارة
+            _ignorePresenterAction = true;
+            update(presenterActionsRef(), { type: 'cell_selected', cellId: cell.id, letter: letter, question: '', answer: '', timestamp: Date.now() });
+            setTimeout(() => { _ignorePresenterAction = false; }, 100);
             return;
         }
 
@@ -2254,6 +2306,10 @@
                                 pendingCell = cell;
                             }
                         }
+                        // وضع مقدم بشري: فقط تحديد الخلية بدون عرض السؤال
+                        if (presenterType === 'human' && action.cellId !== undefined) {
+                            pendingCell = cell;
+                        }
                     }
                 }
                 break;
@@ -2261,6 +2317,16 @@
                 if (action.cellId !== undefined) {
                     const cell = cells[action.cellId];
                     if (cell) { cell.isPending = false; cell.el.classList.remove('pending-fill'); }
+                    // أخفِ الـ overlay لو كان ظاهر
+                    document.getElementById('question-screen-overlay').classList.remove('active');
+                }
+                break;
+            case 'show_question_on_screen':
+                // فقط في وضع مقدم بشري
+                if (presenterType === 'human' && action.letter && action.question) {
+                    document.getElementById('overlay-letter').textContent = action.letter;
+                    document.getElementById('overlay-question').textContent = action.question;
+                    document.getElementById('question-screen-overlay').classList.add('active');
                 }
                 break;
             case 'team_selected':
@@ -2277,8 +2343,11 @@
                         syncGameState();
                     }
                 }
+                // أخفِ الـ overlay عند اختيار الفريق
+                document.getElementById('question-screen-overlay').classList.remove('active');
                 break;
             case 'game_reset':
+                document.getElementById('question-screen-overlay').classList.remove('active');
                 startGame();
                 break;
         }
@@ -2436,4 +2505,4 @@
 
 </script>
 </body>
-    </html>
+                </html>
